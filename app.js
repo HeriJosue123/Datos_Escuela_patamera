@@ -198,15 +198,139 @@ let STATE = {
   },
   activeMonth: '2026-06',
   currentCycleView: 'parvularia',
+  lastUpdated: 0,
 };
 
-/* ═══════════════════════════════════════════════════════════
-   3. PERSISTENCIA (localStorage)
-═══════════════════════════════════════════════════════════ */
+let db = null;
+let firebaseInitialized = false;
+
+function initFirebase() {
+  try {
+    if (typeof firebase === 'undefined') {
+      console.warn("Firebase SDK no cargado. Funcionando en modo local.");
+      return;
+    }
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOxSEhGKWGbIG5fvUYUBRI--dXsRH3mdU",
+      authDomain: "alicontrol-c64d2.firebaseapp.com",
+      projectId: "alicontrol-c64d2",
+      storageBucket: "alicontrol-c64d2.firebasestorage.app",
+      messagingSenderId: "1052279207948",
+      appId: "1:1052279207948:web:f67b98a112c93ee86dd629"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    
+    // Habilitar persistencia offline
+    db.enablePersistence().catch(err => {
+      console.warn("Error de persistencia Firestore:", err.code);
+    });
+    
+    firebaseInitialized = true;
+    console.log("Firebase inicializado correctamente.");
+  } catch (e) {
+    console.error("Fallo al inicializar Firebase:", e);
+  }
+}
+
+// Inicializar Firebase inmediatamente
+initFirebase();
+
+function updateDbStatus(status, text) {
+  const badge = document.getElementById('db-status-badge');
+  if (!badge) return;
+  badge.className = `db-status-badge ${status}`;
+  badge.innerHTML = `☁️ ${text}`;
+}
+
+let syncTimeout = null;
+function saveToFirebase() {
+  if (!firebaseInitialized || !db) {
+    updateDbStatus('offline', 'Modo Local');
+    return;
+  }
+
+  updateDbStatus('syncing', 'Sincronizando...');
+
+  // Debounce para evitar exceso de escrituras en ráfaga
+  if (syncTimeout) clearTimeout(syncTimeout);
+
+  syncTimeout = setTimeout(() => {
+    db.collection('patamera').doc('main_state').set({
+      config: STATE.config,
+      records: STATE.records,
+      ingresos: STATE.ingresos,
+      activeMonth: STATE.activeMonth,
+      lastUpdated: STATE.lastUpdated || Date.now()
+    })
+    .then(() => {
+      updateDbStatus('connected', 'Sincronizado');
+    })
+    .catch(err => {
+      console.error("Error al guardar en Firebase:", err);
+      updateDbStatus('offline', 'Modo Local (Error)');
+    });
+  }, 1000);
+}
+
+function syncFromFirebase() {
+  if (!firebaseInitialized || !db) return;
+
+  updateDbStatus('syncing', 'Sincronizando...');
+
+  db.collection('patamera').doc('main_state').get()
+    .then(doc => {
+      if (doc.exists) {
+        const firestoreData = doc.data();
+        const localLastUpdated = STATE.lastUpdated || 0;
+        const firestoreLastUpdated = firestoreData.lastUpdated || 0;
+
+        if (firestoreLastUpdated > localLastUpdated) {
+          console.log("Firebase tiene datos más nuevos. Actualizando estado local.");
+          
+          STATE.records = firestoreData.records || {};
+          STATE.ingresos = firestoreData.ingresos || [];
+          if (firestoreData.config) {
+            STATE.config.portions       = { ...DEFAULT_PORTIONS,        ...firestoreData.config.portions };
+            STATE.config.packageWeights = { ...DEFAULT_PACKAGE_WEIGHTS, ...firestoreData.config.packageWeights };
+            STATE.config.initialStock   = { ...DEFAULT_INITIAL_STOCK,   ...firestoreData.config.initialStock };
+          }
+          STATE.activeMonth = firestoreData.activeMonth || '2026-06';
+          STATE.lastUpdated = firestoreLastUpdated;
+
+          // Guardar en localStorage
+          localStorage.setItem('alicontrol_v2', JSON.stringify(STATE));
+          
+          // Renderizar vistas
+          renderDashboard();
+          renderConfig();
+          renderIngresoHistory();
+          
+          showToast('☁️ Datos actualizados desde la nube.', 'success');
+        } else if (localLastUpdated > firestoreLastUpdated) {
+          console.log("El estado local es más nuevo. Subiendo a Firebase.");
+          saveToFirebase();
+        } else {
+          console.log("Estado local y Firebase están sincronizados.");
+        }
+        updateDbStatus('connected', 'Sincronizado');
+      } else {
+        console.log("No se encontraron datos remotos. Creando con los datos locales.");
+        saveToFirebase();
+      }
+    })
+    .catch(err => {
+      console.error("Error al sincronizar desde Firebase:", err);
+      updateDbStatus('offline', 'Modo Local (Error)');
+    });
+}
 
 function saveState() {
   try {
+    STATE.lastUpdated = Date.now();
     localStorage.setItem('alicontrol_v2', JSON.stringify(STATE));
+    saveToFirebase();
   } catch(e) {
     showToast('⚠️ No se pudo guardar localmente.', 'error');
   }
@@ -226,12 +350,15 @@ function loadState() {
         STATE.config.initialStock   = { ...DEFAULT_INITIAL_STOCK,   ...loaded.config.initialStock };
       }
       STATE.activeMonth = loaded.activeMonth || '2026-06';
+      STATE.lastUpdated = loaded.lastUpdated || 0;
     } else {
       // First run — seed with June data
       seedJuneData();
+      STATE.lastUpdated = Date.now();
     }
   } catch(e) {
     seedJuneData();
+    STATE.lastUpdated = Date.now();
   }
 }
 
@@ -1325,6 +1452,14 @@ function deleteIngreso(id) {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
+  
+  if (firebaseInitialized) {
+    updateDbStatus('syncing', 'Sincronizando...');
+    syncFromFirebase();
+  } else {
+    updateDbStatus('offline', 'Modo Local');
+  }
+
   updateHeaderDate();
   initRegistroForm();
   initIngresoForm();

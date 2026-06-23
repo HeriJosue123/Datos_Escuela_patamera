@@ -24,6 +24,7 @@
     </div>
   </a>
   <div class="header-spacer"></div>
+  <div class="db-status-badge offline" id="db-status-badge" style="margin-right: 0.5rem;">☁️ Sin Conexión</div>
   <div class="header-date" id="header-date-display">📅 Cargando...</div>
 </header>
 
@@ -547,6 +548,9 @@
 <!-- ════════════════════ TOAST CONTAINER ════════════════════ -->
 <div id="toast-container"></div>
 
+<!-- Firebase SDK Compatibility CDN -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

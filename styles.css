@@ -130,6 +130,35 @@ body {
   gap: 0.4rem;
 }
 
+.db-status-badge {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.35rem 0.85rem;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: var(--transition);
+}
+
+.db-status-badge.syncing {
+  color: var(--gold);
+  background: var(--gold-dim);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.db-status-badge.connected {
+  color: var(--green);
+  background: var(--green-dim);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.db-status-badge.offline {
+  color: var(--text-secondary);
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+}
+
 /* ─── Hamburger Button ──────────────────────── */
 .hamburger-btn {
   display: flex;
