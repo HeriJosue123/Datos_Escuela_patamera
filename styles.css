@@ -1204,6 +1204,11 @@ tbody td.date-cell {
 .empty-state-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-secondary); }
 .empty-state-sub { font-size: 0.82rem; }
 
+/* Header de impresión (oculto en pantalla) */
+.print-only-header {
+  display: none !important;
+}
+
 /* ─── Responsive ──────────────────────────────────── */
 @media (max-width: 768px) {
   .app-header { height: 56px; padding: 0 1rem; }
@@ -1312,54 +1317,44 @@ tbody td.date-cell {
   }
   
   .print-gov-logo svg {
-    width: 64px !important;
-    height: 64px !important;
-    color: #0f172a !important;
+    width: 48px !important;
+    height: 48px !important;
+    color: #c5a02c !important; /* Elegant gold logo color */
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
   
-  .print-gov-text h2 {
-    font-size: 0.8rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 1px !important;
-    margin: 0 0 2px 0 !important;
-    color: #0f172a !important;
-    text-transform: uppercase !important;
+  .print-gov-text {
+    text-align: left !important;
   }
   
-  .print-gov-text h3 {
-    font-size: 0.7rem !important;
-    font-weight: 600 !important;
-    margin: 0 0 4px 0 !important;
-    color: #334155 !important;
-    text-transform: uppercase !important;
-  }
-  
-  .print-gov-text h1 {
-    font-size: 1.15rem !important;
+  .print-gov-text h1.gov-title {
+    font-size: 1.2rem !important;
     font-weight: 800 !important;
-    margin: 0 0 4px 0 !important;
-    color: #1e3a8a !important; /* Navy blue */
+    margin: 0 0 2px 0 !important;
+    color: #c5a02c !important; /* Elegant gold text color */
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
   
-  .print-report-title {
-    font-size: 0.85rem !important;
+  .print-gov-text h2.gov-subtitle {
+    font-size: 0.8rem !important;
     font-weight: 600 !important;
     margin: 0 !important;
     color: #475569 !important;
-    border-top: 1px solid #e2e8f0 !important;
-    padding-top: 3px !important;
-    display: inline-block !important;
+    text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
   }
   
   .print-header-divider {
-    height: 4px !important;
-    border-top: 1px solid #1e3a8a !important;
-    border-bottom: 2px solid #1e3a8a !important;
-    margin-top: 0.75rem !important;
+    height: 2px !important;
+    border-top: 2px solid #c5a02c !important; /* Elegant gold divider */
+    margin-top: 0.5rem !important;
     margin-bottom: 1.25rem !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   /* Tarjetas KPI elegantes y minimalistas para reporte */
