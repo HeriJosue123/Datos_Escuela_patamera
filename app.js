@@ -507,10 +507,14 @@ function navigateTab(tabId, btnEl) {
 
   // Switch panels
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById(`panel-${tabId}`).classList.add('active');
+  const panel = document.getElementById(`panel-${tabId}`);
+  if (panel) panel.classList.add('active');
 
   // Close sidebar
   closeSidebar();
+
+  // Guardar pestaña activa en localStorage para persistencia
+  localStorage.setItem('alicontrol_active_tab', tabId);
 
   // Refresh content
   refreshActiveTab(tabId);
@@ -524,6 +528,17 @@ function refreshActiveTab(tabId) {
     case 'tabla-amarilla':renderYellowTable(); renderAmarillaDetail(); break;
     case 'ciclos':        renderCycleView(STATE.currentCycleView); break;
     case 'config':        renderConfig();       break;
+  }
+}
+
+function restoreActiveTab() {
+  const savedTab = localStorage.getItem('alicontrol_active_tab') || 'dashboard';
+  const btnEl = document.querySelector(`.sidebar-nav-btn[data-tab="${savedTab}"]`);
+  if (btnEl) {
+    navigateTab(savedTab, btnEl);
+  } else {
+    // Fallback if button is not found
+    renderDashboard();
   }
 }
 
@@ -1456,8 +1471,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initIngresoForm();
   initKardexProductSelect();
   initAmarillaProductSelect();
-  renderDashboard();
-  renderConfig();
+  restoreActiveTab();
   updateIngresoPreview();
 
   // Close sidebar with Escape key
