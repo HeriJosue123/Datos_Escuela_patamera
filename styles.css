@@ -100,6 +100,13 @@ body {
   flex-shrink: 0;
 }
 
+.app-logo-icon svg {
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+  display: block;
+}
+
 .app-logo-text {
   line-height: 1.15;
 }
@@ -1214,12 +1221,20 @@ tbody td.date-cell {
 
 /* ─── Print ───────────────────────────────────────── */
 @media print {
+  @page {
+    size: letter;
+    margin: 15mm 15mm 15mm 15mm;
+  }
+
   body {
     background: #ffffff !important;
-    color: #000000 !important;
-    font-family: system-ui, -apple-system, sans-serif !important;
+    color: #0c1a30 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    font-size: 9pt !important;
+    line-height: 1.4 !important;
   }
-  
+
+  /* Ocultar elementos de navegación y de control */
   .app-header, 
   .sidebar-menu, 
   .sidebar-overlay, 
@@ -1231,118 +1246,264 @@ tbody td.date-cell {
   #toast-container,
   .divider,
   .modal-overlay,
-  .sidebar-divider {
+  .sidebar-divider,
+  .sidebar-footer,
+  .sidebar-nav-badge,
+  input[type="radio"],
+  .student-counter,
+  select#kardex-product-select,
+  select#amarilla-product-select,
+  .cycle-tabs {
     display: none !important;
   }
-  
+
   .main-content {
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
   }
-  
+
   .section-title {
-    color: #000000 !important;
-    font-size: 1.6rem !important;
-    margin-bottom: 0.5rem !important;
+    color: #0c1a30 !important;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.25rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
   }
-  
+
+  .section-subtitle {
+    color: #475569 !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
   /* Formatear el mes selector plano sin bordes en impresión */
   select#month-selector {
     border: none !important;
     background: none !important;
-    color: #000000 !important;
-    font-size: 1.1rem !important;
-    font-weight: bold !important;
+    color: #0c1a30 !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
     padding: 0 !important;
+    margin: 0 !important;
     appearance: none !important;
     -webkit-appearance: none !important;
     -moz-appearance: none !important;
   }
+
+  /* Printable Official Header styles */
+  .print-only-header {
+    display: block !important;
+    margin-bottom: 2rem !important;
+  }
   
-  /* Tarjetas KPI de alto contraste */
-  .stat-card {
-    background: #f8fafc !important;
-    border: 1px solid #cbd5e1 !important;
-    box-shadow: none !important;
+  .print-gov-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 1.25rem !important;
+  }
+  
+  .print-gov-logo {
+    display: block !important;
+    flex-shrink: 0 !important;
+  }
+  
+  .print-gov-logo svg {
+    width: 64px !important;
+    height: 64px !important;
     color: #0f172a !important;
+  }
+  
+  .print-gov-text h2 {
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    margin: 0 0 2px 0 !important;
+    color: #0f172a !important;
+    text-transform: uppercase !important;
+  }
+  
+  .print-gov-text h3 {
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    margin: 0 0 4px 0 !important;
+    color: #334155 !important;
+    text-transform: uppercase !important;
+  }
+  
+  .print-gov-text h1 {
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
+    margin: 0 0 4px 0 !important;
+    color: #1e3a8a !important; /* Navy blue */
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+  }
+  
+  .print-report-title {
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    color: #475569 !important;
+    border-top: 1px solid #e2e8f0 !important;
+    padding-top: 3px !important;
+    display: inline-block !important;
+    letter-spacing: 0.5px !important;
+  }
+  
+  .print-header-divider {
+    height: 4px !important;
+    border-top: 1px solid #1e3a8a !important;
+    border-bottom: 2px solid #1e3a8a !important;
+    margin-top: 0.75rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  /* Tarjetas KPI elegantes y minimalistas para reporte */
+  .cards-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 12px !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .stat-card {
+    background: #ffffff !important;
+    border: none !important;
+    border-bottom: 2.5px solid #1e3a8a !important; /* Underline azul marino de lujo */
+    border-radius: 0 !important;
+    padding: 8px 4px !important;
+    box-shadow: none !important;
+    text-align: center !important;
+    color: #0c1a30 !important;
   }
   
   .stat-card-label {
     color: #475569 !important;
+    font-size: 0.7rem !important;
+    text-transform: uppercase !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 4px !important;
   }
   
   .stat-card-value {
-    color: #0f172a !important;
+    color: #0c1a30 !important;
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
   }
   
   .stat-card-sub {
-    color: #475569 !important;
+    color: #64748b !important;
+    font-size: 0.65rem !important;
+    margin-top: 2px !important;
   }
   
   .stat-card-icon {
-    opacity: 0.3 !important;
+    display: none !important; /* Ocultar emojis infantiles */
   }
   
-  /* Tarjetas de stock y barras de progreso */
+  /* Tarjetas de stock más compactas */
+  .stock-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
   .stock-card {
-    background: #f8fafc !important;
-    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 4px !important;
+    padding: 8px 10px !important;
     box-shadow: none !important;
-    color: #0f172a !important;
-    page-break-inside: avoid;
+    color: #0c1a30 !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
   
   .stock-name {
-    color: #0f172a !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+    color: #0c1a30 !important;
   }
   
-  .stock-kg, .stock-packs {
-    color: #0f172a !important;
+  .stock-kg {
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    color: #0c1a30 !important;
+  }
+  
+  .stock-packs {
+    font-size: 0.7rem !important;
+    color: #475569 !important;
   }
   
   .progress-bar-bg {
-    background: #e2e8f0 !important;
-    border: 1px solid #cbd5e1 !important;
+    height: 5px !important;
+    background: #f1f5f9 !important;
+    border: none !important;
+    border-radius: 3px !important;
+    margin-top: 4px !important;
   }
   
   .progress-bar-fill {
-    background: #0ea5e9 !important; /* Usar cyan para imprimir */
+    background: #1e3a8a !important; /* Azul marino para impresión formal */
+    border-radius: 3px !important;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
   
-  /* Tablas de impresión limpias */
+  /* Tablas de impresión impecables y formales */
   .table-wrap {
     border: 1px solid #cbd5e1 !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
     background: #ffffff !important;
+    margin-bottom: 1.5rem !important;
   }
   
   table {
-    color: #0f172a !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
+    color: #0c1a30 !important;
+    font-size: 8.5pt !important;
   }
   
   thead th {
-    background: #f1f5f9 !important;
-    color: #0f172a !important;
-    font-weight: 600 !important;
-    border-bottom: 2px solid #cbd5e1 !important;
+    background: #f8fafc !important;
+    color: #0c1a30 !important;
+    font-weight: 700 !important;
+    font-size: 8pt !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    border-bottom: 2px solid #94a3b8 !important;
+    padding: 6px 8px !important;
   }
   
   tbody tr {
     border-bottom: 1px solid #e2e8f0 !important;
     background: #ffffff !important;
-    page-break-inside: avoid;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
   
   tbody td {
     color: #334155 !important;
+    padding: 5px 8px !important;
   }
   
   .badge {
-    background: #f1f5f9 !important;
-    color: #0f172a !important;
+    background: #ffffff !important;
+    color: #0c1a30 !important;
     border: 1px solid #cbd5e1 !important;
+    font-size: 7.5pt !important;
+    padding: 1px 4px !important;
+    border-radius: 2px !important;
+    font-weight: 600 !important;
   }
 }
