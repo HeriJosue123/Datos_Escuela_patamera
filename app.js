@@ -67,6 +67,11 @@ const DEFAULT_INITIAL_STOCK = {
 
 // Datos históricos cargados dinámicamente desde data.js
 
+function getCurrentMonthStr() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+}
+
 const DAYS_ES = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 const MONTHS_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 
@@ -82,7 +87,7 @@ let STATE = {
     packageWeights: { ...DEFAULT_PACKAGE_WEIGHTS },
     initialStock:   { ...DEFAULT_INITIAL_STOCK },
   },
-  activeMonth: '2026-06',
+  activeMonth: getCurrentMonthStr(),
   currentCycleView: 'parvularia',
   lastUpdated: 0,
 };
@@ -182,7 +187,7 @@ function syncFromFirebase() {
             STATE.config.packageWeights = { ...DEFAULT_PACKAGE_WEIGHTS, ...firestoreData.config.packageWeights };
             STATE.config.initialStock   = { ...DEFAULT_INITIAL_STOCK,   ...firestoreData.config.initialStock };
           }
-          STATE.activeMonth = firestoreData.activeMonth || '2026-06';
+          STATE.activeMonth = firestoreData.activeMonth || getCurrentMonthStr();
           STATE.lastUpdated = firestoreLastUpdated;
 
           // Guardar en localStorage
@@ -235,7 +240,7 @@ function loadState() {
         STATE.config.packageWeights = { ...DEFAULT_PACKAGE_WEIGHTS, ...loaded.config.packageWeights };
         STATE.config.initialStock   = { ...DEFAULT_INITIAL_STOCK,   ...loaded.config.initialStock };
       }
-      STATE.activeMonth = loaded.activeMonth || '2026-06';
+      STATE.activeMonth = loaded.activeMonth || getCurrentMonthStr();
       STATE.lastUpdated = loaded.lastUpdated || 0;
     } else {
       // First run — seed with Excel data
@@ -268,17 +273,14 @@ function changeActiveMonth(newMonth) {
   // Guardar estado localmente (y en Firebase)
   saveState();
   
+  // Repoblar selector
+  populateMonthSelector();
+  
   // Actualizar etiqueta del mes activo en el UI (si existe)
   const [y, m] = STATE.activeMonth.split('-');
   const label = document.getElementById('dash-month-label');
   if (label) {
     label.textContent = `Mes activo: ${MONTHS_ES[parseInt(m)-1].charAt(0).toUpperCase() + MONTHS_ES[parseInt(m)-1].slice(1)} ${y}`;
-  }
-  
-  // Asegurar que el selector del mes esté sincronizado
-  const selector = document.getElementById('month-selector');
-  if (selector) {
-    selector.value = newMonth;
   }
   
   // Refrescar la pestaña actualmente visible
@@ -289,6 +291,76 @@ function changeActiveMonth(newMonth) {
   }
   
   showToast(`📅 Mes activo cambiado a ${MONTHS_ES[parseInt(m)-1]} ${y}`, 'info');
+}
+
+function getFriendlyMonthName(monthStr) {
+  const [y, m] = monthStr.split('-').map(Number);
+  const name = MONTHS_ES[m - 1];
+  return `${name.charAt(0).toUpperCase() + name.slice(1)} ${y}`;
+}
+
+function populateMonthSelector() {
+  const selector = document.getElementById('month-selector');
+  if (!selector) return;
+
+  // Encontrar el mes más antiguo registrado o usar por defecto Marzo 2026
+  let oldestMonth = '2026-03';
+  const recordDates = Object.keys(STATE.records);
+  if (recordDates.length > 0) {
+    recordDates.sort();
+    const oldestDate = recordDates[0];
+    if (oldestDate && oldestDate.includes('-')) {
+      oldestMonth = oldestDate.substring(0, 7);
+    }
+  }
+
+  // Obtener el mes calendario actual del dispositivo del usuario
+  const now = new Date();
+  const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+  // Generar conjunto de meses únicos entre el más antiguo y el actual
+  const monthsSet = new Set();
+  monthsSet.add(oldestMonth);
+  monthsSet.add(currentMonthStr);
+  monthsSet.add(STATE.activeMonth);
+
+  let [oldestY, oldestM] = oldestMonth.split('-').map(Number);
+  let [currentY, currentM] = currentMonthStr.split('-').map(Number);
+
+  let tempY = oldestY;
+  let tempM = oldestM;
+  while (tempY < currentY || (tempY === currentY && tempM <= currentM)) {
+    const mStr = `${tempY}-${String(tempM).padStart(2, '0')}`;
+    monthsSet.add(mStr);
+    
+    tempM++;
+    if (tempM > 12) {
+      tempM = 1;
+      tempY++;
+    }
+  }
+
+  // Asegurar que se incluyan todos los meses que tengan registros guardados
+  recordDates.forEach(d => {
+    if (d.includes('-')) {
+      monthsSet.add(d.substring(0, 7));
+    }
+  });
+
+  // Ordenar de forma descendente (los más recientes primero)
+  const sortedMonths = Array.from(monthsSet).sort().reverse();
+
+  // Rellenar las opciones del selector
+  selector.innerHTML = '';
+  sortedMonths.forEach(mStr => {
+    const isSelected = mStr === STATE.activeMonth ? 'selected' : '';
+    selector.insertAdjacentHTML('beforeend', `
+      <option value="${mStr}" ${isSelected}>${getFriendlyMonthName(mStr)}</option>
+    `);
+  });
+
+  // Asegurar que el valor seleccionado coincida con el estado
+  selector.value = STATE.activeMonth;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1393,14 +1465,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape') closeSidebar();
   });
 
-  // Set active month label
+  // Set active month label y repoblar selector dinámico
   const [y, m] = STATE.activeMonth.split('-');
   document.getElementById('dash-month-label').textContent =
     `Mes activo: ${MONTHS_ES[parseInt(m)-1].charAt(0).toUpperCase() + MONTHS_ES[parseInt(m)-1].slice(1)} ${y}`;
 
-  // Set active month selector
-  const selector = document.getElementById('month-selector');
-  if (selector) {
-    selector.value = STATE.activeMonth;
-  }
+  populateMonthSelector();
 });
