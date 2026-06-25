@@ -288,16 +288,20 @@ function changeActiveMonth(newMonth) {
   // Repoblar selector
   populateMonthSelector();
   
+  // Extraer año y mes
+  const parts = STATE.activeMonth.split('-');
+  let y = "", m = "";
+  if (parts.length === 2) {
+    y = parts[0];
+    m = parts[1];
+  }
+  
   // Actualizar etiqueta del mes activo en el UI (si existe)
   try {
-    const parts = STATE.activeMonth.split('-');
-    if (parts.length === 2) {
-      const [y, m] = parts;
-      const label = document.getElementById('dash-month-label');
-      const idx = parseInt(m) - 1;
-      if (label && idx >= 0 && idx < 12) {
-        label.textContent = `Mes activo: ${MONTHS_ES[idx].charAt(0).toUpperCase() + MONTHS_ES[idx].slice(1)} ${y}`;
-      }
+    const label = document.getElementById('dash-month-label');
+    const idx = parseInt(m) - 1;
+    if (label && !isNaN(idx) && idx >= 0 && idx < 12) {
+      label.textContent = `Mes activo: ${MONTHS_ES[idx].charAt(0).toUpperCase() + MONTHS_ES[idx].slice(1)} ${y}`;
     }
   } catch (e) {
     console.error("Error al actualizar la etiqueta del mes activo:", e);
@@ -310,7 +314,17 @@ function changeActiveMonth(newMonth) {
     refreshActiveTab(tabId);
   }
   
-  showToast(`📅 Mes activo cambiado a ${MONTHS_ES[parseInt(m)-1]} ${y}`, 'info');
+  try {
+    const idx = parseInt(m) - 1;
+    if (!isNaN(idx) && idx >= 0 && idx < 12) {
+      const monthName = MONTHS_ES[idx].charAt(0).toUpperCase() + MONTHS_ES[idx].slice(1);
+      showToast(`📅 Mes activo cambiado a ${monthName} ${y}`, 'info');
+    } else {
+      showToast(`📅 Mes activo cambiado a ${STATE.activeMonth}`, 'info');
+    }
+  } catch(e) {
+    console.error(e);
+  }
 }
 
 function getFriendlyMonthName(monthStr) {
