@@ -71,9 +71,10 @@ body::before {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 55%; 
-  opacity: 0.025; /* Opacidad bajísima para que sea súper sutil y elegante */
+  opacity: 0.08; /* Subimos la opacidad un poco */
+  filter: brightness(0) invert(1); /* Convierte el logo azul oscuro a blanco puro para que contraste con el fondo oscuro */
   pointer-events: none; /* No interfiere con clics */
-  z-index: -1; /* Totalmente al fondo */
+  z-index: 0; /* Para que quede encima del color de fondo pero debajo de las tarjetas */
 }
 
 /* ─── Scrollbar ───────────────────────────────────── */
