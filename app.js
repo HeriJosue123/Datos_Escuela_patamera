@@ -65,121 +65,7 @@ const DEFAULT_INITIAL_STOCK = {
   cereal:         45.5,
 };
 
-// Datos del mes de Junio 2026 extraídos directamente del archivo Excel
-// Valores = número de alumnos que consumieron cada alimento (NO kilogramos)
-// 22 fechas exactas según el Excel original — sin inventar ni omitir ninguna
-const JUNE_2026_RAW = {
-  "2026-06-01": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:11, cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:8,  leche:8,  fortificada:0,  cereal_vainilla:8,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:11, cereal:0 },
-  },
-  "2026-06-02": {
-    parvularia:    { arroz:11, frijol:11, aceite:11, azucar:11, leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:8,  frijol:8,  aceite:8,  azucar:8,  leche:8,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:11, frijol:11, aceite:11, azucar:11, leche:11, fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-03": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:11, cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:8,  leche:8,  fortificada:0,  cereal_vainilla:8,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:11, cereal:0 },
-  },
-  "2026-06-04": {
-    parvularia:    { arroz:0,  frijol:11, aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:8,  aceite:0,  azucar:8,  leche:8,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:11, aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-05": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:11, cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:8,  leche:8,  fortificada:0,  cereal_vainilla:8,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:11, cereal:0 },
-  },
-  "2026-06-08": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:8,  leche:8,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-09": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-10": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-11": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-12": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:8,  leche:8,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-15": {
-    parvularia:    { arroz:11, frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:8,  frijol:0,  aceite:0,  azucar:8,  leche:8,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:11, frijol:0,  aceite:0,  azucar:11, leche:11, fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-16": {
-    parvularia:    { arroz:11, frijol:11, aceite:0,  azucar:11, leche:0,  fortificada:11, cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:8,  frijol:8,  aceite:0,  azucar:8,  leche:0,  fortificada:8,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:11, frijol:11, aceite:0,  azucar:11, leche:0,  fortificada:11, cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-17": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-18": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-19": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-22": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-23": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-24": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-25": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-26": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-29": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-  "2026-06-30": {
-    parvularia:    { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    primer_ciclo:  { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-    "2_y_3_ciclo": { arroz:0,  frijol:0,  aceite:0,  azucar:0,  leche:0,  fortificada:0,  cereal_vainilla:0,  cereal:0 },
-  },
-};
+// Datos históricos cargados dinámicamente desde data.js
 
 const DAYS_ES = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 const MONTHS_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -352,24 +238,57 @@ function loadState() {
       STATE.activeMonth = loaded.activeMonth || '2026-06';
       STATE.lastUpdated = loaded.lastUpdated || 0;
     } else {
-      // First run — seed with June data
-      seedJuneData();
+      // First run — seed with Excel data
+      seedAllMonthsData();
       STATE.lastUpdated = Date.now();
     }
   } catch(e) {
-    seedJuneData();
+    seedAllMonthsData();
     STATE.lastUpdated = Date.now();
   }
 }
 
-function seedJuneData() {
+function seedAllMonthsData() {
+  if (typeof SEED_DATA === 'undefined') {
+    console.error("SEED_DATA no cargada. No se pudieron pre-cargar los datos.");
+    return;
+  }
   // Convert raw Excel attendance numbers to proper record format
-  Object.entries(JUNE_2026_RAW).forEach(([date, cycles]) => {
+  Object.entries(SEED_DATA).forEach(([date, cycles]) => {
     STATE.records[date] = {};
     CYCLES.forEach(cycle => {
       STATE.records[date][cycle] = { ...cycles[cycle] };
     });
   });
+}
+
+function changeActiveMonth(newMonth) {
+  STATE.activeMonth = newMonth;
+  
+  // Guardar estado localmente (y en Firebase)
+  saveState();
+  
+  // Actualizar etiqueta del mes activo en el UI (si existe)
+  const [y, m] = STATE.activeMonth.split('-');
+  const label = document.getElementById('dash-month-label');
+  if (label) {
+    label.textContent = `Mes activo: ${MONTHS_ES[parseInt(m)-1].charAt(0).toUpperCase() + MONTHS_ES[parseInt(m)-1].slice(1)} ${y}`;
+  }
+  
+  // Asegurar que el selector del mes esté sincronizado
+  const selector = document.getElementById('month-selector');
+  if (selector) {
+    selector.value = newMonth;
+  }
+  
+  // Refrescar la pestaña actualmente visible
+  const activePanel = document.querySelector('.tab-panel.active');
+  if (activePanel) {
+    const tabId = activePanel.id.replace('panel-', '');
+    refreshActiveTab(tabId);
+  }
+  
+  showToast(`📅 Mes activo cambiado a ${MONTHS_ES[parseInt(m)-1]} ${y}`, 'info');
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1478,4 +1397,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const [y, m] = STATE.activeMonth.split('-');
   document.getElementById('dash-month-label').textContent =
     `Mes activo: ${MONTHS_ES[parseInt(m)-1].charAt(0).toUpperCase() + MONTHS_ES[parseInt(m)-1].slice(1)} ${y}`;
+
+  // Set active month selector
+  const selector = document.getElementById('month-selector');
+  if (selector) {
+    selector.value = STATE.activeMonth;
+  }
 });

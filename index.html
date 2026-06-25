@@ -91,7 +91,16 @@
     <div class="section-header">
       <div>
         <h1 class="section-title">📊 Dashboard</h1>
-        <p class="section-subtitle" id="dash-month-label">Mes activo: Junio 2026</p>
+        <div class="flex items-center gap-1 mt-1" style="margin-bottom:0.5rem">
+          <span class="text-secondary text-sm">📅 Mes activo:</span>
+          <select id="month-selector" class="form-select" onchange="changeActiveMonth(this.value)" style="background: var(--bg-glass); border: 1px solid var(--border); color: var(--text-primary); border-radius: var(--radius-sm); padding: 0.25rem 0.5rem; font-size: 0.85rem; cursor: pointer; outline: none;">
+            <option value="2026-06" selected>Junio 2026</option>
+            <option value="2026-05">Mayo 2026</option>
+            <option value="2026-04">Abril 2026</option>
+            <option value="2026-03">Marzo 2026</option>
+          </select>
+        </div>
+        <p class="section-subtitle hidden" id="dash-month-label">Mes activo: Junio 2026</p>
       </div>
       <div class="flex gap-2">
         <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ Exportar CSV</button>
@@ -551,6 +560,8 @@
 <!-- Firebase SDK Compatibility CDN -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<!-- Raw data seeds for March, April, May, and June 2026 -->
+<script src="data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
