@@ -5,6 +5,14 @@
 
 'use strict';
 
+// Capturar errores globales para mostrarlos en forma de alerta en la UI
+window.addEventListener('error', function(event) {
+  console.error("Error global capturado:", event.error || event.message);
+  if (typeof showToast === 'function') {
+    showToast(`⚠️ Error: ${event.message}`, 'error');
+  }
+});
+
 /* ═══════════════════════════════════════════════════════════
    1. CONSTANTES Y CONFIGURACIÓN POR DEFECTO
 ═══════════════════════════════════════════════════════════ */
@@ -193,10 +201,14 @@ function syncFromFirebase() {
           // Guardar en localStorage
           localStorage.setItem('alicontrol_v2', JSON.stringify(STATE));
           
-          // Renderizar vistas
-          renderDashboard();
-          renderConfig();
-          renderIngresoHistory();
+          // Refrescar la pestaña actualmente activa con los nuevos datos
+          const activePanel = document.querySelector('.tab-panel.active');
+          if (activePanel) {
+            const tabId = activePanel.id.replace('panel-', '');
+            refreshActiveTab(tabId);
+          } else {
+            renderDashboard();
+          }
           
           showToast('☁️ Datos actualizados desde la nube.', 'success');
         } else if (localLastUpdated > firestoreLastUpdated) {
@@ -277,10 +289,18 @@ function changeActiveMonth(newMonth) {
   populateMonthSelector();
   
   // Actualizar etiqueta del mes activo en el UI (si existe)
-  const [y, m] = STATE.activeMonth.split('-');
-  const label = document.getElementById('dash-month-label');
-  if (label) {
-    label.textContent = `Mes activo: ${MONTHS_ES[parseInt(m)-1].charAt(0).toUpperCase() + MONTHS_ES[parseInt(m)-1].slice(1)} ${y}`;
+  try {
+    const parts = STATE.activeMonth.split('-');
+    if (parts.length === 2) {
+      const [y, m] = parts;
+      const label = document.getElementById('dash-month-label');
+      const idx = parseInt(m) - 1;
+      if (label && idx >= 0 && idx < 12) {
+        label.textContent = `Mes activo: ${MONTHS_ES[idx].charAt(0).toUpperCase() + MONTHS_ES[idx].slice(1)} ${y}`;
+      }
+    }
+  } catch (e) {
+    console.error("Error al actualizar la etiqueta del mes activo:", e);
   }
   
   // Refrescar la pestaña actualmente visible
@@ -663,7 +683,10 @@ function initRegistroForm() {
   // Set today's date as default
   const today = new Date();
   const dd = today.toISOString().split('T')[0];
-  document.getElementById('reg-date').value = dd;
+  const regDateEl = document.getElementById('reg-date');
+  if (regDateEl) {
+    regDateEl.value = dd;
+  }
 
   // Build food checkboxes for each cycle group
   [
@@ -672,6 +695,10 @@ function initRegistroForm() {
     { containerId: 'ciclo23-foods',prefix: 'ciclo23'},
   ].forEach(({ containerId, prefix }) => {
     const container = document.getElementById(containerId);
+    if (!container) {
+      console.warn(`Contenedor #${containerId} no encontrado en initRegistroForm`);
+      return;
+    }
     container.innerHTML = '';
     FOODS.forEach(f => {
       container.insertAdjacentHTML('beforeend', `
@@ -689,7 +716,10 @@ function initRegistroForm() {
 
   // Add listeners for student inputs
   ['parv-students','ciclo1-students','ciclo23-students'].forEach(id => {
-    document.getElementById(id).addEventListener('input', updatePreview);
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', updatePreview);
+    }
   });
 
   updatePreview();
@@ -705,11 +735,16 @@ function adjustCounter(inputId, delta) {
 function updatePreview() {
   const tbody = document.getElementById('preview-tbody');
   const tfoot = document.getElementById('preview-tfoot');
+  if (!tbody || !tfoot) return;
   tbody.innerHTML = '';
 
-  const parvStudents  = parseInt(document.getElementById('parv-students').value)  || 0;
-  const c1Students    = parseInt(document.getElementById('ciclo1-students').value) || 0;
-  const c23Students   = parseInt(document.getElementById('ciclo23-students').value)|| 0;
+  const parvStudentsEl = document.getElementById('parv-students');
+  const c1StudentsEl   = document.getElementById('ciclo1-students');
+  const c23StudentsEl  = document.getElementById('ciclo23-students');
+
+  const parvStudents  = parvStudentsEl ? (parseInt(parvStudentsEl.value) || 0) : 0;
+  const c1Students    = c1StudentsEl ? (parseInt(c1StudentsEl.value) || 0) : 0;
+  const c23Students   = c23StudentsEl ? (parseInt(c23StudentsEl.value) || 0) : 0;
 
   let totalRow = { parv:0, c1:0, c23:0, total:0 };
 
@@ -800,6 +835,7 @@ function clearDayForm() {
 
 function initKardexProductSelect() {
   const sel = document.getElementById('kardex-product-select');
+  if (!sel) return;
   sel.innerHTML = '';
   FOODS.forEach(f => {
     const opt = document.createElement('option');
@@ -917,6 +953,7 @@ function renderYellowTable() {
 
 function initAmarillaProductSelect() {
   const sel = document.getElementById('amarilla-product-select');
+  if (!sel) return;
   sel.innerHTML = '';
   FOODS.forEach(f => {
     const opt = document.createElement('option');
@@ -1271,10 +1308,14 @@ function updateHeaderDate() {
 
 function initIngresoForm() {
   // Set today as default date
-  document.getElementById('ingreso-date').value = new Date().toISOString().split('T')[0];
+  const dateEl = document.getElementById('ingreso-date');
+  if (dateEl) {
+    dateEl.value = new Date().toISOString().split('T')[0];
+  }
 
   // Build food input cards
   const grid = document.getElementById('ingreso-food-grid');
+  if (!grid) return;
   grid.innerHTML = '';
 
   FOODS.forEach(f => {
@@ -1484,22 +1525,66 @@ function deleteIngreso(id) {
 ═══════════════════════════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadState();
+  console.log("DOMContentLoaded: Iniciando inicialización...");
   
-  if (firebaseInitialized) {
-    updateDbStatus('syncing', 'Sincronizando...');
-    syncFromFirebase();
-  } else {
-    updateDbStatus('offline', 'Modo Local');
+  try {
+    loadState();
+  } catch (e) {
+    console.error("Error en loadState:", e);
+  }
+  
+  try {
+    if (firebaseInitialized) {
+      updateDbStatus('syncing', 'Sincronizando...');
+      syncFromFirebase();
+    } else {
+      updateDbStatus('offline', 'Modo Local');
+    }
+  } catch (e) {
+    console.error("Error en sync / Firebase initialization badge:", e);
   }
 
-  updateHeaderDate();
-  initRegistroForm();
-  initIngresoForm();
-  initKardexProductSelect();
-  initAmarillaProductSelect();
-  restoreActiveTab();
-  updateIngresoPreview();
+  try {
+    updateHeaderDate();
+  } catch (e) {
+    console.error("Error en updateHeaderDate:", e);
+  }
+
+  try {
+    initRegistroForm();
+  } catch (e) {
+    console.error("Error en initRegistroForm:", e);
+  }
+
+  try {
+    initIngresoForm();
+  } catch (e) {
+    console.error("Error en initIngresoForm:", e);
+  }
+
+  try {
+    initKardexProductSelect();
+  } catch (e) {
+    console.error("Error en initKardexProductSelect:", e);
+  }
+
+  try {
+    initAmarillaProductSelect();
+  } catch (e) {
+    console.error("Error en initAmarillaProductSelect:", e);
+  }
+
+  try {
+    restoreActiveTab();
+  } catch (e) {
+    console.error("Error en restoreActiveTab:", e);
+  }
+
+  try {
+    updateIngresoPreview();
+  } catch (e) {
+    console.error("Error en updateIngresoPreview:", e);
+  }
 
   // Close sidebar with Escape key
   document.addEventListener('keydown', e => {
@@ -1507,9 +1592,23 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Set active month label y repoblar selector dinámico
-  const [y, m] = STATE.activeMonth.split('-');
-  document.getElementById('dash-month-label').textContent =
-    `Mes activo: ${MONTHS_ES[parseInt(m)-1].charAt(0).toUpperCase() + MONTHS_ES[parseInt(m)-1].slice(1)} ${y}`;
+  try {
+    const parts = STATE.activeMonth.split('-');
+    if (parts.length === 2) {
+      const [y, m] = parts;
+      const label = document.getElementById('dash-month-label');
+      const idx = parseInt(m) - 1;
+      if (label && idx >= 0 && idx < 12) {
+        label.textContent = `Mes activo: ${MONTHS_ES[idx].charAt(0).toUpperCase() + MONTHS_ES[idx].slice(1)} ${y}`;
+      }
+    }
+  } catch (e) {
+    console.error("Error al configurar dash-month-label:", e);
+  }
 
-  populateMonthSelector();
+  try {
+    populateMonthSelector();
+  } catch (e) {
+    console.error("Error en populateMonthSelector:", e);
+  }
 });
