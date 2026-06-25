@@ -1258,7 +1258,9 @@ tbody td.date-cell {
   .student-counter,
   select#kardex-product-select,
   select#amarilla-product-select,
-  .cycle-tabs {
+  .cycle-tabs,
+  #kpi-cards,
+  .flex.items-center.gap-1.mt-1 {
     display: none !important;
   }
 
@@ -1279,28 +1281,26 @@ tbody td.date-cell {
 
   .section-subtitle {
     color: #475569 !important;
-    font-size: 0.85rem !important;
-    margin-bottom: 1.5rem !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 1rem !important;
+    text-align: center !important;
+    font-weight: 600 !important;
+  }
+  
+  #dash-month-label {
+    display: block !important; /* Mostrar en impresión */
+    margin-top: -0.5rem !important;
   }
 
   /* Formatear el mes selector plano sin bordes en impresión */
   select#month-selector {
-    border: none !important;
-    background: none !important;
-    color: #0c1a30 !important;
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
+    display: none !important;
   }
 
   /* Printable Official Header styles */
   .print-only-header {
     display: block !important;
-    margin-bottom: 2rem !important;
+    margin-bottom: 0.5rem !important;
   }
   
   .print-gov-header {
@@ -1359,55 +1359,15 @@ tbody td.date-cell {
 
   /* Tarjetas KPI elegantes y minimalistas para reporte */
   .cards-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 12px !important;
-    margin-bottom: 1.5rem !important;
-  }
-  
-  .stat-card {
-    background: #ffffff !important;
-    border: none !important;
-    border-bottom: 2.5px solid #1e3a8a !important; /* Underline azul marino de lujo */
-    border-radius: 0 !important;
-    padding: 8px 4px !important;
-    box-shadow: none !important;
-    text-align: center !important;
-    color: #0c1a30 !important;
-  }
-  
-  .stat-card-label {
-    color: #475569 !important;
-    font-size: 0.7rem !important;
-    text-transform: uppercase !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
-    margin-bottom: 4px !important;
-  }
-  
-  .stat-card-value {
-    color: #0c1a30 !important;
-    font-size: 1.3rem !important;
-    font-weight: 700 !important;
-    margin: 0 !important;
-  }
-  
-  .stat-card-sub {
-    color: #64748b !important;
-    font-size: 0.65rem !important;
-    margin-top: 2px !important;
-  }
-  
-  .stat-card-icon {
-    display: none !important; /* Ocultar emojis infantiles */
+    display: none !important; /* Oculto a petición del usuario */
   }
   
   /* Tarjetas de stock más compactas */
   .stock-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
-    margin-bottom: 1.5rem !important;
+    gap: 8px !important;
+    margin-bottom: 1rem !important;
   }
   
   .stock-card {
