@@ -501,23 +501,39 @@ function closeSidebar() {
 }
 
 function navigateTab(tabId, btnEl) {
-  // Update sidebar active state
-  document.querySelectorAll('.sidebar-nav-btn').forEach(b => b.classList.remove('active'));
-  btnEl.classList.add('active');
+  try {
+    if (!btnEl) {
+      console.warn("navigateTab called with null btnEl for tab:", tabId);
+      return;
+    }
+    // Update sidebar active state
+    document.querySelectorAll('.sidebar-nav-btn').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
 
-  // Switch panels
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  const panel = document.getElementById(`panel-${tabId}`);
-  if (panel) panel.classList.add('active');
+    // Switch panels
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById(`panel-${tabId}`);
+    if (panel) {
+      panel.classList.add('active');
+    } else {
+      console.error("Panel not found for tabId:", tabId);
+    }
 
-  // Close sidebar
-  closeSidebar();
+    // Close sidebar
+    closeSidebar();
 
-  // Guardar pestaña activa en localStorage para persistencia
-  localStorage.setItem('alicontrol_active_tab', tabId);
+    // Guardar pestaña activa en localStorage para persistencia
+    try {
+      localStorage.setItem('alicontrol_active_tab', tabId);
+    } catch (e) {
+      console.warn("No se pudo guardar la pestaña en localStorage:", e);
+    }
 
-  // Refresh content
-  refreshActiveTab(tabId);
+    // Refresh content
+    refreshActiveTab(tabId);
+  } catch (err) {
+    console.error("Error en navigateTab:", err);
+  }
 }
 
 function refreshActiveTab(tabId) {
@@ -532,13 +548,24 @@ function refreshActiveTab(tabId) {
 }
 
 function restoreActiveTab() {
-  const savedTab = localStorage.getItem('alicontrol_active_tab') || 'dashboard';
-  const btnEl = document.querySelector(`.sidebar-nav-btn[data-tab="${savedTab}"]`);
-  if (btnEl) {
-    navigateTab(savedTab, btnEl);
-  } else {
-    // Fallback if button is not found
-    renderDashboard();
+  try {
+    let savedTab = 'dashboard';
+    try {
+      savedTab = localStorage.getItem('alicontrol_active_tab') || 'dashboard';
+    } catch (e) {
+      console.warn("No se pudo leer de localStorage:", e);
+    }
+    
+    console.log("Restaurando pestaña activa:", savedTab);
+    const btnEl = document.querySelector(`.sidebar-nav-btn[data-tab="${savedTab}"]`);
+    if (btnEl) {
+      navigateTab(savedTab, btnEl);
+    } else {
+      console.warn("Botón de menú no encontrado para la pestaña:", savedTab);
+      renderDashboard();
+    }
+  } catch (err) {
+    console.error("Error al restaurar pestaña:", err);
   }
 }
 
