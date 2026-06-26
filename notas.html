@@ -230,9 +230,8 @@
                             <option value="2045">2045</option>
                         </select>
                     </div>
-                    <button onclick="openAIAssistantModal()" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 active:scale-95 text-white font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-indigo-500/25 transition-all duration-150 flex items-center gap-2">
-                        <i class="fa-solid fa-brain"></i>
-                        Asistente IA
+                    <button onclick="openAIAssistantModal()" title="Asistente IA" class="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 active:scale-95 text-white font-bold h-10 w-10 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all duration-300 flex items-center justify-center text-sm border border-cyan-300/30">
+                        <i class="fa-solid fa-robot"></i>
                     </button>
                     <button onclick="saveAllData(true)" class="bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-brand-500/25 transition-all duration-150 flex items-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i>
@@ -250,7 +249,7 @@
                             <i class="fa-solid fa-school"></i>
                         </span>
                         <input id="header-school" type="text" value="CANTON PATAMERA" oninput="autoSaveHeader()"
-                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-medium text-slate-50">
+                            class="w-full pl-10 pr-2 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-medium text-slate-50">
                     </div>
                 </div>
                 <div>
@@ -260,7 +259,7 @@
                             <i class="fa-solid fa-user-tie"></i>
                         </span>
                         <input id="header-teacher" type="text" value="Marvin Norberto Galvez" oninput="autoSaveHeader()"
-                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-medium text-slate-50">
+                            class="w-full pl-10 pr-2 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-medium text-slate-50">
                     </div>
                 </div>
                 <div>
@@ -270,7 +269,7 @@
                             <i class="fa-solid fa-book-open"></i>
                         </span>
                         <select id="header-subject" onchange="changeSubject()"
-                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-semibold text-slate-50 appearance-none">
+                            class="w-full pl-10 pr-2 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-semibold text-slate-50 appearance-none">
                             <option value="LENGUAJE Y LITERATURA">LENGUAJE Y LITERATURA</option>
                             <option value="MATEMATICA">MATEMATICA</option>
                             <option value="CIUDADANIA Y VALORES">CIUDADANIA Y VALORES</option>
@@ -291,7 +290,7 @@
                             <i class="fa-solid fa-layer-group"></i>
                         </span>
                         <select id="header-grade" onchange="changeGrade()"
-                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-semibold text-brand-900 appearance-none">
+                            class="w-full pl-10 pr-2 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-semibold text-brand-900 appearance-none">
                             <option value="3°">3° Grado</option>
                             <option value="4°">4° Grado</option>
                             <option value="5°">5° Grado</option>
@@ -547,7 +546,7 @@
                                 </span>
                                 <input id="ai-student-search" type="text" placeholder="Escribe el nombre del alumno/a..." 
                                     oninput="suggestStudents(this.value)"
-                                    class="w-full pl-8 pr-0 py-2 bg-[#1a2942]/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 font-semibold uppercase text-sm text-white placeholder-slate-400">
+                                    class="w-full pl-10 pr-2 py-2 bg-[#1a2942]/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 font-semibold uppercase text-sm text-white placeholder-slate-400">
                             </div>
                             <!-- Autocomplete Suggestions List -->
                             <div id="ai-suggestions" class="bg-[#1a2942]/10 rounded-lg overflow-hidden border border-white/10 hidden max-h-32 overflow-y-auto text-xs font-semibold uppercase">
@@ -714,7 +713,7 @@
                             </span>
                             <input id="modal-gemini-api-key-input" type="password" placeholder="Ingresa tu API Key..." 
                                 oninput="saveGeminiKey(this.value)"
-                                class="w-full pl-8 pr-0 py-2.5 bg-[#1a2942]/10 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xs text-white placeholder-slate-500 font-mono">
+                                class="w-full pl-10 pr-2 py-2.5 bg-[#1a2942]/10 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xs text-white placeholder-slate-500 font-mono">
                         </div>
                     </div>
                 </div>
