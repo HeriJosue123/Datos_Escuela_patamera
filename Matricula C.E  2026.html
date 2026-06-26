@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrícula 2026 - C.E. Cantón Patamera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .header-bg {
+            background: #1a2942;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        /* Chart text color override for dark mode */
+        canvas {
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.2));
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d3f5e; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b4c6b; 
+        }
+
+        /* Estilos específicos para impresión */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: white !important;
+                color: black !important;
+            }
+            .header-bg, .bg-[#1a2942], .bg-\[\#1a2942\] {
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+            .text-blue-100, .text-slate-400, .text-slate-300, .text-slate-200, .text-slate-100 {
+                color: #333 !important;
+            }
+            .shadow-lg, .shadow, .shadow-sm {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .break-inside-avoid {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-slate-200 font-sans antialiased selection:bg-brand-500/30 selection:text-brand-300">
+
+    <!-- Header / Navbar -->
+    <header class="header-bg text-slate-100 shadow-xl border-b border-[#2d3f5e] sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <div class="bg-brand-600/20 p-3.5 rounded-xl text-brand-400 border border-brand-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                        <i class="fas fa-school fa-2x"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold uppercase tracking-wider text-inherit">Centro Escolar Cantón Patamera</h1>
+                        <p class="text-brand-300 text-sm font-semibold tracking-wide mt-1">Código: 66083 | Año Lectivo 2026</p>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center md:items-end">
+                    <div class="text-center md:text-right text-sm text-slate-400 font-medium mb-4 md:mb-2">
+                        <p><i class="fas fa-map-marker-alt mr-2"></i>Chalatenango Sur, Chalatenango</p>
+                        <p>Distrito: Nombre de Jesús, Cantón Patamera</p>
+                    </div>
+                    <button onclick="window.print()" class="no-print bg-[#142138] text-brand-400 hover:text-brand-300 hover:bg-[#1e293b] font-bold py-2.5 px-6 rounded-xl shadow-lg transition duration-200 flex items-center border border-brand-500/30 active:scale-95">
+                        <i class="fas fa-file-pdf mr-2 text-red-600"></i> Imprimir / Guardar PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 break-inside-avoid">
+            <!-- Total Students -->
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-600 card-hover flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm uppercase font-semibold">Matrícula Total</p>
+                    <h2 class="text-4xl font-bold text-gray-800" id="total-students">30</h2>
+                </div>
+                <div class="text-blue-200">
+                    <i class="fas fa-users fa-4x"></i>
+                </div>
+            </div>
+
+            <!-- Boys -->
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-teal-500 card-hover flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm uppercase font-semibold">Masculino</p>
+                    <h2 class="text-4xl font-bold text-gray-800" id="total-male">17</h2>
+                </div>
+                <div class="text-teal-200">
+                    <i class="fas fa-male fa-4x"></i>
+                </div>
+            </div>
+
+            <!-- Girls -->
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-pink-500 card-hover flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm uppercase font-semibold">Femenino</p>
+                    <h2 class="text-4xl font-bold text-gray-800" id="total-female">13</h2>
+                </div>
+                <div class="text-pink-200">
+                    <i class="fas fa-female fa-4x"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 break-inside-avoid">
+            
+            <!-- Stats by Grade -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100">
+                <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-700"><i class="fas fa-chart-bar mr-2 text-blue-600"></i>Estadística por Grado</h3>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grado</th>
+                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Masculino</th>
+                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Femenino</th>
+                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider font-bold">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="grade-stats-body">
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats by Cycle -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100">
+                <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-700"><i class="fas fa-layer-group mr-2 text-indigo-600"></i>Estadística por Ciclo</h3>
+                </div>
+                <div class="p-6 flex flex-col md:flex-row items-center justify-around">
+                    <div class="w-full md:w-1/2">
+                         <table class="min-w-full divide-y divide-gray-200 mb-4">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ciclo Educativo</th>
+                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider font-bold">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="cycle-stats-body">
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="w-full md:w-1/2 h-48 relative">
+                        <canvas id="cycleChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teachers Section -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8 break-inside-avoid">
+            <div class="bg-indigo-700 border-b border-indigo-800 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white"><i class="fas fa-chalkboard-teacher mr-2"></i>Profesores Encargados</h3>
+            </div>
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Teacher 1 -->
+                <div class="border rounded-lg p-4 bg-indigo-50 border-indigo-100 shadow-sm hover:shadow-md transition-shadow break-inside-avoid">
+                    <div class="flex items-center mb-4 border-b border-indigo-200 pb-2">
+                        <div class="bg-indigo-200 p-3 rounded-full mr-3 text-indigo-700">
+                            <i class="fas fa-user-graduate fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-indigo-900 text-lg">Prof. Alejandra Alvarenga Otero</h4>
+                            <span class="text-xs font-bold uppercase text-indigo-500 tracking-wider">Parvularia y I Ciclo</span>
+                        </div>
+                    </div>
+                    <div class="pl-2">
+                        <p class="text-xs text-gray-500 uppercase font-semibold mb-2">Grados Asignados:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700 border border-indigo-200 shadow-sm">Parvularia 4</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700 border border-indigo-200 shadow-sm">Parvularia 5</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700 border border-indigo-200 shadow-sm">Parvularia 6</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700 border border-indigo-200 shadow-sm">Primer Grado</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700 border border-indigo-200 shadow-sm">Segundo Grado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher 2 -->
+                <div class="border rounded-lg p-4 bg-blue-50 border-blue-100 shadow-sm hover:shadow-md transition-shadow break-inside-avoid">
+                    <div class="flex items-center mb-4 border-b border-blue-200 pb-2">
+                        <div class="bg-blue-200 p-3 rounded-full mr-3 text-blue-700">
+                            <i class="fas fa-user-tie fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-blue-900 text-lg">Prof. Marvin Norberto Galvez Cruz</h4>
+                            <span class="text-xs font-bold uppercase text-blue-500 tracking-wider">I, II y III Ciclo</span>
+                        </div>
+                    </div>
+                    <div class="pl-2">
+                        <p class="text-xs text-gray-500 uppercase font-semibold mb-2">Grados Asignados:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-blue-700 border border-blue-200 shadow-sm">Tercer Grado</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-blue-700 border border-blue-200 shadow-sm">Cuarto Grado</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-blue-700 border border-blue-200 shadow-sm">Quinto Grado</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-blue-700 border border-blue-200 shadow-sm">Séptimo Grado</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-blue-700 border border-blue-200 shadow-sm">Octavo Grado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student List Section -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100 break-inside-avoid">
+            <div class="bg-blue-800 border-b border-blue-900 px-6 py-4">
+                <h3 class="text-xl font-bold text-white"><i class="fas fa-clipboard-list mr-2"></i>Nómina Oficial de Estudiantes</h3>
+            </div>
+            
+            <div id="students-container" class="p-6 space-y-6">
+                <!-- Students will be rendered here by JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-[#0f172a] text-slate-400 py-8 mt-12 no-print border-t border-[#2d3f5e]">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2">Ministerio de Educación, Ciencia y Tecnología</p>
+            <p class="text-xs text-slate-500 font-semibold tracking-wider uppercase mt-2">&copy; 2026 Sistema de Registro Académico - Centro Escolar Cantón Patamera</p>
+        </div>
+    </footer>
+
+    <script>
+        // Data Source extracted from the uploaded PDFs
+        const schoolData = [
+            {
+                grade: "Parvularia 4",
+                cycle: "Parvularia",
+                male: 0,
+                female: 2,
+                students: [
+                    { name: "ALBERTO LOPEZ, CAMILA JIMENA", nie: "11158382" },
+                    { name: "ALBERTO MENBREÑO, GENESIS CAMILA", nie: "11160349" }
+                ]
+            },
+            {
+                grade: "Parvularia 5",
+                cycle: "Parvularia",
+                male: 2,
+                female: 2,
+                students: [
+                    { name: "ALBERTO MORALES, EZEQUIEL LEONEL", nie: "11004157" },
+                    { name: "ALBERTO PORTILLO, JOSELIN ADRIANA", nie: "11023392" },
+                    { name: "HERCULES ALBERTO, DAMARIS JULISSA", nie: "11004100" },
+                    { name: "PORTILLO ALBERTO, JONATAN JAVIER", nie: "11083864" }
+                ]
+            },
+            {
+                grade: "Parvularia 6",
+                cycle: "Parvularia",
+                male: 2,
+                female: 3,
+                students: [
+                    { name: "ALBERTO PORTILLO, JENNIFER PAOLA", nie: "10922595" },
+                    { name: "BONILLA ABREGO, ISAI ORLANDO", nie: "10923110" },
+                    { name: "FLORES ALBERTO, VALERIA DALLARI", nie: "10922887" },
+                    { name: "LOPEZ MARTINEZ, DYLAN FABRICIO", nie: "10921927" },
+                    { name: "ROMERO AVELAR, KARLA GABRIELA", nie: "10901336" }
+                ]
+            },
+            {
+                grade: "Primer Grado",
+                cycle: "I Ciclo",
+                male: 2,
+                female: 1,
+                students: [
+                    { name: "ALBERTO ALBERTO, JOSHUA ALEXIS", nie: "10766064" },
+                    { name: "ALBERTO RIVERA, JOSÉ DANILO", nie: "10768672" },
+                    { name: "MIRANDA ALBERTO, DAYANI MELISSA", nie: "10910728" }
+                ]
+            },
+            {
+                grade: "Segundo Grado",
+                cycle: "I Ciclo",
+                male: 2,
+                female: 1,
+                students: [
+                    { name: "FLORES ALBERTO, JUAN MANUEL", nie: "10633747" },
+                    { name: "HERCULES ALBERTO, DANELY BETZALY", nie: "10645646" },
+                    { name: "HERNÁNDEZ ALBERTO, LIAM CALEB", nie: "10798973" }
+                ]
+            },
+            {
+                grade: "Tercer Grado",
+                cycle: "I Ciclo",
+                male: 2,
+                female: 0,
+                students: [
+                    { name: "PORTILLO ALBERTO, GERARDO EDENILSON", nie: "10488163" },
+                    { name: "PORTILLO ALBERTO, JOEL ISAİ", nie: "10470912" }
+                ]
+            },
+            {
+                grade: "Cuarto Grado",
+                cycle: "II Ciclo",
+                male: 2,
+                female: 0,
+                students: [
+                    { name: "HENRÍQUEZ PORTILLO, IRVIN EMANUEL", nie: "10471058" },
+                    { name: "MIRANDA ALBERTO, DIEGO ALEXANDER", nie: "10539516" }
+                ]
+            },
+            {
+                grade: "Quinto Grado",
+                cycle: "II Ciclo",
+                male: 3,
+                female: 0,
+                students: [
+                    { name: "ALBERTO RIVERA, BRAYAN FABRICIO", nie: "10170774" },
+                    { name: "LÓPEZ ALBERTO, ALEXANDER ADONAY", nie: "10170799" },
+                    { name: "PORTILLO MELGAR, DIEGO FELIPE", nie: "10170814" }
+                ]
+            },
+            {
+                grade: "Séptimo Grado",
+                cycle: "III Ciclo",
+                male: 2,
+                female: 3,
+                students: [
+                    { name: "ALBERTO ALBERTO, ESTRELLA DANIELA", nie: "20230706" },
+                    { name: "ALBERTO LOBOS, JOSÉ EDUARDO", nie: "20330251" },
+                    { name: "ECHEVERRÍA CARDONA, ELIZA ITAMAR", nie: "20230708" },
+                    { name: "ECHEVERRÍA CARDONA, ROSMERY BETSABE", nie: "20230707" },
+                    { name: "RAUDA NATAREN, HARRIS ALEXANDER", nie: "20134702" }
+                ]
+            },
+            {
+                grade: "Octavo Grado",
+                cycle: "III Ciclo",
+                male: 0,
+                female: 1,
+                students: [
+                    { name: "URBINA PORTILLO, ANDREA SARAI", nie: "20134703" }
+                ]
+            }
+        ];
+
+        // --- Render Functions ---
+
+        function renderStats() {
+            const gradeBody = document.getElementById('grade-stats-body');
+            const cycleBody = document.getElementById('cycle-stats-body');
+            let totalM = 0;
+            let totalF = 0;
+            
+            // Cycle Aggregation
+            const cycles = {};
+
+            schoolData.forEach(item => {
+                const total = item.male + item.female;
+                totalM += item.male;
+                totalF += item.female;
+
+                // Populate Grade Table
+                const row = `
+                    <tr>
+                        <td class="px-4 py-3 whitespace-nowrap font-medium text-gray-900">${item.grade}</td>
+                        <td class="px-4 py-3 text-center text-teal-600 font-semibold bg-teal-50">${item.male}</td>
+                        <td class="px-4 py-3 text-center text-pink-600 font-semibold bg-pink-50">${item.female}</td>
+                        <td class="px-4 py-3 text-center font-bold text-gray-800 bg-gray-100">${total}</td>
+                    </tr>
+                `;
+                gradeBody.innerHTML += row;
+
+                // Aggregate Cycles
+                if(!cycles[item.cycle]) cycles[item.cycle] = 0;
+                cycles[item.cycle] += total;
+            });
+
+            // Update Total Cards
+            document.getElementById('total-students').innerText = totalM + totalF;
+            document.getElementById('total-male').innerText = totalM;
+            document.getElementById('total-female').innerText = totalF;
+
+            // Populate Cycle Table & Chart Data
+            const cycleLabels = [];
+            const cycleData = [];
+            const cycleColors = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899']; // Blue, Green, Yellow, Red
+            let colorIndex = 0;
+
+            for (const [cycleName, count] of Object.entries(cycles)) {
+                const row = `
+                    <tr>
+                        <td class="px-4 py-3 whitespace-nowrap font-medium text-gray-900">${cycleName}</td>
+                        <td class="px-4 py-3 text-center font-bold text-blue-600 bg-blue-50">${count}</td>
+                    </tr>
+                `;
+                cycleBody.innerHTML += row;
+
+                cycleLabels.push(cycleName);
+                cycleData.push(count);
+            }
+
+            // Render Chart
+            const ctx = document.getElementById('cycleChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: cycleLabels,
+                    datasets: [{
+                        data: cycleData,
+                        backgroundColor: cycleColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { boxWidth: 12, font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderStudents() {
+            const container = document.getElementById('students-container');
+            container.innerHTML = '';
+
+            schoolData.forEach(item => {
+                const studentListHTML = item.students.map((student, index) => `
+                    <li class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 rounded border-b last:border-0 border-gray-100">
+                        <div class="flex items-center">
+                            <span class="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full text-xs mr-3 font-bold">${index + 1}</span>
+                            <span class="text-gray-700 uppercase text-sm font-medium">${student.name}</span>
+                        </div>
+                        <div class="mt-2 sm:mt-0 sm:ml-4">
+                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+                                <span class="mr-1 text-gray-500 font-normal">NIE:</span> <span class="font-mono font-bold">${student.nie}</span>
+                            </span>
+                        </div>
+                    </li>
+                `).join('');
+
+                const sectionHTML = `
+                    <div class="border border-gray-200 rounded-lg overflow-hidden mb-4 break-inside-avoid">
+                        <div class="bg-gray-100 px-4 py-2 border-b border-gray-200 flex justify-between items-center cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                            <h4 class="font-bold text-gray-800">${item.grade}</h4>
+                            <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${item.male + item.female} Estudiantes</span>
+                        </div>
+                        <div class="p-0 transition-all duration-300">
+                            <ul class="divide-y divide-gray-100">
+                                ${studentListHTML}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += sectionHTML;
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStats();
+            renderStudents();
+        });
+
+    </script>
+</body>
+</html>
