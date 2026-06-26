@@ -1541,3 +1541,54 @@ tbody td.date-cell {
 #consolidado-rows td {
     padding: 0.75rem !important;
 }
+
+
+/* ─── Consolidado Table Refinements ──────────────────────── */
+#consolidado-rows td {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    vertical-align: middle;
+}
+
+#consolidado-rows tr {
+    transition: all 0.2s ease-in-out;
+    background-color: #142138 !important; /* Ensure dark background */
+}
+
+#consolidado-rows tr:hover {
+    background-color: #1e293b !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 10;
+}
+
+/* Override hardcoded JS colors safely via CSS for elegance */
+#consolidado-rows td:nth-child(2) { 
+    background-color: rgba(59, 130, 246, 0.05) !important; 
+    color: #93c5fd !important; 
+}
+#consolidado-rows td:nth-child(3) { 
+    background-color: rgba(16, 185, 129, 0.05) !important; 
+    color: #6ee7b7 !important; 
+}
+#consolidado-rows td:nth-child(4) { 
+    background-color: rgba(245, 158, 11, 0.05) !important; 
+    color: #fcd34d !important; 
+}
+#consolidado-rows td:nth-child(5) { 
+    background-color: rgba(139, 92, 246, 0.12) !important; 
+    color: #c4b5fd !important; 
+    font-weight: 800 !important; 
+    border-bottom: 1px solid transparent !important;
+    font-size: 0.85rem !important;
+}
+
+#consolidado-rows td:nth-child(5) span {
+    background: transparent !important;
+    color: inherit !important;
+    padding: 0 !important;
+    font-size: inherit !important;
+}
