@@ -35,7 +35,7 @@ function updateHeaderDate() {
   const dateEl = document.getElementById('header-date-display');
   const sidebarDateEl = document.getElementById('sidebar-date');
   const d = new Date();
-  const str = d.toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const str = d.toLocaleDateString('es-ES', { weekday:'long', month:'long', day:'numeric' });
   const formatted = str.charAt(0).toUpperCase() + str.slice(1);
   if (dateEl) dateEl.innerText = '📅 ' + formatted;
   if (sidebarDateEl) sidebarDateEl.innerText = formatted;
@@ -54,7 +54,7 @@ async function syncToFirebase() {
             last_updated: firebase.firestore.FieldValue.serverTimestamp()
         });
         console.log("Datos guardados en Firebase");
-        updateDbStatus('online', 'Sincronizado');
+        updateDbStatus('connected', 'Sincronizado');
     } catch(e) {
         console.error("Error guardando a Firebase", e);
         updateDbStatus('error', 'Error al Guardar');
@@ -71,7 +71,7 @@ async function loadFromFirebase() {
             if(remoteData) {
                 database = remoteData;
                 localStorage.setItem('school_notes_full_progression_db', JSON.stringify(database));
-                updateDbStatus('online', 'Sincronizado');
+                updateDbStatus('connected', 'Sincronizado');
                 return true;
             }
         }
