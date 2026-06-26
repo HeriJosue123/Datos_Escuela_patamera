@@ -227,35 +227,35 @@
         <!-- KPI Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 break-inside-avoid">
             <!-- Total Students -->
-            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-600 card-hover flex items-center justify-between">
+            <div class="bg-[#142138] rounded-2xl shadow-lg p-6 border border-[#2d3f5e] border-l-4 border-l-brand-500 card-hover flex items-center justify-between">
                 <div>
-                    <p class="text-gray-500 text-sm uppercase font-semibold">Matrícula Total</p>
-                    <h2 class="text-4xl font-bold text-gray-800" id="total-students">30</h2>
+                    <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Matrícula Total</p>
+                    <h2 class="text-5xl font-black text-slate-100 tracking-tight" id="total-students">--</h2>
                 </div>
-                <div class="text-blue-200">
-                    <i class="fas fa-users fa-4x"></i>
+                <div class="bg-brand-500/10 p-4 rounded-2xl text-brand-400 border border-brand-500/20">
+                    <i class="fas fa-users fa-3x"></i>
                 </div>
             </div>
 
             <!-- Boys -->
-            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-teal-500 card-hover flex items-center justify-between">
+            <div class="bg-[#142138] rounded-2xl shadow-lg p-6 border border-[#2d3f5e] border-l-4 border-l-teal-500 card-hover flex items-center justify-between">
                 <div>
-                    <p class="text-gray-500 text-sm uppercase font-semibold">Masculino</p>
-                    <h2 class="text-4xl font-bold text-gray-800" id="total-male">17</h2>
+                    <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Masculino</p>
+                    <h2 class="text-5xl font-black text-slate-100 tracking-tight" id="total-male">--</h2>
                 </div>
-                <div class="text-teal-200">
-                    <i class="fas fa-male fa-4x"></i>
+                <div class="bg-teal-500/10 p-4 rounded-2xl text-teal-400 border border-teal-500/20 px-5">
+                    <i class="fas fa-male fa-3x"></i>
                 </div>
             </div>
 
             <!-- Girls -->
-            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-pink-500 card-hover flex items-center justify-between">
+            <div class="bg-[#142138] rounded-2xl shadow-lg p-6 border border-[#2d3f5e] border-l-4 border-l-pink-500 card-hover flex items-center justify-between">
                 <div>
-                    <p class="text-gray-500 text-sm uppercase font-semibold">Femenino</p>
-                    <h2 class="text-4xl font-bold text-gray-800" id="total-female">13</h2>
+                    <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Femenino</p>
+                    <h2 class="text-5xl font-black text-slate-100 tracking-tight" id="total-female">--</h2>
                 </div>
-                <div class="text-pink-200">
-                    <i class="fas fa-female fa-4x"></i>
+                <div class="bg-pink-500/10 p-4 rounded-2xl text-pink-400 border border-pink-500/20 px-6">
+                    <i class="fas fa-female fa-3x"></i>
                 </div>
             </div>
         </div>
@@ -264,22 +264,25 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 break-inside-avoid">
             
             <!-- Stats by Grade -->
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100">
-                <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-gray-700"><i class="fas fa-chart-bar mr-2 text-blue-600"></i>Estadística por Grado</h3>
+            <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e]">
+                <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-100 flex items-center gap-3">
+                        <div class="bg-brand-500/20 p-2 rounded-lg text-brand-400 text-sm"><i class="fas fa-chart-bar"></i></div>
+                        Estadística por Grado
+                    </h3>
                 </div>
                 <div class="p-6">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                    <div class="overflow-x-auto rounded-xl border border-[#2d3f5e]">
+                        <table class="min-w-full divide-y divide-[#2d3f5e]">
+                            <thead class="bg-[#0f172a]/80">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grado</th>
-                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Masculino</th>
-                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Femenino</th>
-                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider font-bold">Total</th>
+                                    <th class="px-5 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest">Grado</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Masculino</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Femenino</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-brand-400 uppercase tracking-widest">Total</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200" id="grade-stats-body">
+                            <tbody class="bg-[#142138] divide-y divide-[#2d3f5e]" id="grade-stats-body">
                                 <!-- JS will populate this -->
                             </tbody>
                         </table>
@@ -288,25 +291,28 @@
             </div>
 
             <!-- Stats by Cycle -->
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100">
-                <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-gray-700"><i class="fas fa-layer-group mr-2 text-indigo-600"></i>Estadística por Ciclo</h3>
+            <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e] flex flex-col">
+                <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-100 flex items-center gap-3">
+                        <div class="bg-indigo-500/20 p-2 rounded-lg text-indigo-400 text-sm"><i class="fas fa-layer-group"></i></div>
+                        Estadística por Ciclo
+                    </h3>
                 </div>
-                <div class="p-6 flex flex-col md:flex-row items-center justify-around">
-                    <div class="w-full md:w-1/2">
-                         <table class="min-w-full divide-y divide-gray-200 mb-4">
-                            <thead class="bg-gray-50">
+                <div class="p-6 flex flex-col lg:flex-col xl:flex-row items-center justify-around flex-1 gap-8">
+                    <div class="w-full xl:w-1/2 overflow-x-auto rounded-xl border border-[#2d3f5e]">
+                         <table class="min-w-full divide-y divide-[#2d3f5e]">
+                            <thead class="bg-[#0f172a]/80">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ciclo Educativo</th>
-                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider font-bold">Total</th>
+                                    <th class="px-5 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest">Ciclo Educativo</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-brand-400 uppercase tracking-widest">Total</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200" id="cycle-stats-body">
+                            <tbody class="bg-[#142138] divide-y divide-[#2d3f5e]" id="cycle-stats-body">
                                 <!-- JS will populate this -->
                             </tbody>
                         </table>
                     </div>
-                    <div class="w-full md:w-1/2 h-48 relative">
+                    <div class="w-full xl:w-1/2 h-48 relative">
                         <canvas id="cycleChart"></canvas>
                     </div>
                 </div>
@@ -314,53 +320,56 @@
         </div>
 
         <!-- Teachers Section -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8 break-inside-avoid">
-            <div class="bg-indigo-700 border-b border-indigo-800 px-6 py-4 flex justify-between items-center">
-                <h3 class="text-xl font-bold text-white"><i class="fas fa-chalkboard-teacher mr-2"></i>Profesores Encargados</h3>
+        <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e] mb-8 break-inside-avoid">
+            <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-4 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-slate-100 flex items-center gap-3">
+                    <div class="bg-purple-500/20 p-2 rounded-lg text-purple-400 text-sm"><i class="fas fa-chalkboard-teacher"></i></div>
+                    Profesores Encargados
+                </h3>
             </div>
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Teacher 1 -->
-                <div class="border rounded-lg p-4 bg-indigo-50 border-indigo-100 shadow-sm hover:shadow-md transition-shadow break-inside-avoid">
-                    <div class="flex items-center mb-4 border-b border-indigo-200 pb-2">
-                        <div class="bg-indigo-200 p-3 rounded-full mr-3 text-indigo-700">
+                <div class="border rounded-2xl p-6 bg-[#1a2942] border-[#2d3f5e] shadow-inner card-hover break-inside-avoid">
+                    <div class="flex items-center mb-5 border-b border-[#2d3f5e]/80 pb-4">
+                        <div class="bg-purple-500/10 p-3.5 rounded-xl mr-4 text-purple-400 border border-purple-500/20">
                             <i class="fas fa-user-graduate fa-lg"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-indigo-900 text-lg">Prof. Alejandra Alvarenga Otero</h4>
-                            <span class="text-xs font-bold uppercase text-indigo-500 tracking-wider">Parvularia y I Ciclo</span>
+                            <h4 class="font-bold text-slate-100 text-lg">Prof. Alejandra Alvarenga Otero</h4>
+                            <span class="text-[10px] font-black uppercase text-purple-400 tracking-widest">Parvularia y I Ciclo</span>
                         </div>
                     </div>
-                    <div class="pl-2">
-                        <p class="text-xs text-gray-500 uppercase font-semibold mb-2">Grados Asignados:</p>
+                    <div>
+                        <p class="text-[11px] text-slate-400 uppercase font-bold mb-3 tracking-widest">Grados Asignados:</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700 border border-indigo-200 shadow-sm">Parvularia 4</span>
-                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700 border border-indigo-200 shadow-sm">Parvularia 5</span>
-                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700 border border-indigo-200 shadow-sm">Parvularia 6</span>
-                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700 border border-indigo-200 shadow-sm">Primer Grado</span>
-                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700 border border-indigo-200 shadow-sm">Segundo Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Parvularia 4</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Parvularia 5</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Parvularia 6</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Primer Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Segundo Grado</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Teacher 2 -->
-                <div class="border rounded-lg p-4 bg-blue-50 border-blue-100 shadow-sm hover:shadow-md transition-shadow break-inside-avoid">
-                    <div class="flex items-center mb-4 border-b border-blue-200 pb-2">
-                        <div class="bg-blue-200 p-3 rounded-full mr-3 text-blue-700">
+                <div class="border rounded-2xl p-6 bg-[#1a2942] border-[#2d3f5e] shadow-inner card-hover break-inside-avoid">
+                    <div class="flex items-center mb-5 border-b border-[#2d3f5e]/80 pb-4">
+                        <div class="bg-brand-500/10 p-3.5 rounded-xl mr-4 text-brand-400 border border-brand-500/20">
                             <i class="fas fa-user-tie fa-lg"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-blue-900 text-lg">Prof. Marvin Norberto Galvez Cruz</h4>
-                            <span class="text-xs font-bold uppercase text-blue-500 tracking-wider">I, II y III Ciclo</span>
+                            <h4 class="font-bold text-slate-100 text-lg">Prof. Marvin Norberto Galvez Cruz</h4>
+                            <span class="text-[10px] font-black uppercase text-brand-400 tracking-widest">I, II y III Ciclo</span>
                         </div>
                     </div>
-                    <div class="pl-2">
-                        <p class="text-xs text-gray-500 uppercase font-semibold mb-2">Grados Asignados:</p>
+                    <div>
+                        <p class="text-[11px] text-slate-400 uppercase font-bold mb-3 tracking-widest">Grados Asignados:</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-blue-700 border border-blue-200 shadow-sm">Tercer Grado</span>
-                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-blue-700 border border-blue-200 shadow-sm">Cuarto Grado</span>
-                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-blue-700 border border-blue-200 shadow-sm">Quinto Grado</span>
-                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-blue-700 border border-blue-200 shadow-sm">Séptimo Grado</span>
-                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-white text-blue-700 border border-blue-200 shadow-sm">Octavo Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Tercer Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Cuarto Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Quinto Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Séptimo Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Octavo Grado</span>
                         </div>
                     </div>
                 </div>
@@ -368,12 +377,18 @@
         </div>
 
         <!-- Student List Section -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100 break-inside-avoid">
-            <div class="bg-blue-800 border-b border-blue-900 px-6 py-4">
-                <h3 class="text-xl font-bold text-white"><i class="fas fa-clipboard-list mr-2"></i>Nómina Oficial de Estudiantes</h3>
+        <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e] break-inside-avoid">
+            <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-5 flex items-center gap-3">
+                <div class="bg-cyan-500/20 p-2.5 rounded-lg text-cyan-400 shadow-inner">
+                    <i class="fas fa-clipboard-list fa-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-100">Nómina Oficial de Estudiantes</h3>
+                    <p class="text-xs text-slate-400 font-semibold tracking-widest uppercase mt-0.5">Listado estructurado por grados</p>
+                </div>
             </div>
             
-            <div id="students-container" class="p-6 space-y-6">
+            <div id="students-container" class="p-6 space-y-4">
                 <!-- Students will be rendered here by JS -->
             </div>
         </div>
@@ -510,46 +525,43 @@
             let totalM = 0;
             let totalF = 0;
             
-            // Cycle Aggregation
             const cycles = {};
+
+            gradeBody.innerHTML = '';
+            cycleBody.innerHTML = '';
 
             schoolData.forEach(item => {
                 const total = item.male + item.female;
                 totalM += item.male;
                 totalF += item.female;
 
-                // Populate Grade Table
                 const row = `
-                    <tr>
+                    <tr class="hover:bg-[#1a2942]/50 transition-colors">
                         <td class="px-5 py-3 whitespace-nowrap font-bold text-slate-200">${item.grade}</td>
-                        <td class="px-5 py-3 text-center text-teal-400 font-bold bg-teal-500/10 border-x border-[#2d3f5e]/50">${item.male}</td>
-                        <td class="px-5 py-3 text-center text-pink-400 font-bold bg-pink-500/10 border-r border-[#2d3f5e]/50">${item.female}</td>
+                        <td class="px-5 py-3 text-center text-teal-400 font-bold bg-teal-500/5 border-x border-[#2d3f5e]/30">${item.male}</td>
+                        <td class="px-5 py-3 text-center text-pink-400 font-bold bg-pink-500/5 border-r border-[#2d3f5e]/30">${item.female}</td>
                         <td class="px-5 py-3 text-center font-black text-brand-300 bg-brand-500/10">${total}</td>
                     </tr>
                 `;
                 gradeBody.innerHTML += row;
 
-                // Aggregate Cycles
                 if(!cycles[item.cycle]) cycles[item.cycle] = 0;
                 cycles[item.cycle] += total;
             });
 
-            // Update Total Cards
             document.getElementById('total-students').innerText = totalM + totalF;
             document.getElementById('total-male').innerText = totalM;
             document.getElementById('total-female').innerText = totalF;
 
-            // Populate Cycle Table & Chart Data
             const cycleLabels = [];
             const cycleData = [];
-            const cycleColors = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899']; // Blue, Green, Yellow, Red
-            let colorIndex = 0;
+            const cycleColors = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899'];
 
             for (const [cycleName, count] of Object.entries(cycles)) {
                 const row = `
-                    <tr>
+                    <tr class="hover:bg-[#1a2942]/50 transition-colors">
                         <td class="px-5 py-4 whitespace-nowrap font-bold text-slate-200">${cycleName}</td>
-                        <td class="px-5 py-4 text-center font-black text-brand-300 bg-brand-500/10 border-l border-[#2d3f5e]/50">${count}</td>
+                        <td class="px-5 py-4 text-center font-black text-brand-300 bg-brand-500/10 border-l border-[#2d3f5e]/30">${count}</td>
                     </tr>
                 `;
                 cycleBody.innerHTML += row;
@@ -558,25 +570,27 @@
                 cycleData.push(count);
             }
 
-            // Render Chart
             const ctx = document.getElementById('cycleChart').getContext('2d');
-            new Chart(ctx, {
+            if (window.cycleChartInstance) { window.cycleChartInstance.destroy(); }
+            window.cycleChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: cycleLabels,
                     datasets: [{
                         data: cycleData,
                         backgroundColor: cycleColors,
-                        borderWidth: 1
+                        borderWidth: 1,
+                        borderColor: '#142138'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    color: '#94a3b8',
                     plugins: {
                         legend: {
                             position: 'right',
-                            labels: { boxWidth: 12, font: { size: 10 } }
+                            labels: { color: '#94a3b8', boxWidth: 12, font: { size: 11, family: 'Inter' } }
                         }
                     }
                 }
