@@ -60,7 +60,13 @@
         .table-container::-webkit-scrollbar-thumb:hover {
             background: #3f567a;
         }
-    </style>
+    
+        select option {
+            background-color: #1a2942;
+            color: #f8fafc;
+            font-weight: 600;
+        }
+</style>
 
     <!-- Link to the main app styles -->
     <link rel="stylesheet" href="styles.css?v=6" />
@@ -244,7 +250,7 @@
                             <i class="fa-solid fa-school"></i>
                         </span>
                         <input id="header-school" type="text" value="CANTON PATAMERA" oninput="autoSaveHeader()"
-                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none px-0 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-medium text-slate-50">
+                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-medium text-slate-50">
                     </div>
                 </div>
                 <div>
@@ -254,7 +260,7 @@
                             <i class="fa-solid fa-user-tie"></i>
                         </span>
                         <input id="header-teacher" type="text" value="Marvin Norberto Galvez" oninput="autoSaveHeader()"
-                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none px-0 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-medium text-slate-50">
+                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-medium text-slate-50">
                     </div>
                 </div>
                 <div>
@@ -264,7 +270,7 @@
                             <i class="fa-solid fa-book-open"></i>
                         </span>
                         <select id="header-subject" onchange="changeSubject()"
-                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none px-0 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-semibold text-slate-50 appearance-none">
+                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-semibold text-slate-50 appearance-none">
                             <option value="LENGUAJE Y LITERATURA">LENGUAJE Y LITERATURA</option>
                             <option value="MATEMATICA">MATEMATICA</option>
                             <option value="CIUDADANIA Y VALORES">CIUDADANIA Y VALORES</option>
@@ -285,7 +291,7 @@
                             <i class="fa-solid fa-layer-group"></i>
                         </span>
                         <select id="header-grade" onchange="changeGrade()"
-                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none px-0 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-semibold text-brand-900 appearance-none">
+                            class="w-full pl-8 pr-0 py-2 bg-transparent border-b-2 border-[#2d3f5e] rounded-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-semibold text-brand-900 appearance-none">
                             <option value="3°">3° Grado</option>
                             <option value="4°">4° Grado</option>
                             <option value="5°">5° Grado</option>
