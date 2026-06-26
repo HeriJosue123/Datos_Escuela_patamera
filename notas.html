@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro y Análisis de Notas - C.E. Cantón Patamera</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for beautiful interactive analytics -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-base);
+            min-height: 100vh;
+        }
+        .glass-panel {
+            background: rgba(26, 41, 66, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(45, 63, 94, 0.5);
+        }
+        /* Custom scrollbar for wide tables */
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: #0c1a30;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: #2d3f5e;
+            border-radius: 4px;
+        }
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #3f567a;
+        }
+    </style>
+
+    <!-- Link to the main app styles -->
+    <link rel="stylesheet" href="styles.css?v=6" />
+</head>
+<body class="text-slate-100 antialiased p-4 md:p-6">
+<div class="app-container">
+
+
+<!-- ════════════════════ HEADER ════════════════════ -->
+<header class="app-header">
+  <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Abrir menú">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+  <a href="#" class="app-logo">
+    <div class="app-logo-icon">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2.5"/>
+        <circle cx="50" cy="50" r="41" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+        <polygon points="50,20 23,67 77,67" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M50,42 L50,30 M50,42 L42,35 M50,42 L58,35 M50,42 L38,42 M50,42 L62,42 M50,42 L42,49 M50,42 L58,49 M50,42 L45,55 M50,42 L55,55" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M48,42 C48,40 52,40 52,42 L51,45 L49,45 Z" fill="currentColor"/>
+        <path d="M22,72 C35,80 65,80 78,72" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M25,71 L22,68 M32,74 L30,70 M40,76 L39,72 M50,77 L50,73 M60,76 L61,72 M68,74 L70,70 M75,71 L78,68" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="50" cy="85" r="1.5" fill="currentColor"/>
+        <circle cx="40" cy="83" r="1" fill="currentColor"/>
+        <circle cx="60" cy="83" r="1" fill="currentColor"/>
+        <circle cx="31" cy="79" r="1" fill="currentColor"/>
+        <circle cx="69" cy="79" r="1" fill="currentColor"/>
+      </svg>
+    </div>
+    <div class="app-logo-text">
+      <strong>Cantón Patamera</strong>
+      <span>Escuela Cantón Patamera</span>
+    </div>
+  </a>
+  <div class="header-spacer"></div>
+  <div class="db-status-badge offline" id="db-status-badge" style="margin-right: 0.5rem;">☁️ Sin Conexión</div>
+  <div class="header-date" id="header-date-display">📅 Cargando...</div>
+</header>
+
+<!-- ════════════════════ SIDEBAR OVERLAY ════════════════════ -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- ════════════════════ SIDEBAR MENU ════════════════════ -->
+<nav class="sidebar-menu" id="sidebar-menu" role="navigation">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="app-logo-icon">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="41" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+          <polygon points="50,20 23,67 77,67" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M50,42 L50,30 M50,42 L42,35 M50,42 L58,35 M50,42 L38,42 M50,42 L62,42 M50,42 L42,49 M50,42 L58,49 M50,42 L45,55 M50,42 L55,55" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M48,42 C48,40 52,40 52,42 L51,45 L49,45 Z" fill="currentColor"/>
+          <path d="M22,72 C35,80 65,80 78,72" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M25,71 L22,68 M32,74 L30,70 M40,76 L39,72 M50,77 L50,73 M60,76 L61,72 M68,74 L70,70 M75,71 L78,68" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="50" cy="85" r="1.5" fill="currentColor"/>
+          <circle cx="40" cy="83" r="1" fill="currentColor"/>
+          <circle cx="60" cy="83" r="1" fill="currentColor"/>
+          <circle cx="31" cy="79" r="1" fill="currentColor"/>
+          <circle cx="69" cy="79" r="1" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="app-logo-text">
+        <strong>Cantón Patamera</strong>
+        <span>Menú Principal</span>
+      </div>
+    </div>
+    <button class="sidebar-close-btn" onclick="closeSidebar()" aria-label="Cerrar menú">✕</button>
+  </div>
+  <div class="sidebar-nav-items">
+    <button class="sidebar-nav-btn" onclick="window.location.href=\'index.html\'" id="tab-dashboard" onclick="navigateTab('dashboard', this)">
+      <span class="sidebar-nav-icon">📊</span>
+      <span class="sidebar-nav-label">Inicio</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="registro" id="tab-registro" onclick="navigateTab('registro', this)">
+      <span class="sidebar-nav-icon">✏️</span>
+      <span class="sidebar-nav-label">Registro Diario</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="ingreso" id="tab-ingreso" onclick="navigateTab('ingreso', this)">
+      <span class="sidebar-nav-icon">📦</span>
+      <span class="sidebar-nav-label">Ingreso de Alimentos</span>
+      <span class="sidebar-nav-badge">Nuevo</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="kardex" id="tab-kardex" onclick="navigateTab('kardex', this)">
+      <span class="sidebar-nav-icon">📋</span>
+      <span class="sidebar-nav-label">Kardex</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="tabla-amarilla" id="tab-amarilla" onclick="navigateTab('tabla-amarilla', this)">
+      <span class="sidebar-nav-icon">🟡</span>
+      <span class="sidebar-nav-label">Tabla Resumen</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="ciclos" id="tab-ciclos" onclick="navigateTab('ciclos', this)">
+      <span class="sidebar-nav-icon">👥</span>
+      <span class="sidebar-nav-label">Por Ciclo</span>
+    </button>
+    <div class="sidebar-divider"></div>
+    <button class="sidebar-nav-btn" onclick="window.location.href='notas.html'">
+      <span class="sidebar-nav-icon">🎓</span>
+      <span class="sidebar-nav-label">Control de Notas</span>
+      <span class="sidebar-nav-badge" style="background:var(--brand-500)">IA</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="config" id="tab-config" onclick="navigateTab('config', this)">
+      <span class="sidebar-nav-icon">⚙️</span>
+      <span class="sidebar-nav-label">Configuración</span>
+    </button>
+  </div>
+  <div class="sidebar-footer">
+    <p>📅 <span id="sidebar-date"></span></p>
+    <p class="sidebar-version">Cantón Patamera v2.0</p>
+  </div>
+</nav>
+
+<!-- Tab nav removed — now using sidebar hamburger menu -->
+
+<!-- ════════════════════ MAIN ════════════════════ -->
+
+<main class="main-content">
+
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- HEADER CONFIGURATION (Premium Card) -->
+        <header class="glass-panel rounded-2xl shadow-xl p-6 transition-all duration-300 hover:shadow-2xl border-l-8 border-brand-600">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#2d3f5e] pb-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-brand-600 text-white p-3 rounded-xl shadow-lg shadow-brand-500/30">
+                        <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight text-slate-50">Registro de Evaluación Escolar</h1>
+                        <p class="text-sm text-slate-400">Centro Escolar Cantón Patamera - Gestión de Calificaciones 2026 - 2035</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- School Year Selector -->
+                    <div class="flex items-center gap-2 bg-[#142138] border border-[#3f567a] px-3 py-1.5 rounded-xl">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Año Lectivo:</span>
+                        <select id="header-year" onchange="changeYear()" class="bg-transparent font-extrabold text-brand-700 focus:outline-none cursor-pointer">
+                            <option value="2026" selected>2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                            <option value="2030">2030</option>
+                            <option value="2031">2031</option>
+                            <option value="2032">2032</option>
+                            <option value="2033">2033</option>
+                            <option value="2034">2034</option>
+                            <option value="2035">2035</option>
+                            <option value="2036">2036</option>
+                            <option value="2037">2037</option>
+                            <option value="2038">2038</option>
+                            <option value="2039">2039</option>
+                            <option value="2040">2040</option>
+                            <option value="2041">2041</option>
+                            <option value="2042">2042</option>
+                            <option value="2043">2043</option>
+                            <option value="2044">2044</option>
+                            <option value="2045">2045</option>
+                        </select>
+                    </div>
+                    <button onclick="openAIAssistantModal()" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 active:scale-95 text-white font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-indigo-500/25 transition-all duration-150 flex items-center gap-2">
+                        <i class="fa-solid fa-brain"></i>
+                        Asistente IA
+                    </button>
+                    <button onclick="saveAllData(true)" class="bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-brand-500/25 transition-all duration-150 flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Guardar Notas
+                    </button>
+                </div>
+            </div>
+
+            <!-- Header Grid Inputs -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Centro Escolar</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <i class="fa-solid fa-school"></i>
+                        </span>
+                        <input id="header-school" type="text" value="CANTON PATAMERA" oninput="autoSaveHeader()"
+                            class="w-full pl-9 pr-3 py-2 bg-[#1a2942]/70 border border-[#3f567a] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-medium text-slate-50">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Profesor / Docente</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </span>
+                        <input id="header-teacher" type="text" value="Marvin Norberto Galvez" oninput="autoSaveHeader()"
+                            class="w-full pl-9 pr-3 py-2 bg-[#1a2942]/70 border border-[#3f567a] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-medium text-slate-50">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Asignatura / Materia</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <i class="fa-solid fa-book-open"></i>
+                        </span>
+                        <select id="header-subject" onchange="changeSubject()"
+                            class="w-full pl-9 pr-3 py-2 bg-[#1a2942]/70 border border-[#3f567a] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-semibold text-slate-50 appearance-none">
+                            <option value="LENGUAJE Y LITERATURA">LENGUAJE Y LITERATURA</option>
+                            <option value="MATEMATICA">MATEMATICA</option>
+                            <option value="CIUDADANIA Y VALORES">CIUDADANIA Y VALORES</option>
+                            <option value="CIENCIA Y TECNOLOGIA">CIENCIA Y TECNOLOGIA</option>
+                            <option value="INGLES">INGLES</option>
+                            <option value="EDUCACION DE FISICA">EDUCACION DE FISICA</option>
+                            <option value="MORAL, URBANIDAD Y CIVICA">MORAL, URBANIDAD Y CIVICA</option>
+                        </select>
+                        <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Grado Académico</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </span>
+                        <select id="header-grade" onchange="changeGrade()"
+                            class="w-full pl-9 pr-3 py-2 bg-[#1a2942]/70 border border-[#3f567a] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-semibold text-brand-900 appearance-none">
+                            <option value="3°">3° Grado</option>
+                            <option value="4°">4° Grado</option>
+                            <option value="5°">5° Grado</option>
+                            <option value="6°">6° Grado</option>
+                            <option value="7°" selected>7° Grado</option>
+                            <option value="8°">8° Grado</option>
+                            <option value="9°">9° Grado</option>
+                        </select>
+                        <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- TAB NAVIGATION -->
+        <nav class="flex space-x-2 bg-[#23324d]/60 p-1.5 rounded-xl max-w-3xl">
+            <button onclick="switchTab('periodo1')" id="tab-periodo1" class="tab-btn flex-1 text-center py-2.5 px-3 font-semibold text-xs sm:text-sm rounded-lg transition-all duration-200 bg-brand-600 text-white shadow-md">
+                1° Periodo
+            </button>
+            <button onclick="switchTab('periodo2')" id="tab-periodo2" class="tab-btn flex-1 text-center py-2.5 px-3 font-semibold text-xs sm:text-sm rounded-lg transition-all duration-200 text-slate-300 hover:text-slate-50">
+                2° Periodo
+            </button>
+            <button onclick="switchTab('periodo3')" id="tab-periodo3" class="tab-btn flex-1 text-center py-2.5 px-3 font-semibold text-xs sm:text-sm rounded-lg transition-all duration-200 text-slate-300 hover:text-slate-50">
+                3° Periodo
+            </button>
+            <button onclick="switchTab('consolidado')" id="tab-consolidado" class="tab-btn flex-1 text-center py-2.5 px-3 font-semibold text-xs sm:text-sm rounded-lg transition-all duration-200 text-slate-300 hover:text-slate-50">
+                Consolidado <span class="consolidado-year-lbl">2026</span>
+            </button>
+            <button onclick="switchTab('analisis')" id="tab-analisis" class="tab-btn flex-1 text-center py-2.5 px-3 font-bold text-xs sm:text-sm rounded-lg transition-all duration-200 text-slate-300 hover:text-slate-50 flex items-center justify-center gap-1.5 text-brand-600">
+                <i class="fa-solid fa-chart-pie"></i>
+                Estadísticas e IA
+            </button>
+        </nav>
+
+        <!-- MAIN PANEL -->
+        <main class="glass-panel rounded-2xl shadow-xl p-6 transition-all">
+            
+            <!-- PERIOD VISTA -->
+            <div id="period-view" class="space-y-4">
+                <div class="flex items-center justify-between border-b border-[#2d3f5e] pb-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                        <span id="period-badge" class="bg-brand-100 text-brand-700 px-3 py-1 text-xs font-bold uppercase rounded-full self-start sm:self-auto">Primer Periodo</span>
+                        <h2 class="text-lg font-bold text-slate-100">
+                            Control Calificador: <span id="current-info-title" class="text-brand-600 font-extrabold">2026 - 7° Grado - LENGUAJE Y LITERATURA</span>
+                        </h2>
+                    </div>
+                    <button onclick="openAddStudentModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white active:scale-95 px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-1.5 shadow-md">
+                        <i class="fa-solid fa-user-plus"></i>
+                        Agregar Alumno
+                    </button>
+                </div>
+
+                <!-- Scrollable Table Wrapper -->
+                <div class="table-container overflow-x-auto rounded-xl border border-[#2d3f5e] shadow-inner bg-[#1a2942]">
+                    <table class="w-full text-left border-collapse text-xs min-w-[1250px]">
+                        <thead>
+                            <!-- Actividad Row Headers -->
+                            <tr class="bg-[#142138] text-slate-200 border-b border-[#2d3f5e] uppercase tracking-wider text-[10px] font-bold">
+                                <th class="p-3 border-r border-[#2d3f5e] min-w-[240px]" rowspan="2">Nombres del Alumno/a</th>
+                                <th class="p-2 border-r border-[#2d3f5e] text-center bg-blue-50/50" colspan="9">Actividad N° 1 - Integradora (35%)</th>
+                                <th class="p-2 border-r border-[#2d3f5e] text-center bg-emerald-50/50" colspan="8">Actividad N° 2 - Cotidianas (35%)</th>
+                                <th class="p-2 border-r border-[#2d3f5e] text-center bg-amber-50/50" colspan="2">Actividad 3 (30%)</th>
+                                <th class="p-3 text-center bg-violet-50" rowspan="2">Nota Trimestral</th>
+                                <th class="p-3 text-center" rowspan="2">Acción</th>
+                            </tr>
+                            <!-- Sub criteria headers -->
+                            <tr class="bg-[#0c1a30] text-slate-300 border-b border-[#2d3f5e] font-semibold">
+                                <!-- Act1 -->
+                                <th id="a1-c1-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[35px] bg-blue-50/20 cursor-help" title="C1: Criterio 1 (Máx. 2.0 pt)">C1</th>
+                                <th id="a1-c2-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[35px] bg-blue-50/20 cursor-help" title="C2: Criterio 2 (Máx. 2.0 pt)">C2</th>
+                                <th id="a1-c3-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[35px] bg-blue-50/20 cursor-help" title="C3: Criterio 3 (Máx. 1.5 pt)">C3</th>
+                                <th id="a1-c4-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[35px] bg-blue-50/20 cursor-help" title="C4: Criterio 4 (Máx. 1.5 pt)">C4</th>
+                                <th id="a1-c5-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[35px] bg-blue-50/20 cursor-help" title="C5: Criterio 5 (Máx. 1.0 pt)">C5</th>
+                                <th id="a1-c6-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[35px] bg-blue-50/20 cursor-help" title="C6: Criterio 6 (Máx. 1.0 pt)">C6</th>
+                                <th id="a1-c7-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[35px] bg-blue-50/20 cursor-help" title="C7: Criterio 7 (Máx. 1.0 pt)">C7</th>
+                                <th class="p-1 border-r border-[#2d3f5e] text-center font-bold bg-[#142138]/50 text-slate-100" title="Suma total de criterios de la Actividad 1 (Máx. 10.0)">Total</th>
+                                <th class="p-1 border-r border-[#2d3f5e] text-center font-bold bg-blue-100/70 text-blue-800" title="Ponderación final del 35% de la Actividad 1 (Total * 0.35)">35%</th>
+                                <!-- Act2 -->
+                                <th id="a2-c1-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[40px] bg-emerald-50/20 cursor-help" title="C1: Clases completas (Máx. 2.0 pt)">C1</th>
+                                <th id="a2-c2-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[40px] bg-emerald-50/20 cursor-help" title="C2: Cumplimiento de tareas (Máx. 2.0 pt)">C2</th>
+                                <th id="a2-c3-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[40px] bg-emerald-50/20 cursor-help" title="C3: Ortografía (Máx. 1.5 pt)">C3</th>
+                                <th id="a2-c4-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[40px] bg-emerald-50/20 cursor-help" title="C4: Letra legible (Máx. 1.0 pt)">C4</th>
+                                <th id="a2-c5-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[40px] bg-emerald-50/20 cursor-help" title="C5: Orden y aseo el cuaderno y escuela (Máx. 2.0 pt)">C5</th>
+                                <th id="a2-c6-hdr" class="p-1 border-r border-[#2d3f5e] text-center w-[40px] bg-emerald-50/20 cursor-help" title="C6: Participa en clase (Máx. 1.5 pt)">C6</th>
+                                <th class="p-1 border-r border-[#2d3f5e] text-center font-bold bg-[#142138]/50 text-slate-100" title="Suma total de criterios de la Actividad 2 (Máx. 10.0 pt)">Total</th>
+                                <th class="p-1 border-r border-[#2d3f5e] text-center font-bold bg-emerald-100/70 text-emerald-800" title="Ponderación final del 35% de la Actividad 2 (Suma total * 0.35)">35%</th>
+                                <!-- Act3 -->
+                                <th class="p-1 border-r border-[#2d3f5e] text-center bg-amber-50/20 cursor-help" title="Nota directa obtenida en la Prueba Objetiva (Máx. 10.0 pt)">Nota</th>
+                                <th class="p-1 border-r border-[#2d3f5e] text-center font-bold bg-amber-100/70 text-amber-800" title="Ponderación final del 30% de la Actividad 3 (Nota * 0.30)">30%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-rows">
+                            <!-- Dynamic populated row content -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- PANEL DE CRITERIOS DE EVALUACIÓN -->
+                <div class="bg-[#1a2942]/90 rounded-2xl p-5 border border-[#2d3f5e] shadow-lg mt-6">
+                    <div class="flex items-center gap-2 border-b border-[#2d3f5e] pb-3 mb-4">
+                        <div class="text-brand-600 text-lg bg-brand-50 p-2 rounded-lg">
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-100">Criterios de Evaluación y Distribución de Puntaje</h3>
+                            <p class="text-[11px] text-slate-400 font-medium">Detalle de las actividades y criterios aplicados en los periodos escolares</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs text-slate-300" id="criteria-distribution-panel">
+                        <!-- Actividad 1 -->
+                        <div class="space-y-3 bg-blue-50/20 p-4 rounded-xl border border-blue-100/50">
+                            <h4 class="font-bold text-blue-900 flex justify-between items-center border-b border-blue-100 pb-2">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-users-viewfinder text-blue-700"></i>Actividad N° 1 - Integradora (35%)</span>
+                                <span class="bg-blue-100/80 text-blue-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Total: 10 Puntos</span>
+                            </h4>
+                            <ul class="space-y-2 font-semibold">
+                                <li class="flex justify-between items-center text-slate-200"><span>U1 a U8: Calificación de Unidades de la 1 a la 8</span> <span class="bg-[#1a2942] px-2 py-0.5 rounded border text-blue-800 font-extrabold text-[10px]">Nota: 0.0 - 10.0</span></li>
+                                <li class="flex justify-between items-center text-slate-400 text-[11px] italic">La nota final de la Actividad 1 se obtiene promediando las calificaciones de las 8 unidades.</li>
+                            </ul>
+                        </div>
+                        <!-- Actividad 2 -->
+                        <div class="space-y-3 bg-emerald-50/20 p-4 rounded-xl border border-emerald-100/50">
+                            <h4 class="font-bold text-emerald-900 flex justify-between items-center border-b border-emerald-100 pb-2">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-book-reader text-emerald-700"></i>Actividad N° 2 - Cotidianas (35%)</span>
+                                <span class="bg-emerald-100/80 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Total: 10 Puntos</span>
+                            </h4>
+                            <ul class="space-y-2 font-semibold">
+                                <li class="flex justify-between items-center text-slate-200"><span>C1: Clases completas en orden</span> <span class="bg-[#1a2942] px-2 py-0.5 rounded border text-emerald-800 font-extrabold text-[10px]">Max: 2.0 pt</span></li>
+                                <li class="flex justify-between items-center text-slate-200"><span>C2: Cumplimiento de tareas asignadas</span> <span class="bg-[#1a2942] px-2 py-0.5 rounded border text-emerald-800 font-extrabold text-[10px]">Max: 2.0 pt</span></li>
+                                <li class="flex justify-between items-center text-slate-200"><span>C3: Ortografía correcta</span> <span class="bg-[#1a2942] px-2 py-0.5 rounded border text-emerald-800 font-extrabold text-[10px]">Max: 1.5 pt</span></li>
+                                <li class="flex justify-between items-center text-slate-200"><span>C4: Letra legible en el cuaderno</span> <span class="bg-[#1a2942] px-2 py-0.5 rounded border text-emerald-800 font-extrabold text-[10px]">Max: 1.0 pt</span></li>
+                                <li class="flex justify-between items-center text-slate-200"><span>C5: Orden y aseo general del cuaderno y escuela</span> <span class="bg-[#1a2942] px-2 py-0.5 rounded border text-emerald-800 font-extrabold text-[10px]">Max: 2.0 pt</span></li>
+                                <li class="flex justify-between items-center text-slate-200"><span>C6: Participación proactiva en clase</span> <span class="bg-[#1a2942] px-2 py-0.5 rounded border text-emerald-800 font-extrabold text-[10px]">Max: 1.5 pt</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONSOLIDADO ANUAL VISTA -->
+            <div id="consolidado-view" class="space-y-4 hidden">
+                <div class="flex items-center justify-between border-b border-[#2d3f5e] pb-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                        <span class="bg-violet-100 text-violet-700 px-3 py-1 text-xs font-bold uppercase rounded-full">Consolidado Final</span>
+                        <h2 class="text-lg font-bold text-slate-100">
+                            Promedio General Anual <span class="consolidado-year-lbl">2026</span> - <span id="consolidado-info-title" class="text-violet-700 font-extrabold">LENGUAJE Y LITERATURA</span>
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="table-container overflow-x-auto rounded-xl border border-[#2d3f5e] bg-[#1a2942]">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-[#142138] text-slate-200 border-b border-[#2d3f5e] uppercase tracking-wider text-[10px] font-bold">
+                                <th class="p-3 border-r border-[#2d3f5e] min-w-[220px]">Nombre del Alumno/a</th>
+                                <th class="p-3 border-r border-[#2d3f5e] text-center bg-[#0c1a30]">1° Periodo</th>
+                                <th class="p-3 border-r border-[#2d3f5e] text-center bg-[#0c1a30]">2° Periodo</th>
+                                <th class="p-3 border-r border-[#2d3f5e] text-center bg-[#0c1a30]">3° Periodo</th>
+                                <th class="p-3 text-center bg-violet-100 text-violet-900 font-bold">Promedio Final</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consolidado-rows">
+                            <!-- Dynamic populated row content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ANALYTICS DASHBOARD VIEW -->
+            <div id="analisis-view" class="space-y-6 hidden">
+                <div class="flex items-center justify-between border-b border-[#2d3f5e] pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-brand-100 text-brand-700 px-3 py-1 text-xs font-bold uppercase rounded-full">Dashboard Analítico</span>
+                        <h2 class="text-lg font-bold text-slate-100">Panel de Rendimiento Escolar</h2>
+                    </div>
+                </div>
+
+                <!-- KPI Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Promedio General -->
+                    <div class="bg-[#1a2942] p-5 rounded-xl border border-[#2d3f5e] shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Promedio General</p>
+                            <h3 class="text-3xl font-extrabold text-slate-100 mt-1" id="kpi-avg">0.0</h3>
+                        </div>
+                        <div class="text-brand-500 bg-brand-50 p-3 rounded-lg"><i class="fa-solid fa-calculator text-2xl"></i></div>
+                    </div>
+                    <!-- Tasa de Aprobación -->
+                    <div class="bg-[#1a2942] p-5 rounded-xl border border-[#2d3f5e] shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Aprobación (>=5.0)</p>
+                            <h3 class="text-3xl font-extrabold text-emerald-600 mt-1" id="kpi-pass-rate">0%</h3>
+                        </div>
+                        <div class="text-emerald-500 bg-emerald-50 p-3 rounded-lg"><i class="fa-solid fa-circle-check text-2xl"></i></div>
+                    </div>
+                    <!-- Alumnos en Riesgo -->
+                    <div class="bg-[#1a2942] p-5 rounded-xl border border-[#2d3f5e] shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Alumnos en Riesgo (&lt;6.0)</p>
+                            <h3 class="text-3xl font-extrabold text-rose-600 mt-1" id="kpi-risk">0</h3>
+                        </div>
+                        <div class="text-rose-500 bg-rose-50 p-3 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-2xl"></i></div>
+                    </div>
+                    <!-- Nota Máxima -->
+                    <div class="bg-[#1a2942] p-5 rounded-xl border border-[#2d3f5e] shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Nota Más Alta</p>
+                            <h3 class="text-3xl font-extrabold text-violet-600 mt-1" id="kpi-max">0.0</h3>
+                        </div>
+                        <div class="text-violet-500 bg-violet-50 p-3 rounded-lg"><i class="fa-solid fa-trophy text-2xl"></i></div>
+                    </div>
+                </div>
+
+                <!-- Charts Area -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Distribution Chart Card -->
+                    <div class="bg-[#1a2942] p-5 rounded-xl border border-[#2d3f5e] shadow-sm">
+                        <h4 class="font-bold text-slate-200 text-sm mb-4 border-b pb-2"><i class="fa-solid fa-chart-column mr-1.5 text-brand-500"></i>Distribución de Rendimiento</h4>
+                        <div class="h-64 relative">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Averages Comparation Period Chart -->
+                    <div class="bg-[#1a2942] p-5 rounded-xl border border-[#2d3f5e] shadow-sm">
+                        <h4 class="font-bold text-slate-200 text-sm mb-4 border-b pb-2"><i class="fa-solid fa-chart-line mr-1.5 text-indigo-500"></i>Evolución Promedio por Periodo</h4>
+                        <div class="h-64 relative">
+                            <canvas id="periodComparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI INDIVIDUAL STUDENT ANALYZER (New Requested Feature) -->
+                <div class="bg-gradient-to-r from-blue-900 to-indigo-950 text-white rounded-2xl shadow-xl p-6 border border-slate-800">
+                    <div class="flex items-center gap-3 border-b border-white/20 pb-4 mb-4">
+                        <div class="bg-cyan-500 text-white p-2.5 rounded-xl shadow-lg shadow-cyan-500/30">
+                            <i class="fa-solid fa-robot text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold">Asistente Pedagógico IA</h3>
+                            <p class="text-xs text-blue-200/80">Escribe el nombre de un alumno para analizar su avance y obtener recomendaciones personalizadas</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Left Search Input Column -->
+                        <div class="space-y-3">
+                            <label class="block text-xs font-semibold text-blue-200 uppercase tracking-wider">Buscar Alumno en esta Sección</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </span>
+                                <input id="ai-student-search" type="text" placeholder="Escribe el nombre del alumno/a..." 
+                                    oninput="suggestStudents(this.value)"
+                                    class="w-full pl-9 pr-3 py-2 bg-[#1a2942]/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 font-semibold uppercase text-sm text-white placeholder-slate-400">
+                            </div>
+                            <!-- Autocomplete Suggestions List -->
+                            <div id="ai-suggestions" class="bg-[#1a2942]/10 rounded-lg overflow-hidden border border-white/10 hidden max-h-32 overflow-y-auto text-xs font-semibold uppercase">
+                                <!-- Suggested items populated here -->
+                            </div>
+                            <!-- Gemini Key Input on Dashboard -->
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-semibold text-blue-200 uppercase tracking-wider">Gemini API Key (Para IA Real)</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                        <i class="fa-solid fa-key text-[10px]"></i>
+                                    </span>
+                                    <input id="dashboard-gemini-api-key-input" type="password" placeholder="API Key para diagnóstico avanzado..." 
+                                        oninput="saveGeminiKey(this.value)"
+                                        class="w-full pl-8 pr-3 py-1.5 bg-[#1a2942]/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 text-xs text-white placeholder-slate-500 font-mono">
+                                </div>
+                            </div>
+                            <button onclick="runStudentAIAnalysis()" class="w-full bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-slate-950 font-bold py-2.5 rounded-xl shadow-lg transition-all duration-150 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                Analizar con IA
+                            </button>
+                        </div>
+
+                        <!-- Right Output Diagnostic Card (span-2) -->
+                        <div class="lg:col-span-2 bg-[#1a2942]/5 rounded-xl p-5 border border-white/10 min-h-[220px] flex flex-col justify-between" id="ai-output-container">
+                            <div class="flex flex-col items-center justify-center text-center h-full py-8 text-blue-200/60" id="ai-blank-state">
+                                <i class="fa-solid fa-brain text-4xl mb-2 animate-pulse"></i>
+                                <p class="text-sm font-semibold">Esperando selección de alumno para iniciar diagnóstico</p>
+                            </div>
+                            <!-- Diagnostic result block -->
+                            <div id="ai-results" class="hidden space-y-4">
+                                <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                                    <h4 class="font-extrabold text-cyan-300 text-sm tracking-wide uppercase" id="ai-student-header-name">JUAN MANUEL FLORES ALBERTO</h4>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-brand-500 text-white" id="ai-student-trend">ESTABLE</span>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                    <div class="space-y-2">
+                                        <p class="font-semibold"><i class="fa-solid fa-clipboard-list mr-1 text-cyan-400"></i><strong>Diagnóstico de Notas:</strong></p>
+                                        <ul class="space-y-1 text-slate-300 font-medium text-[11px] pl-1 list-none" id="ai-score-units-list">
+                                            <!-- Dynamic units list -->
+                                        </ul>
+                                        <p class="text-xs font-bold text-white mt-2 pt-1.5 border-t border-white/10">
+                                            Promedio Final: <span id="ai-score-final" class="font-bold text-cyan-300">0.00</span>
+                                        </p>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <p class="font-semibold"><i class="fa-solid fa-gauge-high mr-1 text-cyan-400"></i><strong>Foco Evaluativo:</strong></p>
+                                        <p id="ai-score-breakdown" class="text-slate-300 font-medium leading-relaxed">
+                                            -
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="bg-[#1a2942]/5 p-3 rounded-lg border border-white/5 space-y-1.5">
+                                    <p class="text-xs font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="fa-solid fa-lightbulb"></i>
+                                        Recomendación del Asistente
+                                    </p>
+                                    <p id="ai-recommendation" class="text-xs text-slate-100 font-semibold leading-relaxed">
+                                        -
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alumnos en Riesgo List -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-[#1a2942] p-5 rounded-xl border border-[#2d3f5e] shadow-sm">
+                        <h4 class="font-bold text-rose-700 text-sm mb-3"><i class="fa-solid fa-circle-exclamation mr-1.5"></i>Alumnos que requieren Refuerzo Escolar (Promedio Anual &lt; 6.0)</h4>
+                        <div class="overflow-y-auto max-h-48 border border-rose-100 rounded-lg p-2 bg-rose-50/30">
+                            <ul class="divide-y divide-rose-100 text-xs font-semibold text-slate-200" id="risk-students-list">
+                                <!-- JS will populate lists -->
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Automatic recommendations panel -->
+                    <div class="bg-[#1a2942] p-5 rounded-xl border border-[#2d3f5e] shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-slate-200 text-sm mb-3"><i class="fa-solid fa-lightbulb mr-1.5 text-amber-500"></i>Recomendaciones Pedagógicas Generales</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed font-medium" id="pedagogical-tips">
+                                Agrega notas y evalúa para recibir retroalimentación automática sobre el avance de la sección.
+                            </p>
+                        </div>
+                        <div class="mt-4 border-t pt-3 flex justify-end">
+                            <span class="text-[10px] uppercase font-bold text-slate-400">Analizador Inteligente de Rendimiento C.E.P.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL ADD STUDENT -->
+    <div id="student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#1a2942] rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 transition-all duration-200" id="modal-container">
+            <div class="bg-brand-600 text-white p-5 flex items-center justify-between">
+                <h3 class="font-bold text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Registrar Nuevo Alumno
+                </h3>
+                <button onclick="closeAddStudentModal()" class="text-white/80 hover:text-white transition-all text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Nombre Completo del Alumno</label>
+                    <input id="new-student-name" type="text" placeholder="Ej: ALEJANDRO LOPEZ LOPEZ" 
+                        class="w-full px-3 py-2 bg-[#0c1a30] border border-[#3f567a] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 font-semibold uppercase">
+                </div>
+            </div>
+            <div class="bg-[#0c1a30] p-4 flex justify-end gap-3 border-t border-[#23324d]">
+                <button onclick="closeAddStudentModal()" class="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">
+                    Cancelar
+                </button>
+                <button onclick="addStudent()" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-md active:scale-95 transition-all">
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ASISTENTE IA -->
+    <div id="ai-assistant-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-950 text-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden transform scale-95 transition-all duration-200 border border-slate-800" id="ai-modal-container">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-indigo-900 to-slate-900 p-5 flex items-center justify-between border-b border-slate-800 flex-shrink-0">
+                <h3 class="font-bold text-lg flex items-center gap-2.5 text-cyan-300">
+                    <i class="fa-solid fa-robot text-xl animate-pulse text-cyan-400"></i>
+                    Asistente Pedagógico IA Integral
+                </h3>
+                <button onclick="closeAIAssistantModal()" class="text-slate-400 hover:text-white transition-all text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6 space-y-6 overflow-y-auto flex-1">
+                <!-- Search and API Key Section -->
+                <div class="flex flex-col md:flex-row gap-4 items-end">
+                    <div class="flex-1 relative w-full">
+                        <label class="block text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2" id="modal-ai-title-label">Buscar Alumno en Grado Actual</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            <input id="modal-ai-student-search" type="text" placeholder="Escribe el nombre del alumno/a..." 
+                                oninput="suggestStudentsModal(this.value)"
+                                class="w-full pl-10 pr-3 py-2.5 bg-[#1a2942]/10 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 font-semibold uppercase text-sm text-white placeholder-slate-400">
+                        </div>
+                        <!-- Autocomplete Suggestions List -->
+                        <div id="modal-ai-suggestions" class="absolute z-50 mt-1 bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hidden max-h-40 overflow-y-auto text-xs font-semibold uppercase w-full shadow-2xl">
+                            <!-- Suggested items populated here -->
+                        </div>
+                    </div>
+                    <div class="w-full md:w-80">
+                        <label class="block text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">Gemini API Key (Para IA Real)</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                <i class="fa-solid fa-key"></i>
+                            </span>
+                            <input id="modal-gemini-api-key-input" type="password" placeholder="Ingresa tu API Key..." 
+                                oninput="saveGeminiKey(this.value)"
+                                class="w-full pl-9 pr-3 py-2.5 bg-[#1a2942]/10 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xs text-white placeholder-slate-500 font-mono">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Analysis Content Area -->
+                <div id="modal-ai-output-container" class="min-h-[300px] flex flex-col justify-center">
+                    <!-- Blank state -->
+                    <div class="flex flex-col items-center justify-center text-center py-12 text-slate-400 space-y-3" id="modal-ai-blank-state">
+                        <i class="fa-solid fa-brain text-5xl text-indigo-500 animate-pulse"></i>
+                        <div>
+                            <p class="text-base font-bold text-slate-200">¿De quién deseas ver el avance escolar?</p>
+                            <p class="text-xs max-w-md mt-1">Ingresa el nombre del alumno arriba para realizar un diagnóstico completo de su desempeño en todas las asignaturas de este grado.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Results state -->
+                    <div id="modal-ai-results" class="hidden grid grid-cols-1 lg:grid-cols-5 gap-6 text-slate-200">
+                        <!-- Left Side: Table of Grades by Subject (span-2) -->
+                        <div class="lg:col-span-2 space-y-3">
+                            <h4 class="font-bold text-xs uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-table-list"></i>
+                                Calificaciones por Asignatura
+                            </h4>
+                            <div class="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-slate-900 text-slate-400 font-bold border-b border-slate-800 uppercase tracking-wider">
+                                            <th class="p-2.5">Materia</th>
+                                            <th class="p-2.5 text-center bg-indigo-950/40">Promedio</th>
+                                            <th class="p-2.5 text-center">Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modal-ai-subjects-tbody">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-[10px] text-slate-400 italic">
+                                * Se calculan los promedios en base a las materias registradas en este grado.
+                            </div>
+                        </div>
+
+                        <!-- Right Side: AI Recommendations (span-3) -->
+                        <div class="lg:col-span-3 space-y-4">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                <h4 class="font-extrabold text-cyan-300 text-sm tracking-wide uppercase" id="modal-ai-student-name">-</h4>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-brand-500 text-white" id="modal-ai-student-trend">-</span>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/80 space-y-2">
+                                    <p class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="fa-solid fa-clipboard-question"></i>
+                                        Diagnóstico de Notas y Avance
+                                    </p>
+                                    <div id="modal-ai-summary-text" class="text-xs leading-relaxed text-slate-300">
+                                        -
+                                    </div>
+                                </div>
+
+                                <div class="bg-cyan-950/10 p-4 rounded-xl border border-cyan-800/30 space-y-2">
+                                    <p class="text-xs font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="fa-solid fa-lightbulb"></i>
+                                        Recomendación Pedagógica Personalizada
+                                    </p>
+                                    <p id="modal-ai-recommendation-text" class="text-xs font-semibold leading-relaxed text-slate-100">
+                                        -
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-slate-900 p-4 flex justify-end gap-3 border-t border-slate-800 flex-shrink-0">
+                <button onclick="closeAIAssistantModal()" class="px-5 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-all">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- POPUP NOTIFICATION Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 translate-y-20 opacity-0 z-50">
+        <span id="toast-icon" class="text-emerald-400 text-lg"><i class="fa-solid fa-circle-check"></i></span>
+        <span id="toast-message" class="text-xs font-semibold">Datos guardados con éxito</span>
+    </div>
+
+    <!-- MAIN JAVASCRIPT LOGIC -->
+    
+    <!-- Firebase SDK Compatibility CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="notas.js?v=1"></script>
+    
+</main>
+</div>
+
+<script>
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar-menu');
+  const overlay = document.getElementById('sidebar-overlay');
+  const btn = document.getElementById('hamburger-btn');
+  if (sidebar.classList.contains('open')) { closeSidebar(); } else {
+    sidebar.classList.add('open'); overlay.classList.add('active'); btn.classList.add('active');
+  }
+}
+function closeSidebar() {
+  document.getElementById('sidebar-menu').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('active');
+  document.getElementById('hamburger-btn').classList.remove('active');
+}
+</script>
+
+</body>
+</html>
