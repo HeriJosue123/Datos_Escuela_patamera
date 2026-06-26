@@ -1524,3 +1524,20 @@ tbody td.date-cell {
 #student-rows tr:hover td input:not(:focus) {
     background-color: rgba(0,0,0,0.2);
 }
+
+
+/* ─── Table Input Consistency ──────────────────────── */
+#student-rows input[type="number"], 
+#student-rows input[type="text"] {
+    background-color: rgba(0,0,0,0.15);
+    border-radius: 6px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+}
+#student-rows input[type="number"]:focus, 
+#student-rows input[type="text"]:focus {
+    background-color: #1a2942;
+    box-shadow: none;
+}
+#consolidado-rows td {
+    padding: 0.75rem !important;
+}

@@ -330,7 +330,7 @@
                             Control Calificador: <span id="current-info-title" class="text-brand-400 font-extrabold">2026 - 7° Grado - LENGUAJE Y LITERATURA</span>
                         </h2>
                     </div>
-                    <button onclick="openAddStudentModal()" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20 hover:-translate-y-0.5 mt-4 md:mt-0">
+                    <button onclick="openAddStudentModal()" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white px-5 h-10 rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20 hover:-translate-y-0.5 mt-4 md:mt-0">
                         <i class="fa-solid fa-user-plus"></i>
                         Agregar Alumno
                     </button>
@@ -480,13 +480,13 @@
                     <div class="bg-[#142138] rounded-2xl border border-[#2d3f5e] p-5 shadow-inner overflow-hidden">
                         <div class="table-container overflow-x-auto rounded-xl">
                             <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-[#142138] text-slate-200 border-b border-[#2d3f5e] uppercase tracking-wider text-[10px] font-bold">
-                                <th class="p-3 border-r border-[#2d3f5e] min-w-[220px]">Nombre del Alumno/a</th>
-                                <th class="p-3 border-r border-[#2d3f5e] text-center bg-[#0c1a30]">1° Periodo</th>
-                                <th class="p-3 border-r border-[#2d3f5e] text-center bg-[#0c1a30]">2° Periodo</th>
-                                <th class="p-3 border-r border-[#2d3f5e] text-center bg-[#0c1a30]">3° Periodo</th>
-                                <th class="p-3 text-center bg-violet-100 text-violet-900 font-bold">Promedio Final</th>
+                        <thead class="rounded-t-2xl overflow-hidden">
+                            <tr class="bg-[#1a2942] text-slate-100 border-b border-[#2d3f5e] uppercase tracking-wider text-[11px] font-extrabold shadow-sm">
+                                <th class="p-4 border-r border-[#2d3f5e] min-w-[220px] rounded-tl-xl">Nombre del Alumno/a</th>
+                                <th class="p-4 border-r border-[#2d3f5e] text-center bg-blue-900/20 text-blue-300">1° Periodo</th>
+                                <th class="p-4 border-r border-[#2d3f5e] text-center bg-emerald-900/20 text-emerald-300">2° Periodo</th>
+                                <th class="p-4 border-r border-[#2d3f5e] text-center bg-amber-900/20 text-amber-300">3° Periodo</th>
+                                <th class="p-4 text-center bg-violet-900/30 text-violet-400 font-extrabold rounded-tr-xl">Promedio Final</th>
                             </tr>
                         </thead>
                         <tbody id="consolidado-rows">
@@ -510,7 +510,7 @@
                 <!-- KPI Cards Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <!-- Promedio General -->
-                    <div class="bg-[#1a2942] p-5 rounded-xl shadow-lg shadow-black/20 flex items-center justify-between">
+                    <div class="bg-[#1a2942] p-5 rounded-2xl border border-[#2d3f5e] shadow-lg flex items-center justify-between">
                         <div>
                             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Promedio General</p>
                             <h3 class="text-3xl font-extrabold text-slate-100 mt-1" id="kpi-avg">0.0</h3>
@@ -518,7 +518,7 @@
                         <div class="text-brand-500 bg-brand-50 p-3 rounded-lg"><i class="fa-solid fa-calculator text-2xl"></i></div>
                     </div>
                     <!-- Tasa de Aprobación -->
-                    <div class="bg-[#1a2942] p-5 rounded-xl shadow-lg shadow-black/20 flex items-center justify-between">
+                    <div class="bg-[#1a2942] p-5 rounded-2xl border border-[#2d3f5e] shadow-lg flex items-center justify-between">
                         <div>
                             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Aprobación (>=5.0)</p>
                             <h3 class="text-3xl font-extrabold text-emerald-600 mt-1" id="kpi-pass-rate">0%</h3>
@@ -526,7 +526,7 @@
                         <div class="text-emerald-500 bg-emerald-50 p-3 rounded-lg"><i class="fa-solid fa-circle-check text-2xl"></i></div>
                     </div>
                     <!-- Alumnos en Riesgo -->
-                    <div class="bg-[#1a2942] p-5 rounded-xl shadow-lg shadow-black/20 flex items-center justify-between">
+                    <div class="bg-[#1a2942] p-5 rounded-2xl border border-[#2d3f5e] shadow-lg flex items-center justify-between">
                         <div>
                             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Alumnos en Riesgo (&lt;6.0)</p>
                             <h3 class="text-3xl font-extrabold text-rose-600 mt-1" id="kpi-risk">0</h3>
@@ -534,7 +534,7 @@
                         <div class="text-rose-500 bg-rose-50 p-3 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-2xl"></i></div>
                     </div>
                     <!-- Nota Máxima -->
-                    <div class="bg-[#1a2942] p-5 rounded-xl shadow-lg shadow-black/20 flex items-center justify-between">
+                    <div class="bg-[#1a2942] p-5 rounded-2xl border border-[#2d3f5e] shadow-lg flex items-center justify-between">
                         <div>
                             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Nota Más Alta</p>
                             <h3 class="text-3xl font-extrabold text-violet-600 mt-1" id="kpi-max">0.0</h3>
@@ -546,14 +546,14 @@
                 <!-- Charts Area -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Distribution Chart Card -->
-                    <div class="bg-[#1a2942] p-5 rounded-xl shadow-lg shadow-black/20">
+                    <div class="bg-[#1a2942] p-5 rounded-2xl border border-[#2d3f5e] shadow-lg">
                         <h4 class="font-bold text-slate-200 text-sm mb-4 border-b pb-2"><i class="fa-solid fa-chart-column mr-1.5 text-brand-500"></i>Distribución de Rendimiento</h4>
                         <div class="h-64 relative">
                             <canvas id="distributionChart"></canvas>
                         </div>
                     </div>
                     <!-- Averages Comparation Period Chart -->
-                    <div class="bg-[#1a2942] p-5 rounded-xl shadow-lg shadow-black/20">
+                    <div class="bg-[#1a2942] p-5 rounded-2xl border border-[#2d3f5e] shadow-lg">
                         <h4 class="font-bold text-slate-200 text-sm mb-4 border-b pb-2"><i class="fa-solid fa-chart-line mr-1.5 text-indigo-500"></i>Evolución Promedio por Periodo</h4>
                         <div class="h-64 relative">
                             <canvas id="periodComparisonChart"></canvas>
@@ -652,7 +652,7 @@
 
                 <!-- Alumnos en Riesgo List -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-[#1a2942] p-5 rounded-xl shadow-lg shadow-black/20">
+                    <div class="bg-[#1a2942] p-5 rounded-2xl border border-[#2d3f5e] shadow-lg">
                         <h4 class="font-bold text-rose-700 text-sm mb-3"><i class="fa-solid fa-circle-exclamation mr-1.5"></i>Alumnos que requieren Refuerzo Escolar (Promedio Anual &lt; 6.0)</h4>
                         <div class="overflow-y-auto max-h-48 border border-rose-100 rounded-lg p-2 bg-rose-50/30">
                             <ul class="divide-y divide-rose-100 text-xs font-semibold text-slate-200" id="risk-students-list">
@@ -662,7 +662,7 @@
                     </div>
                     
                     <!-- Automatic recommendations panel -->
-                    <div class="bg-[#1a2942] p-5 rounded-xl shadow-lg shadow-black/20 flex flex-col justify-between">
+                    <div class="bg-[#1a2942] p-5 rounded-2xl border border-[#2d3f5e] shadow-lg flex flex-col justify-between">
                         <div>
                             <h4 class="font-bold text-slate-200 text-sm mb-3"><i class="fa-solid fa-lightbulb mr-1.5 text-amber-500"></i>Recomendaciones Pedagógicas Generales</h4>
                             <p class="text-xs text-slate-300 leading-relaxed font-medium" id="pedagogical-tips">
@@ -681,9 +681,9 @@
 
     <!-- MODAL ADD STUDENT -->
     <div id="student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-[#1a2942] rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 transition-all duration-200" id="modal-container">
-            <div class="bg-brand-600 text-white p-5 flex items-center justify-between">
-                <h3 class="font-bold text-lg flex items-center gap-2">
+        <div class="bg-[#1a2942] rounded-2xl border border-[#2d3f5e] shadow-2xl w-full max-w-md overflow-hidden transform scale-95 transition-all duration-200" id="modal-container">
+            <div class="bg-[#142138] border-b border-[#2d3f5e] text-slate-100 p-5 flex items-center justify-between">
+                <h3 class="font-extrabold text-lg flex items-center gap-2 text-brand-400">
                     <i class="fa-solid fa-user-plus"></i>
                     Registrar Nuevo Alumno
                 </h3>
@@ -698,7 +698,7 @@
                         class="w-full px-3 py-2 bg-[#0c1a30] border border-[#3f567a] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 font-semibold uppercase">
                 </div>
             </div>
-            <div class="bg-[#0c1a30] p-4 flex justify-end gap-3 border-t border-[#23324d]">
+            <div class="bg-[#142138] p-5 flex justify-end gap-3 border-t border-[#2d3f5e]">
                 <button onclick="closeAddStudentModal()" class="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">
                     Cancelar
                 </button>
@@ -711,9 +711,9 @@
 
     <!-- MODAL ASISTENTE IA -->
     <div id="ai-assistant-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-950 text-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden transform scale-95 transition-all duration-200 border border-slate-800" id="ai-modal-container">
+        <div class="bg-[#1a2942] text-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden transform scale-95 transition-all duration-200 border border-[#2d3f5e]" id="ai-modal-container">
             <!-- Modal Header -->
-            <div class="bg-gradient-to-r from-indigo-900 to-slate-900 p-5 flex items-center justify-between border-b border-slate-800 flex-shrink-0">
+            <div class="bg-[#142138] p-5 flex items-center justify-between border-b border-[#2d3f5e] flex-shrink-0">
                 <h3 class="font-bold text-lg flex items-center gap-2.5 text-cyan-300">
                     <i class="fa-solid fa-robot text-xl animate-pulse text-cyan-400"></i>
                     Asistente Pedagógico IA Integral
@@ -827,7 +827,7 @@
             </div>
 
             <!-- Modal Footer -->
-            <div class="bg-slate-900 p-4 flex justify-end gap-3 border-t border-slate-800 flex-shrink-0">
+            <div class="bg-[#142138] p-5 flex justify-end gap-3 border-t border-[#2d3f5e] flex-shrink-0">
                 <button onclick="closeAIAssistantModal()" class="px-5 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-all">
                     Cerrar
                 </button>
