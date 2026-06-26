@@ -652,25 +652,27 @@
                         </div>
 
                         <!-- Info -->
-                        <div class="flex-grow z-10 pr-10">
-                            <h5 class="text-slate-200 text-sm font-bold tracking-wide group-hover:text-white transition-colors leading-tight mb-1">
+                        <div class="flex-grow z-10 pr-2">
+                            <h5 class="text-slate-200 text-sm font-bold tracking-wide group-hover:text-white transition-colors leading-tight mb-1.5">
                                 ${student.name}
                             </h5>
-                            <p class="text-[10px] text-slate-500 font-semibold uppercase tracking-widest flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500/70"></span> Activo
-                            </p>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="bg-[#0f172a] text-slate-400 border border-[#2d3f5e] px-2 py-0.5 rounded text-[10px] font-mono tracking-wider shadow-inner flex items-center gap-1.5 transition-colors group-hover:border-slate-600">
+                                    <i class="fas fa-id-card text-slate-500 text-[9px] group-hover:text-brand-500/70 transition-colors"></i>
+                                    ${student.nie}
+                                </span>
+                                <!-- Copy NIE Button -->
+                                <button onclick="copyNie('${student.nie}', this)" class="w-6 h-6 rounded bg-[#0f172a] hover:bg-[#1e293b] border border-[#2d3f5e] hover:border-brand-500/50 text-slate-500 hover:text-brand-400 flex items-center justify-center transition-all duration-200 relative group/btn" title="Copiar NIE">
+                                    <i class="far fa-copy text-[10px]"></i>
+                                    <!-- Tooltip -->
+                                    <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-700 text-white text-[9px] font-bold px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg border border-slate-600 z-20">
+                                        Copiar NIE
+                                        <!-- Flecha del tooltip -->
+                                        <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-700"></span>
+                                    </span>
+                                </button>
+                            </div>
                         </div>
-
-                        <!-- Copy NIE Button -->
-                        <button onclick="copyNie('${student.nie}', this)" class="absolute top-1/2 -translate-y-1/2 right-4 w-9 h-9 rounded-xl bg-[#0f172a] hover:bg-[#1e293b] border border-[#2d3f5e] hover:border-slate-600 text-slate-400 hover:text-white flex items-center justify-center transition-all duration-200 group/btn shadow-sm" title="Copiar NIE">
-                            <i class="far fa-copy"></i>
-                            <!-- Tooltip -->
-                            <span class="absolute -top-10 right-1/2 translate-x-1/2 bg-slate-700 text-white text-[10px] font-bold px-2.5 py-1 rounded-md opacity-0 group-hover/btn:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl border border-slate-600">
-                                Copiar NIE
-                                <!-- Flecha del tooltip -->
-                                <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-700"></span>
-                            </span>
-                        </button>
                     </div>
                     `;
                 }).join('');
