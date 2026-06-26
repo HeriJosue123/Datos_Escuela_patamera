@@ -761,12 +761,12 @@ async function loadFromFirebase() {
         function switchTab(tabId) {
             activeTab = tabId;
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-brand-600', 'text-white', 'shadow-md');
-                btn.classList.add('text-slate-300', 'hover:text-slate-50');
+                btn.classList.remove('text-brand-400', 'border-brand-400', 'font-bold'); btn.classList.add('border-transparent');
+                btn.classList.add('text-slate-400', 'hover:text-slate-200', 'hover:border-slate-500', 'font-semibold');
             });
             const activeBtn = document.getElementById(`tab-${tabId}`);
-            activeBtn.classList.remove('text-slate-300', 'hover:text-slate-50');
-            activeBtn.classList.add('bg-brand-600', 'text-white', 'shadow-md');
+            activeBtn.classList.remove('text-slate-400', 'hover:text-slate-200', 'hover:border-slate-500', 'font-semibold', 'border-transparent');
+            activeBtn.classList.add('text-brand-400', 'border-brand-400', 'font-bold');
 
             renderActiveTab();
         }
