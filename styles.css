@@ -1481,3 +1481,46 @@ tbody td.date-cell {
     font-weight: 600 !important;
   }
 }
+
+
+/* ─── Custom Table UI ──────────────────────────────── */
+.table-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+.table-container::-webkit-scrollbar {
+    height: 10px;
+}
+.table-container::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+/* Elegant Table Row Hover */
+#student-rows tr {
+    transition: all 0.2s ease-in-out;
+}
+#student-rows tr:hover {
+    background-color: #1a2942 !important; /* Force darker blue overlay */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    position: relative;
+    z-index: 10;
+}
+#student-rows tr td {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+#student-rows tr td input {
+    transition: background-color 0.2s;
+}
+#student-rows tr:hover td input:not(:focus) {
+    background-color: rgba(0,0,0,0.2);
+}
