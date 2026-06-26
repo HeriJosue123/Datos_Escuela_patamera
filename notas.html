@@ -85,7 +85,7 @@
 
 <!-- ════════════════════ HEADER ════════════════════ -->
 <header class="app-header">
-  <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Abrir menú">
+  <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar(event)" aria-label="Abrir menú">
     <span class="hamburger-line"></span>
     <span class="hamburger-line"></span>
     <span class="hamburger-line"></span>
@@ -148,7 +148,7 @@
     <button class="sidebar-close-btn" onclick="closeSidebar()" aria-label="Cerrar menú">✕</button>
   </div>
   <div class="sidebar-nav-items">
-    <button class="sidebar-nav-btn" onclick="window.location.href=\'index.html\'" id="tab-dashboard" onclick="localStorage.setItem('active_tab', 'dashboard'); window.location.href='index.html';">
+    <button class="sidebar-nav-btn" id="tab-dashboard" onclick="localStorage.setItem('active_tab', 'dashboard'); window.location.href='index.html';">
       <span class="sidebar-nav-icon">📊</span>
       <span class="sidebar-nav-label">Inicio</span>
     </button>
@@ -174,7 +174,7 @@
       <span class="sidebar-nav-label">Por Ciclo</span>
     </button>
     <div class="sidebar-divider"></div>
-    <button class="sidebar-nav-btn" onclick="window.location.href='notas.html'">
+    <button class="sidebar-nav-btn active" onclick="window.location.href='notas.html'">
       <span class="sidebar-nav-icon">🎓</span>
       <span class="sidebar-nav-label">Control de Notas</span>
       <span class="sidebar-nav-badge" style="background:var(--brand-500)">IA</span>
@@ -898,7 +898,8 @@
 </div>
 
 <script>
-function toggleSidebar() {
+function toggleSidebar(event) {
+  if (event) event.stopPropagation();
   const sidebar = document.getElementById('sidebar-menu');
   const overlay = document.getElementById('sidebar-overlay');
   const btn = document.getElementById('hamburger-btn');
