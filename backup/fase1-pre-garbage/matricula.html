@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrícula 2026 - C.E. Cantón Patamera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .header-bg {
+            background: #1a2942;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        /* Chart text color override for dark mode */
+        canvas {
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.2));
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d3f5e; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b4c6b; 
+        }
+
+        /* Estilos específicos para impresión */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: white !important;
+                color: black !important;
+            }
+            .header-bg, .bg-[#1a2942], .bg-\[\#1a2942\] {
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+            .text-blue-100, .text-slate-400, .text-slate-300, .text-slate-200, .text-slate-100 {
+                color: #333 !important;
+            }
+            .shadow-lg, .shadow, .shadow-sm {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .break-inside-avoid {
+                break-inside: avoid;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css?v=6" />
+
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-[#0f172a] text-slate-200 font-sans antialiased selection:bg-brand-500/30 selection:text-brand-300">
+<div class="app-container">
+
+    <!-- Header / Navbar -->
+    <header class="header-bg text-slate-100 shadow-xl border-b border-[#2d3f5e] sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-6">
+            <button class="hamburger-btn fixed top-6 left-4 z-[60] bg-[#142138] border border-[#2d3f5e] p-2 rounded-lg" id="hamburger-btn" onclick="toggleSidebar(event)" aria-label="Abrir menú" style="display:flex; flex-direction:column; gap:4px; margin-right:15px; position:absolute; left:20px;">
+                <span style="width:20px;height:2px;background:#94a3b8;border-radius:2px;"></span>
+                <span style="width:20px;height:2px;background:#94a3b8;border-radius:2px;"></span>
+                <span style="width:20px;height:2px;background:#94a3b8;border-radius:2px;"></span>
+            </button>
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <div class="bg-brand-600/20 p-3.5 rounded-xl text-brand-400 border border-brand-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                        <i class="fas fa-school fa-2x"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold uppercase tracking-wider text-inherit">Centro Escolar Cantón Patamera</h1>
+                        <p class="text-brand-300 text-sm font-semibold tracking-wide mt-1">Código: 66083 | Año Lectivo 2026</p>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center md:items-end">
+                    <div class="text-center md:text-right text-sm text-slate-400 font-medium mb-4 md:mb-2">
+                        <p><i class="fas fa-map-marker-alt mr-2"></i>Chalatenango Sur, Chalatenango</p>
+                        <p>Distrito: Nombre de Jesús, Cantón Patamera</p>
+                    </div>
+                    <button onclick="window.print()" class="no-print bg-[#142138] text-brand-400 hover:text-brand-300 hover:bg-[#1e293b] font-bold py-2.5 px-6 rounded-xl shadow-lg transition duration-200 flex items-center border border-brand-500/30 active:scale-95">
+                        <i class="fas fa-file-pdf mr-2 text-red-600"></i> Imprimir / Guardar PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+<!-- ════════════════════ SIDEBAR OVERLAY ════════════════════ -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- ════════════════════ SIDEBAR MENU ════════════════════ -->
+<nav class="sidebar-menu" id="sidebar-menu" role="navigation">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="app-logo-icon">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="41" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+          <polygon points="50,20 23,67 77,67" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M50,42 L50,30 M50,42 L42,35 M50,42 L58,35 M50,42 L38,42 M50,42 L62,42 M50,42 L42,49 M50,42 L58,49 M50,42 L45,55 M50,42 L55,55" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M48,42 C48,40 52,40 52,42 L51,45 L49,45 Z" fill="currentColor"/>
+          <path d="M22,72 C35,80 65,80 78,72" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M25,71 L22,68 M32,74 L30,70 M40,76 L39,72 M50,77 L50,73 M60,76 L61,72 M68,74 L70,70 M75,71 L78,68" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="50" cy="85" r="1.5" fill="currentColor"/>
+          <circle cx="40" cy="83" r="1" fill="currentColor"/>
+          <circle cx="60" cy="83" r="1" fill="currentColor"/>
+          <circle cx="31" cy="79" r="1" fill="currentColor"/>
+          <circle cx="69" cy="79" r="1" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="app-logo-text">
+        <strong>Cantón Patamera</strong>
+        <span>Menú Principal</span>
+      </div>
+    </div>
+    <button class="sidebar-close-btn" onclick="closeSidebar()" aria-label="Cerrar menú">✕</button>
+  </div>
+  <div class="sidebar-nav-items">
+    <button class="sidebar-nav-btn" id="tab-dashboard" onclick="navigateWithTransition('index.html', 'dashboard')">
+      <span class="sidebar-nav-icon">📊</span>
+      <span class="sidebar-nav-label">Inicio</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="registro" id="tab-registro" onclick="navigateWithTransition('index.html', 'registro')">
+      <span class="sidebar-nav-icon">✏️</span>
+      <span class="sidebar-nav-label">Registro Diario</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="ingreso" id="tab-ingreso" onclick="navigateWithTransition('index.html', 'ingreso')">
+      <span class="sidebar-nav-icon">📦</span>
+      <span class="sidebar-nav-label">Ingreso de Alimentos</span>
+      <span class="sidebar-nav-badge">Nuevo</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="kardex" id="tab-kardex" onclick="navigateWithTransition('index.html', 'kardex')">
+      <span class="sidebar-nav-icon">📋</span>
+      <span class="sidebar-nav-label">Kardex</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="tabla-amarilla" id="tab-amarilla" onclick="navigateWithTransition('index.html', 'tabla-amarilla')">
+      <span class="sidebar-nav-icon">🟡</span>
+      <span class="sidebar-nav-label">Tabla Resumen</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="ciclos" id="tab-ciclos" onclick="navigateWithTransition('index.html', 'ciclos')">
+      <span class="sidebar-nav-icon">👥</span>
+      <span class="sidebar-nav-label">Por Ciclo</span>
+    </button>
+    
+    <div class="sidebar-divider"></div>
+    <button class="sidebar-nav-btn active" onclick="navigateWithTransition('matricula.html')">
+      <span class="sidebar-nav-icon">🏫</span>
+      <span class="sidebar-nav-label">Matrícula 2026</span>
+    </button>
+
+    <div class="sidebar-divider"></div>
+    <button class="sidebar-nav-btn" onclick="navigateWithTransition('notas.html')">
+      <span class="sidebar-nav-icon">🎓</span>
+      <span class="sidebar-nav-label">Control de Notas</span>
+      <span class="sidebar-nav-badge" style="background:var(--brand-500)">IA</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="config" id="tab-config" onclick="navigateWithTransition('index.html', 'config')">
+      <span class="sidebar-nav-icon">⚙️</span>
+      <span class="sidebar-nav-label">Configuración</span>
+    </button>
+  </div>
+</nav>
+
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 break-inside-avoid">
+            <!-- Total Students -->
+            <div class="bg-[#142138] rounded-2xl shadow-lg p-6 border border-[#2d3f5e] border-l-4 border-l-brand-500 card-hover flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Matrícula Total</p>
+                    <h2 class="text-5xl font-black text-slate-100 tracking-tight" id="total-students">--</h2>
+                </div>
+                <div class="bg-brand-500/10 p-4 rounded-2xl text-brand-400 border border-brand-500/20">
+                    <i class="fas fa-users fa-3x"></i>
+                </div>
+            </div>
+
+            <!-- Boys -->
+            <div class="bg-[#142138] rounded-2xl shadow-lg p-6 border border-[#2d3f5e] border-l-4 border-l-teal-500 card-hover flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Masculino</p>
+                    <h2 class="text-5xl font-black text-slate-100 tracking-tight" id="total-male">--</h2>
+                </div>
+                <div class="bg-teal-500/10 p-4 rounded-2xl text-teal-400 border border-teal-500/20 px-5">
+                    <i class="fas fa-male fa-3x"></i>
+                </div>
+            </div>
+
+            <!-- Girls -->
+            <div class="bg-[#142138] rounded-2xl shadow-lg p-6 border border-[#2d3f5e] border-l-4 border-l-pink-500 card-hover flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Femenino</p>
+                    <h2 class="text-5xl font-black text-slate-100 tracking-tight" id="total-female">--</h2>
+                </div>
+                <div class="bg-pink-500/10 p-4 rounded-2xl text-pink-400 border border-pink-500/20 px-6">
+                    <i class="fas fa-female fa-3x"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 break-inside-avoid">
+            
+            <!-- Stats by Grade -->
+            <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e]">
+                <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-100 flex items-center gap-3">
+                        <div class="bg-brand-500/20 p-2 rounded-lg text-brand-400 text-sm"><i class="fas fa-chart-bar"></i></div>
+                        Estadística por Grado
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto rounded-xl border border-[#2d3f5e]">
+                        <table class="min-w-full divide-y divide-[#2d3f5e]">
+                            <thead class="bg-[#0f172a]/80">
+                                <tr>
+                                    <th class="px-5 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest">Grado</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Masculino</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Femenino</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-brand-400 uppercase tracking-widest">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-[#142138] divide-y divide-[#2d3f5e]" id="grade-stats-body">
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats by Cycle -->
+            <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e] flex flex-col">
+                <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-100 flex items-center gap-3">
+                        <div class="bg-indigo-500/20 p-2 rounded-lg text-indigo-400 text-sm"><i class="fas fa-layer-group"></i></div>
+                        Estadística por Ciclo
+                    </h3>
+                </div>
+                <div class="p-6 flex flex-col lg:flex-col xl:flex-row items-center justify-around flex-1 gap-8">
+                    <div class="w-full xl:w-1/2 overflow-x-auto rounded-xl border border-[#2d3f5e]">
+                         <table class="min-w-full divide-y divide-[#2d3f5e]">
+                            <thead class="bg-[#0f172a]/80">
+                                <tr>
+                                    <th class="px-5 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest">Ciclo Educativo</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-brand-400 uppercase tracking-widest">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-[#142138] divide-y divide-[#2d3f5e]" id="cycle-stats-body">
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="w-full xl:w-1/2 h-48 relative">
+                        <canvas id="cycleChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teachers Section -->
+        <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e] mb-8 break-inside-avoid">
+            <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-4 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-slate-100 flex items-center gap-3">
+                    <div class="bg-purple-500/20 p-2 rounded-lg text-purple-400 text-sm"><i class="fas fa-chalkboard-teacher"></i></div>
+                    Profesores Encargados
+                </h3>
+            </div>
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Teacher 1 -->
+                <div class="border rounded-2xl p-6 bg-[#1a2942] border-[#2d3f5e] shadow-inner card-hover break-inside-avoid">
+                    <div class="flex items-center mb-5 border-b border-[#2d3f5e]/80 pb-4">
+                        <div class="bg-purple-500/10 p-3.5 rounded-xl mr-4 text-purple-400 border border-purple-500/20">
+                            <i class="fas fa-user-graduate fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-100 text-lg">Prof. Alejandra Alvarenga Otero</h4>
+                            <span class="text-[10px] font-black uppercase text-purple-400 tracking-widest">Parvularia y I Ciclo</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-slate-400 uppercase font-bold mb-3 tracking-widest">Grados Asignados:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Parvularia 4</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Parvularia 5</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Parvularia 6</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Primer Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Segundo Grado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher 2 -->
+                <div class="border rounded-2xl p-6 bg-[#1a2942] border-[#2d3f5e] shadow-inner card-hover break-inside-avoid">
+                    <div class="flex items-center mb-5 border-b border-[#2d3f5e]/80 pb-4">
+                        <div class="bg-brand-500/10 p-3.5 rounded-xl mr-4 text-brand-400 border border-brand-500/20">
+                            <i class="fas fa-user-tie fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-100 text-lg">Prof. Marvin Norberto Galvez Cruz</h4>
+                            <span class="text-[10px] font-black uppercase text-brand-400 tracking-widest">I, II y III Ciclo</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-slate-400 uppercase font-bold mb-3 tracking-widest">Grados Asignados:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Tercer Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Cuarto Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Quinto Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Séptimo Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Octavo Grado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student List Section -->
+        <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e] break-inside-avoid">
+            <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-5 flex items-center gap-3">
+                <div class="bg-cyan-500/20 p-2.5 rounded-lg text-cyan-400 shadow-inner">
+                    <i class="fas fa-clipboard-list fa-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-100">Nómina Oficial de Estudiantes</h3>
+                    <p class="text-xs text-slate-400 font-semibold tracking-widest uppercase mt-0.5">Listado estructurado por grados</p>
+                </div>
+            </div>
+            
+            <div id="students-container" class="p-6 space-y-4">
+                <!-- Students will be rendered here by JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-[#0f172a] text-slate-400 py-8 mt-12 no-print border-t border-[#2d3f5e]">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2">Ministerio de Educación, Ciencia y Tecnología</p>
+            <p class="text-xs text-slate-500 font-semibold tracking-wider uppercase mt-2">&copy; 2026 Sistema de Registro Académico - Centro Escolar Cantón Patamera</p>
+        </div>
+    </footer>
+
+    <script>
+        // Data Source extracted from the uploaded PDFs
+        let schoolData = [
+            {
+                grade: "Parvularia 4",
+                cycle: "Parvularia",
+                male: 0,
+                female: 2,
+                students: [
+                    { name: "ALBERTO LOPEZ, CAMILA JIMENA", nie: "11158382" },
+                    { name: "ALBERTO MENBREÑO, GENESIS CAMILA", nie: "11160349" }
+                ]
+            },
+            {
+                grade: "Parvularia 5",
+                cycle: "Parvularia",
+                male: 2,
+                female: 2,
+                students: [
+                    { name: "ALBERTO MORALES, EZEQUIEL LEONEL", nie: "11004157" },
+                    { name: "ALBERTO PORTILLO, JOSELIN ADRIANA", nie: "11023392" },
+                    { name: "HERCULES ALBERTO, DAMARIS JULISSA", nie: "11004100" },
+                    { name: "PORTILLO ALBERTO, JONATAN JAVIER", nie: "11083864" }
+                ]
+            },
+            {
+                grade: "Parvularia 6",
+                cycle: "Parvularia",
+                male: 2,
+                female: 3,
+                students: [
+                    { name: "ALBERTO PORTILLO, JENNIFER PAOLA", nie: "10922595" },
+                    { name: "BONILLA ABREGO, ISAI ORLANDO", nie: "10923110" },
+                    { name: "FLORES ALBERTO, VALERIA DALLARI", nie: "10922887" },
+                    { name: "LOPEZ MARTINEZ, DYLAN FABRICIO", nie: "10921927" },
+                    { name: "ROMERO AVELAR, KARLA GABRIELA", nie: "10901336" }
+                ]
+            },
+            {
+                grade: "Primer Grado",
+                cycle: "I Ciclo",
+                male: 2,
+                female: 1,
+                students: [
+                    { name: "ALBERTO ALBERTO, JOSHUA ALEXIS", nie: "10766064" },
+                    { name: "ALBERTO RIVERA, JOSÉ DANILO", nie: "10768672" },
+                    { name: "MIRANDA ALBERTO, DAYANI MELISSA", nie: "10910728" }
+                ]
+            },
+            {
+                grade: "Segundo Grado",
+                cycle: "I Ciclo",
+                male: 2,
+                female: 1,
+                students: [
+                    { name: "FLORES ALBERTO, JUAN MANUEL", nie: "10633747" },
+                    { name: "HERCULES ALBERTO, DANELY BETZALY", nie: "10645646" },
+                    { name: "HERNÁNDEZ ALBERTO, LIAM CALEB", nie: "10798973" }
+                ]
+            },
+            {
+                grade: "Tercer Grado",
+                cycle: "I Ciclo",
+                male: 2,
+                female: 0,
+                students: [
+                    { name: "PORTILLO ALBERTO, GERARDO EDENILSON", nie: "10488163" },
+                    { name: "PORTILLO ALBERTO, JOEL ISAİ", nie: "10470912" }
+                ]
+            },
+            {
+                grade: "Cuarto Grado",
+                cycle: "II Ciclo",
+                male: 2,
+                female: 0,
+                students: [
+                    { name: "HENRÍQUEZ PORTILLO, IRVIN EMANUEL", nie: "10471058" },
+                    { name: "MIRANDA ALBERTO, DIEGO ALEXANDER", nie: "10539516" }
+                ]
+            },
+            {
+                grade: "Quinto Grado",
+                cycle: "II Ciclo",
+                male: 3,
+                female: 0,
+                students: [
+                    { name: "ALBERTO RIVERA, BRAYAN FABRICIO", nie: "10170774" },
+                    { name: "LÓPEZ ALBERTO, ALEXANDER ADONAY", nie: "10170799" },
+                    { name: "PORTILLO MELGAR, DIEGO FELIPE", nie: "10170814" }
+                ]
+            },
+            {
+                grade: "Séptimo Grado",
+                cycle: "III Ciclo",
+                male: 2,
+                female: 3,
+                students: [
+                    { name: "ALBERTO ALBERTO, ESTRELLA DANIELA", nie: "20230706" },
+                    { name: "ALBERTO LOBOS, JOSÉ EDUARDO", nie: "20330251" },
+                    { name: "ECHEVERRÍA CARDONA, ELIZA ITAMAR", nie: "20230708" },
+                    { name: "ECHEVERRÍA CARDONA, ROSMERY BETSABE", nie: "20230707" },
+                    { name: "RAUDA NATAREN, HARRIS ALEXANDER", nie: "20134702" }
+                ]
+            },
+            {
+                grade: "Octavo Grado",
+                cycle: "III Ciclo",
+                male: 0,
+                female: 1,
+                students: [
+                    { name: "URBINA PORTILLO, ANDREA SARAI", nie: "20134703" }
+                ]
+            }
+        ];
+
+        // --- Render Functions ---
+
+        function renderStats() {
+            const gradeBody = document.getElementById('grade-stats-body');
+            const cycleBody = document.getElementById('cycle-stats-body');
+            let totalM = 0;
+            let totalF = 0;
+            
+            const cycles = {};
+
+            gradeBody.innerHTML = '';
+            cycleBody.innerHTML = '';
+
+            schoolData.forEach(item => {
+                const total = item.male + item.female;
+                totalM += item.male;
+                totalF += item.female;
+
+                const row = `
+                    <tr class="hover:bg-[#1a2942]/50 transition-colors">
+                        <td class="px-5 py-3 whitespace-nowrap font-bold text-slate-200">${item.grade}</td>
+                        <td class="px-5 py-3 text-center text-teal-400 font-bold bg-teal-500/5 border-x border-[#2d3f5e]/30">${item.male}</td>
+                        <td class="px-5 py-3 text-center text-pink-400 font-bold bg-pink-500/5 border-r border-[#2d3f5e]/30">${item.female}</td>
+                        <td class="px-5 py-3 text-center font-black text-brand-300 bg-brand-500/10">${total}</td>
+                    </tr>
+                `;
+                gradeBody.innerHTML += row;
+
+                if(!cycles[item.cycle]) cycles[item.cycle] = 0;
+                cycles[item.cycle] += total;
+            });
+
+            document.getElementById('total-students').innerText = totalM + totalF;
+            document.getElementById('total-male').innerText = totalM;
+            document.getElementById('total-female').innerText = totalF;
+
+            const cycleLabels = [];
+            const cycleData = [];
+            const cycleColors = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899'];
+
+            for (const [cycleName, count] of Object.entries(cycles)) {
+                const row = `
+                    <tr class="hover:bg-[#1a2942]/50 transition-colors">
+                        <td class="px-5 py-4 whitespace-nowrap font-bold text-slate-200">${cycleName}</td>
+                        <td class="px-5 py-4 text-center font-black text-brand-300 bg-brand-500/10 border-l border-[#2d3f5e]/30">${count}</td>
+                    </tr>
+                `;
+                cycleBody.innerHTML += row;
+
+                cycleLabels.push(cycleName);
+                cycleData.push(count);
+            }
+
+            const ctx = document.getElementById('cycleChart').getContext('2d');
+            if (window.cycleChartInstance) { window.cycleChartInstance.destroy(); }
+            window.cycleChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: cycleLabels,
+                    datasets: [{
+                        data: cycleData,
+                        backgroundColor: cycleColors,
+                        borderWidth: 1,
+                        borderColor: '#142138'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    color: '#94a3b8',
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { color: '#94a3b8', boxWidth: 12, font: { size: 11, family: 'Inter' } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderStudents() {
+            const container = document.getElementById('students-container');
+            container.innerHTML = '';
+            
+            const getInitials = (name) => {
+                const parts = name.split(', ');
+                let cleanName = name;
+                if (parts.length === 2) {
+                    cleanName = parts[1] + " " + parts[0]; 
+                }
+                const words = cleanName.split(' ').filter(w => w.length > 0);
+                if (words.length >= 2) {
+                    return (words[0][0] + words[1][0]).toUpperCase();
+                }
+                return cleanName.substring(0, 2).toUpperCase();
+            };
+
+            const accentGradients = [
+                'from-cyan-500/20 to-blue-500/5 text-cyan-400 border-cyan-500/30 shadow-[inset_0_0_10px_rgba(6,182,212,0.2)]',
+                'from-purple-500/20 to-pink-500/5 text-purple-400 border-purple-500/30 shadow-[inset_0_0_10px_rgba(168,85,247,0.2)]',
+                'from-emerald-500/20 to-teal-500/5 text-emerald-400 border-emerald-500/30 shadow-[inset_0_0_10px_rgba(16,185,129,0.2)]',
+                'from-amber-500/20 to-orange-500/5 text-amber-400 border-amber-500/30 shadow-[inset_0_0_10px_rgba(245,158,11,0.2)]',
+                'from-blue-500/20 to-indigo-500/5 text-blue-400 border-blue-500/30 shadow-[inset_0_0_10px_rgba(59,130,246,0.2)]'
+            ];
+
+            schoolData.forEach((item, gradeIndex) => {
+                const total = item.male + item.female;
+                const studentListHTML = item.students.map((student, index) => {
+                    const initials = getInitials(student.name);
+                    const accent = accentGradients[index % accentGradients.length];
+                    const accentColors = accent.split(' ');
+                    const bgGradients = accentColors[0] + ' ' + accentColors[1];
+                    const textColor = accentColors[2];
+                    const borderColor = accentColors[3];
+                    const shadowGlow = accentColors[4] || '';
+
+                    return `
+                    <div class="group relative flex items-center p-4 bg-[#142138] hover:bg-[#1a2942] rounded-2xl border border-[#2d3f5e] hover:border-[#3b4c6b] transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] cursor-default overflow-hidden">
+                        
+                        <!-- Left color accent bar -->
+                        <div class="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b ${bgGradients} opacity-60 group-hover:opacity-100 transition-opacity"></div>
+
+                        <!-- Decorative Watermark Number -->
+                        <div class="absolute -bottom-2 -right-1 text-[#1e293b] font-black text-5xl opacity-30 select-none pointer-events-none transition-all duration-300 group-hover:scale-110 group-hover:opacity-50">
+                            #${(index + 1).toString().padStart(2, '0')}
+                        </div>
+
+                        <!-- Avatar -->
+                        <div class="flex-shrink-0 mr-4 relative z-10">
+                            <div class="w-11 h-11 rounded-full bg-gradient-to-br ${bgGradients} border ${borderColor} flex items-center justify-center font-black text-sm ${textColor} ${shadowGlow} group-hover:scale-105 transition-transform duration-300 tracking-wider">
+                                ${initials}
+                            </div>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="flex-grow z-10 pr-2">
+                            <h5 class="text-slate-200 text-sm font-bold tracking-wide group-hover:text-white transition-colors leading-tight mb-1.5">
+                                ${student.name}
+                            </h5>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="bg-[#0f172a] text-slate-400 border border-[#2d3f5e] px-2 py-0.5 rounded text-[10px] font-mono tracking-wider shadow-inner flex items-center gap-1.5 transition-colors group-hover:border-slate-600">
+                                    <i class="fas fa-id-card text-slate-500 text-[9px] group-hover:text-brand-500/70 transition-colors"></i>
+                                    ${student.nie}
+                                </span>
+                                <!-- Copy NIE Button -->
+                                <button onclick="copyNie('${student.nie}', this)" class="w-6 h-6 rounded bg-[#0f172a] hover:bg-[#1e293b] border border-[#2d3f5e] hover:border-brand-500/50 text-slate-500 hover:text-brand-400 flex items-center justify-center transition-all duration-200 relative group/btn" title="Copiar NIE">
+                                    <i class="far fa-copy text-[10px]"></i>
+                                    <!-- Tooltip -->
+                                    <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-700 text-white text-[9px] font-bold px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg border border-slate-600 z-20">
+                                        Copiar NIE
+                                        <!-- Flecha del tooltip -->
+                                        <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-700"></span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+
+                const sectionHTML = `
+                    <div class="mb-8 break-inside-avoid">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-5">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-[#1a2942] p-3 rounded-xl text-slate-300 border border-[#2d3f5e] shadow-inner">
+                                    <i class="fas fa-folder-open"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-extrabold text-slate-100 text-lg tracking-wide uppercase">${item.grade}</h4>
+                                    <p class="text-[11px] text-slate-500 font-bold tracking-widest uppercase mt-0.5">${total} Matriculados</p>
+                                </div>
+                            </div>
+                            <div class="flex-grow hidden sm:block border-t border-[#2d3f5e] border-dashed mx-4 opacity-70"></div>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                            ${studentListHTML}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += sectionHTML;
+            });
+        }
+
+        window.copyNie = function(nie, btn) {
+            navigator.clipboard.writeText(nie).then(() => {
+                const tooltip = btn.querySelector('span');
+                const originalText = tooltip.childNodes[0].nodeValue;
+                const icon = btn.querySelector('i');
+                
+                tooltip.childNodes[0].nodeValue = '¡Copiado! ';
+                tooltip.classList.remove('bg-slate-700', 'border-slate-600');
+                tooltip.classList.add('bg-emerald-600', 'border-emerald-500');
+                tooltip.style.opacity = '1';
+                tooltip.querySelector('span').classList.replace('border-t-slate-700', 'border-t-emerald-600');
+                
+                icon.classList.remove('fa-copy', 'far');
+                icon.classList.add('fa-check', 'fas', 'text-emerald-400');
+                
+                setTimeout(() => {
+                    tooltip.childNodes[0].nodeValue = originalText;
+                    tooltip.classList.remove('bg-emerald-600', 'border-emerald-500');
+                    tooltip.classList.add('bg-slate-700', 'border-slate-600');
+                    tooltip.style.opacity = '';
+                    tooltip.querySelector('span').classList.replace('border-t-emerald-600', 'border-t-slate-700');
+                    
+                    icon.classList.remove('fa-check', 'fas', 'text-emerald-400');
+                    icon.classList.add('fa-copy', 'far');
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        };
+
+        // --- FIREBASE INTEGRATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOxSEhGKWGbIG5fvUYUBRI--dXsRH3mdU",
+            authDomain: "alicontrol-c64d2.firebaseapp.com",
+            projectId: "alicontrol-c64d2",
+            storageBucket: "alicontrol-c64d2.firebasestorage.app",
+            messagingSenderId: "1052279207948",
+            appId: "1:1052279207948:web:f67b98a112c93ee86dd629"
+        };
+
+        let db;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.firestore();
+            console.log("🔥 Firebase inicializado en módulo Matrícula");
+        } catch(e) {
+            console.error("Error al iniciar Firebase", e);
+        }
+
+        async function initEnrollmentData() {
+            const schoolId = '66083';
+            const year = '2026';
+            const enrollmentRef = db.collection('schools').doc(schoolId).collection('years').doc(year).collection('enrollment');
+            
+            try {
+                const snapshot = await enrollmentRef.get();
+                if (snapshot.empty) {
+                    console.log("📦 Base de datos vacía. Migrando datos locales a Firestore...");
+                    for (const group of schoolData) {
+                        await enrollmentRef.doc(group.grade).set(group);
+                    }
+                    console.log("✅ Migración completada.");
+                } else {
+                    console.log("☁️ Cargando datos desde Firestore...");
+                    const remoteData = [];
+                    snapshot.forEach(doc => {
+                        remoteData.push(doc.data());
+                    });
+                    
+                    const gradeOrder = {
+                        "Parvularia 4": 1,
+                        "Parvularia 5": 2,
+                        "Parvularia 6": 3,
+                        "Primer Grado": 4,
+                        "Segundo Grado": 5,
+                        "Tercer Grado": 6,
+                        "Cuarto Grado": 7,
+                        "Quinto Grado": 8,
+                        "Séptimo Grado": 9,
+                        "Octavo Grado": 10
+                    };
+                    
+                    remoteData.sort((a, b) => {
+                        return (gradeOrder[a.grade] || 99) - (gradeOrder[b.grade] || 99);
+                    });
+                    
+                    schoolData = remoteData;
+                    console.log("✅ Datos cargados correctamente.");
+                }
+            } catch (error) {
+                console.error("❌ Error de Firestore:", error);
+            }
+
+            renderStats();
+            renderStudents();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initEnrollmentData();
+        });
+    </script>
+</div>
+
+<script>
+function toggleSidebar(event) {
+  if (event) event.stopPropagation();
+  const sidebar = document.getElementById('sidebar-menu');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (sidebar.classList.contains('open')) { closeSidebar(); } else {
+    sidebar.classList.add('open'); overlay.classList.add('active'); 
+  }
+}
+function closeSidebar() {
+  document.getElementById('sidebar-menu').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('active');
+}
+</script>
+    <script src="navigation.js?v=1"></script>
+
+            <!-- Global Page Transition Premium -->
+    <div id="global-page-transition">
+        <div class="transition-particles" id="particles-container"></div>
+        
+        <div id="global-transition-content">
+            <div class="stagger-1 transition-header">
+                <i class="fa-solid fa-graduation-cap header-icon"></i>
+                <div class="header-titles">
+                    <h3>Sistema Integral Escolar</h3>
+                    <p>Centro Escolar Cantón Patamera</p>
+                </div>
+            </div>
+            
+            <div class="stagger-1 transition-divider"></div>
+            
+            <div class="stagger-2 transition-module-info">
+                <p class="module-pre-title">Preparando módulo</p>
+                <h2 class="module-title">
+                    <i id="global-transition-icon" class="fa-solid fa-circle-notch fa-spin text-2xl text-cyan-400"></i>
+                    <span id="global-transition-title">CARGANDO...</span>
+                </h2>
+            </div>
+            
+            <div class="stagger-2 transition-divider"></div>
+            
+            <div class="stagger-3 transition-progress-container">
+                <div class="transition-bar-wrapper">
+                    <div id="global-transition-bar">
+                        <div class="bar-shine"></div>
+                    </div>
+                </div>
+                <p id="global-transition-subtitle" class="loading-message">Iniciando sistema...</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sistema de control y registro de alimentos escolares. Automatiza el inventario, Kardex y descuentos de stock en kg." />
+  <title>Escuela Cantón Patamera - Control de Alimentos</title>
+  <link rel="stylesheet" href="styles.css?v=6" />
+</head>
+<body>
+
+<!-- ════════════════════ HEADER ════════════════════ -->
+<header class="app-header">
+  <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Abrir menú">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+  <a href="#" class="app-logo">
+    <div class="app-logo-icon">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2.5"/>
+        <circle cx="50" cy="50" r="41" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+        <polygon points="50,20 23,67 77,67" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M50,42 L50,30 M50,42 L42,35 M50,42 L58,35 M50,42 L38,42 M50,42 L62,42 M50,42 L42,49 M50,42 L58,49 M50,42 L45,55 M50,42 L55,55" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M48,42 C48,40 52,40 52,42 L51,45 L49,45 Z" fill="currentColor"/>
+        <path d="M22,72 C35,80 65,80 78,72" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M25,71 L22,68 M32,74 L30,70 M40,76 L39,72 M50,77 L50,73 M60,76 L61,72 M68,74 L70,70 M75,71 L78,68" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="50" cy="85" r="1.5" fill="currentColor"/>
+        <circle cx="40" cy="83" r="1" fill="currentColor"/>
+        <circle cx="60" cy="83" r="1" fill="currentColor"/>
+        <circle cx="31" cy="79" r="1" fill="currentColor"/>
+        <circle cx="69" cy="79" r="1" fill="currentColor"/>
+      </svg>
+    </div>
+    <div class="app-logo-text">
+      <strong>Cantón Patamera</strong>
+      <span>Escuela Cantón Patamera</span>
+    </div>
+  </a>
+  <div class="header-spacer"></div>
+  <div class="db-status-badge offline" id="db-status-badge" style="margin-right: 0.5rem;">☁️ Sin Conexión</div>
+  <div class="header-date" id="header-date-display">📅 Cargando...</div>
+</header>
+
+<!-- ════════════════════ SIDEBAR OVERLAY ════════════════════ -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- ════════════════════ SIDEBAR MENU ════════════════════ -->
+<nav class="sidebar-menu" id="sidebar-menu" role="navigation">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="app-logo-icon">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="41" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+          <polygon points="50,20 23,67 77,67" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M50,42 L50,30 M50,42 L42,35 M50,42 L58,35 M50,42 L38,42 M50,42 L62,42 M50,42 L42,49 M50,42 L58,49 M50,42 L45,55 M50,42 L55,55" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M48,42 C48,40 52,40 52,42 L51,45 L49,45 Z" fill="currentColor"/>
+          <path d="M22,72 C35,80 65,80 78,72" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M25,71 L22,68 M32,74 L30,70 M40,76 L39,72 M50,77 L50,73 M60,76 L61,72 M68,74 L70,70 M75,71 L78,68" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="50" cy="85" r="1.5" fill="currentColor"/>
+          <circle cx="40" cy="83" r="1" fill="currentColor"/>
+          <circle cx="60" cy="83" r="1" fill="currentColor"/>
+          <circle cx="31" cy="79" r="1" fill="currentColor"/>
+          <circle cx="69" cy="79" r="1" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="app-logo-text">
+        <strong>Cantón Patamera</strong>
+        <span>Menú Principal</span>
+      </div>
+    </div>
+    <button class="sidebar-close-btn" onclick="closeSidebar()" aria-label="Cerrar menú">✕</button>
+  </div>
+  <div class="sidebar-nav-items">
+    <button class="sidebar-nav-btn active" data-tab="dashboard" id="tab-dashboard" onclick="navigateTab('dashboard', this)">
+      <span class="sidebar-nav-icon">📊</span>
+      <span class="sidebar-nav-label">Inicio</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="registro" id="tab-registro" onclick="navigateTab('registro', this)">
+      <span class="sidebar-nav-icon">✏️</span>
+      <span class="sidebar-nav-label">Registro Diario</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="ingreso" id="tab-ingreso" onclick="navigateTab('ingreso', this)">
+      <span class="sidebar-nav-icon">📦</span>
+      <span class="sidebar-nav-label">Ingreso de Alimentos</span>
+      <span class="sidebar-nav-badge">Nuevo</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="kardex" id="tab-kardex" onclick="navigateTab('kardex', this)">
+      <span class="sidebar-nav-icon">📋</span>
+      <span class="sidebar-nav-label">Kardex</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="tabla-amarilla" id="tab-amarilla" onclick="navigateTab('tabla-amarilla', this)">
+      <span class="sidebar-nav-icon">🟡</span>
+      <span class="sidebar-nav-label">Tabla Resumen</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="ciclos" id="tab-ciclos" onclick="navigateTab('ciclos', this)">
+      <span class="sidebar-nav-icon">👥</span>
+      <span class="sidebar-nav-label">Por Ciclo</span>
+    </button>
+    
+    <div class="sidebar-divider"></div>
+    <button class="sidebar-nav-btn" onclick="navigateWithTransition('matricula.html')">
+      <span class="sidebar-nav-icon">🏫</span>
+      <span class="sidebar-nav-label">Matrícula 2026</span>
+    </button>
+    <div class="sidebar-divider"></div>
+    <button class="sidebar-nav-btn" onclick="navigateWithTransition('notas.html')">
+      <span class="sidebar-nav-icon">🎓</span>
+      <span class="sidebar-nav-label">Control de Notas</span>
+      <span class="sidebar-nav-badge" style="background:var(--brand-500)">IA</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="config" id="tab-config" onclick="navigateTab('config', this)">
+      <span class="sidebar-nav-icon">⚙️</span>
+      <span class="sidebar-nav-label">Configuración</span>
+    </button>
+  </div>
+  <div class="sidebar-footer">
+    <p>📅 <span id="sidebar-date"></span></p>
+    <p class="sidebar-version">Cantón Patamera v2.0</p>
+  </div>
+</nav>
+
+<!-- Tab nav removed — now using sidebar hamburger menu -->
+
+<!-- ════════════════════ MAIN ════════════════════ -->
+<main class="main-content">
+
+  <!-- Printable Official Header (Only visible in print mode) -->
+  <div class="print-only-header">
+    <div class="print-gov-header" style="display: flex; align-items: center; justify-content: center; gap: 1rem; border-bottom: 2px solid #cda434; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+      <div class="print-gov-logo" style="width: 55px; height: 55px; color: #cda434; flex-shrink: 0;">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="41" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+          <polygon points="50,20 23,67 77,67" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M50,42 L50,30 M50,42 L42,35 M50,42 L58,35 M50,42 L38,42 M50,42 L62,42 M50,42 L42,49 M50,42 L58,49 M50,42 L45,55 M50,42 L55,55" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M48,42 C48,40 52,40 52,42 L51,45 L49,45 Z" fill="currentColor"/>
+          <path d="M22,72 C35,80 65,80 78,72" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M25,71 L22,68 M32,74 L30,70 M40,76 L39,72 M50,77 L50,73 M60,76 L61,72 M68,74 L70,70 M75,71 L78,68" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="50" cy="85" r="1.5" fill="currentColor"/>
+          <circle cx="40" cy="83" r="1" fill="currentColor"/>
+          <circle cx="60" cy="83" r="1" fill="currentColor"/>
+          <circle cx="31" cy="79" r="1" fill="currentColor"/>
+          <circle cx="69" cy="79" r="1" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="print-gov-text" style="text-align: left;">
+        <h1 class="gov-title" style="font-size: 1.2rem; margin: 0; color: #cda434; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Gobierno de El Salvador</h1>
+        <h2 class="gov-subtitle" style="font-size: 0.95rem; margin: 0; color: #a68529; font-weight: 600;">Ministerio de Educación — Cantón Patamera</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD ─────────────────────────────── -->
+  <section class="tab-panel active" id="panel-dashboard" role="tabpanel">
+    <div class="section-header">
+      <div>
+        <div class="flex items-center gap-1 mt-1" style="margin-bottom:0.5rem">
+          <span class="text-secondary text-sm">📅 Mes activo:</span>
+          <select id="month-selector" class="form-select" onchange="changeActiveMonth(this.value)" style="background: var(--bg-glass); border: 1px solid var(--border); color: var(--text-primary); border-radius: var(--radius-sm); padding: 0.25rem 0.5rem; font-size: 0.85rem; cursor: pointer; outline: none;">
+            <option value="2026-06" selected>Junio 2026</option>
+            <option value="2026-05">Mayo 2026</option>
+            <option value="2026-04">Abril 2026</option>
+            <option value="2026-03">Marzo 2026</option>
+          </select>
+        </div>
+        <p class="section-subtitle hidden" id="dash-month-label">Mes activo: Junio 2026</p>
+      </div>
+      <div class="flex gap-2">
+        <button class="btn btn-ghost btn-sm" onclick="window.print()">📄 Descargar PDF</button>
+        <button class="btn btn-gold btn-sm" onclick="openNewDayModal()">➕ Nuevo Día</button>
+      </div>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="cards-grid" id="kpi-cards">
+      <div class="stat-card card-cyan">
+        <div class="stat-card-label">Días Registrados</div>
+        <div class="stat-card-value" id="kpi-days">0</div>
+        <div class="stat-card-sub">en el mes activo</div>
+        <div class="stat-card-icon">📅</div>
+      </div>
+      <div class="stat-card card-green">
+        <div class="stat-card-label">Total Estudiantes Hoy</div>
+        <div class="stat-card-value" id="kpi-students">0</div>
+        <div class="stat-card-sub" id="kpi-students-sub">último registro</div>
+        <div class="stat-card-icon">🎒</div>
+      </div>
+      <div class="stat-card card-gold">
+        <div class="stat-card-label">Consumo Hoy (kg)</div>
+        <div class="stat-card-value" id="kpi-consumption">0.0</div>
+        <div class="stat-card-sub">todos los alimentos</div>
+        <div class="stat-card-icon">⚖️</div>
+      </div>
+      <div class="stat-card card-violet">
+        <div class="stat-card-label">Alimentos en Stock</div>
+        <div class="stat-card-value" id="kpi-stock-items">8</div>
+        <div class="stat-card-sub">productos activos</div>
+        <div class="stat-card-icon">🏪</div>
+      </div>
+    </div>
+
+    <!-- Stock bars -->
+    <div class="section-header" style="margin-top:1.5rem">
+      <div>
+        <h2 class="section-title" style="font-size:1rem">🏪 Stock en Bodega</h2>
+        <p class="section-subtitle">Saldo disponible vs. stock inicial del mes</p>
+      </div>
+    </div>
+    <div class="stock-grid" id="stock-bars-container"></div>
+
+    <!-- Last 5 entries mini-table -->
+    <div class="section-header" style="margin-top:0.5rem">
+      <h2 class="section-title" style="font-size:1rem">🕐 Últimos Registros</h2>
+    </div>
+    <div class="table-wrap">
+      <table id="recent-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Parvularia</th>
+            <th>1er Ciclo</th>
+            <th>2° y 3° Ciclo</th>
+            <th>Arroz (kg)</th>
+            <th>Frijol (kg)</th>
+            <th>Azúcar (kg)</th>
+            <th>Leche (kg)</th>
+            <th>Cereal V. (kg)</th>
+          </tr>
+        </thead>
+        <tbody id="recent-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── INGRESO DE ALIMENTOS ──────────────────────── -->
+  <section class="tab-panel" id="panel-ingreso" role="tabpanel">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">📦 Ingreso de Alimentos</h1>
+        <p class="section-subtitle">Registra nuevas entradas de alimentos a la bodega</p>
+      </div>
+    </div>
+
+    <div class="form-panel">
+      <div class="form-panel-title">📋 Nuevo Ingreso de Alimentos</div>
+      <div class="info-box">
+        ℹ️ Usa este formulario cuando recibas nuevas bolsas/paquetes de alimentos. Se sumarán automáticamente al stock actual.
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="ingreso-date">Fecha de Ingreso</label>
+          <input type="date" id="ingreso-date" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ingreso-proveedor">Proveedor / Origen</label>
+          <input type="text" id="ingreso-proveedor" class="form-input" placeholder="Ej: MINED, Donación, Compra..." />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="ingreso-nota">Nota / Observaciones</label>
+          <input type="text" id="ingreso-nota" class="form-input" placeholder="Ej: Entrega mensual, bolsas en buen estado..." />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="form-panel-title">🥫 Selecciona los alimentos que ingresan</div>
+
+      <div class="ingreso-food-grid" id="ingreso-food-grid">
+        <!-- Se generan dinámicamente -->
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Vista previa del ingreso -->
+      <div class="form-panel-title">👁️ Vista Previa del Ingreso</div>
+      <div class="table-wrap mb-2">
+        <table id="ingreso-preview-table">
+          <thead>
+            <tr>
+              <th>Alimento</th>
+              <th>Cantidad (kg)</th>
+              <th>Paquetes</th>
+              <th>Stock Actual</th>
+              <th>Nuevo Stock</th>
+            </tr>
+          </thead>
+          <tbody id="ingreso-preview-tbody"></tbody>
+          <tfoot id="ingreso-preview-tfoot"></tfoot>
+        </table>
+      </div>
+
+      <div class="flex gap-2" style="justify-content:flex-end;flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="clearIngresoForm()">🗑️ Limpiar</button>
+        <button class="btn btn-success btn-lg" onclick="saveIngreso()">📦 Registrar Ingreso</button>
+      </div>
+    </div>
+
+    <!-- Historial de ingresos -->
+    <div class="section-header" style="margin-top:1.5rem">
+      <h2 class="section-title" style="font-size:1rem">📜 Historial de Ingresos</h2>
+    </div>
+    <div class="table-wrap">
+      <table id="ingreso-history-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Proveedor</th>
+            <th>Alimentos</th>
+            <th>Total (kg)</th>
+            <th>Nota</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="ingreso-history-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── REGISTRO DIARIO ────────────────────────── -->
+  <section class="tab-panel" id="panel-registro" role="tabpanel">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">✏️ Registro Diario</h1>
+        <p class="section-subtitle">Ingresa la asistencia y selecciona los alimentos servidos</p>
+      </div>
+    </div>
+
+    <div class="form-panel">
+      <div class="form-panel-title">📅 Fecha y Configuración General</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="reg-date">Fecha del Registro</label>
+          <input type="date" id="reg-date" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Estado del Día</label>
+          <div class="flex gap-2 items-center" style="padding-top:0.3rem">
+            <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.82rem">
+              <input type="radio" name="day-status" value="normal" checked id="status-normal" /> Día Normal
+            </label>
+            <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.82rem">
+              <input type="radio" name="day-status" value="feriado" id="status-feriado" /> Feriado / Vacación
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div id="day-form-body">
+        <!-- Parvularia -->
+        <div class="divider"></div>
+        <div class="form-panel-title">🌸 Parvularia</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="parv-students">Estudiantes Presentes</label>
+            <div class="student-counter">
+              <button class="counter-btn" onclick="adjustCounter('parv-students',-1)">−</button>
+              <input type="number" id="parv-students" class="counter-input" value="0" min="0" max="200" />
+              <button class="counter-btn" onclick="adjustCounter('parv-students',1)">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Alimentos Servidos</label>
+            <div class="food-grid" id="parv-foods"></div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="form-panel-title">📗 Primer Ciclo (1°–3° grado)</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="ciclo1-students">Estudiantes Presentes</label>
+            <div class="student-counter">
+              <button class="counter-btn" onclick="adjustCounter('ciclo1-students',-1)">−</button>
+              <input type="number" id="ciclo1-students" class="counter-input" value="0" min="0" max="200" />
+              <button class="counter-btn" onclick="adjustCounter('ciclo1-students',1)">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Alimentos Servidos</label>
+            <div class="food-grid" id="ciclo1-foods"></div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="form-panel-title">📘 Segundo y Tercer Ciclo (4°–9° grado)</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="ciclo23-students">Estudiantes Presentes</label>
+            <div class="student-counter">
+              <button class="counter-btn" onclick="adjustCounter('ciclo23-students',-1)">−</button>
+              <input type="number" id="ciclo23-students" class="counter-input" value="0" min="0" max="200" />
+              <button class="counter-btn" onclick="adjustCounter('ciclo23-students',1)">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Alimentos Servidos</label>
+            <div class="food-grid" id="ciclo23-foods"></div>
+          </div>
+        </div>
+
+        <!-- Vista previa de consumo -->
+        <div class="divider"></div>
+        <div class="form-panel-title">⚖️ Vista Previa de Consumo</div>
+        <div class="info-box">
+          ℹ️ Los valores se calculan automáticamente según las porciones configuradas y los alumnos presentes.
+        </div>
+        <div id="preview-table-wrap" class="table-wrap mb-2">
+          <table id="preview-table">
+            <thead>
+              <tr>
+                <th>Alimento</th>
+                <th>Parvularia</th>
+                <th>1er Ciclo</th>
+                <th>2° y 3° Ciclo</th>
+                <th>Total (kg)</th>
+              </tr>
+            </thead>
+            <tbody id="preview-tbody"></tbody>
+            <tfoot id="preview-tfoot"></tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="flex gap-2" style="justify-content:flex-end;flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="clearDayForm()">🗑️ Limpiar</button>
+        <button class="btn btn-success btn-lg" onclick="saveDayRecord()">💾 Guardar Registro del Día</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── KARDEX ─────────────────────────────────── -->
+  <section class="tab-panel" id="panel-kardex" role="tabpanel">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">📋 Kardex del Mes</h1>
+        <p class="section-subtitle">Bitácora de entradas, salidas y saldo diario por alimento</p>
+      </div>
+      <div class="flex gap-2">
+        <select id="kardex-product-select" class="form-select" style="width:auto" onchange="renderKardex()"></select>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="kardex-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Día</th>
+            <th>Entrada (kg)</th>
+            <th>Salida Parv.</th>
+            <th>Salida 1° Ciclo</th>
+            <th>Salida 2°-3° Ciclo</th>
+            <th>Total Salida (kg)</th>
+            <th>Saldo (kg)</th>
+            <th>Saldo (lbs)</th>
+          </tr>
+        </thead>
+        <tbody id="kardex-tbody"></tbody>
+        <tfoot id="kardex-tfoot"></tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── TABLA AMARILLA ─────────────────────────── -->
+  <section class="tab-panel" id="panel-tabla-amarilla" role="tabpanel">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">🟡 Tabla Resumen del Mes</h1>
+        <p class="section-subtitle">Resumen total de consumo por alimento — equivalente a la "Tabla Amarilla Grande"</p>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+
+    <div class="yellow-table-header">🟡 RESUMEN TOTAL DEL MES — DESCUENTOS DE STOCK EN KG</div>
+    <div class="yellow-table-wrap">
+      <table id="yellow-table">
+        <thead>
+          <tr>
+            <th>Alimento</th>
+            <th>Stock Inicial (kg)</th>
+            <th>Total Consumido (kg)</th>
+            <th>Consumo Parvularia (kg)</th>
+            <th>Consumo 1° Ciclo (kg)</th>
+            <th>Consumo 2°-3° Ciclo (kg)</th>
+            <th>Stock Restante (kg)</th>
+            <th>Stock Restante (lbs)</th>
+            <th>Paquetes Restantes</th>
+          </tr>
+        </thead>
+        <tbody id="yellow-tbody"></tbody>
+        <tfoot id="yellow-tfoot"></tfoot>
+      </table>
+    </div>
+
+    <!-- Per-day breakdown -->
+    <div class="section-header" style="margin-top:2rem">
+      <h2 class="section-title" style="font-size:1rem">📅 Detalle Diario de Consumo</h2>
+      <select id="amarilla-product-select" class="form-select" style="width:auto" onchange="renderAmarillaDetail()"></select>
+    </div>
+    <div class="table-wrap" id="amarilla-detail-wrap">
+      <table id="amarilla-detail-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Día</th>
+            <th>Parv. (alum.)</th>
+            <th>Parv. (kg)</th>
+            <th>1° Ciclo (alum.)</th>
+            <th>1° Ciclo (kg)</th>
+            <th>2°-3° (alum.)</th>
+            <th>2°-3° (kg)</th>
+            <th>Total (kg)</th>
+            <th>Saldo (kg)</th>
+          </tr>
+        </thead>
+        <tbody id="amarilla-detail-tbody"></tbody>
+        <tfoot id="amarilla-detail-tfoot"></tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── POR CICLO ──────────────────────────────── -->
+  <section class="tab-panel" id="panel-ciclos" role="tabpanel">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">👥 Vista por Ciclo</h1>
+        <p class="section-subtitle">Consumo mensual detallado por cada grupo escolar</p>
+      </div>
+    </div>
+
+    <div class="cycle-tabs">
+      <button class="cycle-tab active" onclick="showCycleView('parvularia',this)">🌸 Parvularia</button>
+      <button class="cycle-tab" onclick="showCycleView('primer_ciclo',this)">📗 Primer Ciclo</button>
+      <button class="cycle-tab" onclick="showCycleView('2_y_3_ciclo',this)">📘 2° y 3° Ciclo</button>
+    </div>
+
+    <div class="table-wrap" id="cycle-table-wrap">
+      <table id="cycle-table">
+        <thead>
+          <tr id="cycle-thead-row"></tr>
+        </thead>
+        <tbody id="cycle-tbody"></tbody>
+        <tfoot id="cycle-tfoot"></tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── CONFIGURACIÓN ──────────────────────────── -->
+  <section class="tab-panel" id="panel-config" role="tabpanel">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">⚙️ Configuración</h1>
+        <p class="section-subtitle">Ajusta porciones, pesos de paquetes y stock inicial del mes</p>
+      </div>
+    </div>
+
+    <!-- Porciones por alimento por ciclo -->
+    <div class="config-section">
+      <div class="config-section-title">🍽️ Porciones por Alumno (gramos/día)</div>
+      <div class="info-box">
+        ℹ️ Estos valores se usan para convertir: <strong>Consumo (kg) = Alumnos × Porción (g) / 1000</strong>
+      </div>
+      <div class="config-grid" id="portions-config"></div>
+    </div>
+
+    <!-- Peso de paquetes -->
+    <div class="config-section">
+      <div class="config-section-title">📦 Peso de Paquete / Unidad en Bodega (kg)</div>
+      <div class="info-box">
+        ℹ️ Usado para calcular: <strong>Paquetes restantes = Saldo (kg) / Peso de Paquete (kg)</strong>
+      </div>
+      <div class="config-grid" id="packages-config"></div>
+    </div>
+
+    <!-- Stock inicial del mes -->
+    <div class="config-section">
+      <div class="config-section-title">🏪 Stock Inicial del Mes (kg)</div>
+      <div class="info-box">
+        ℹ️ Cantidad total en bodega al inicio del mes. El sistema descuenta los consumos de este valor.
+      </div>
+      <div class="config-grid" id="stock-config"></div>
+    </div>
+
+    <div class="flex gap-2 mt-2">
+      <button class="btn btn-success" onclick="saveConfig()">💾 Guardar Configuración</button>
+      <button class="btn btn-ghost" onclick="resetConfig()">↩️ Restablecer Defaults</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Gestión de datos -->
+    <div class="config-section">
+      <div class="config-section-title">🗂️ Gestión de Datos</div>
+      <div class="flex gap-2" style="flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="exportJSON()">📤 Exportar Backup (JSON)</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('import-file').click()">📥 Importar Backup</button>
+        <input type="file" id="import-file" accept=".json" class="hidden" onchange="importJSON(event)" />
+        <button class="btn btn-danger btn-sm" onclick="confirmReset()">🗑️ Resetear Todos los Datos</button>
+      </div>
+    </div>
+  </section>
+
+</main><!-- /main-content -->
+
+<!-- ════════════════════ MODAL NUEVO DÍA ════════════════════ -->
+<div class="modal-overlay hidden" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-title">➕ Registro Rápido</div>
+    <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem">¿Vas al Registro Diario completo para ingresar el nuevo día?</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-success" onclick="goToRegistry()">Ir a Registro Diario →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ TOAST CONTAINER ════════════════════ -->
+<div id="toast-container"></div>
+
+<!-- Firebase SDK Compatibility CDN -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<!-- Raw data seeds for March, April, May, and June 2026 -->
+<script src="data.js"></script>
+<script src="app.js?v=2"></script>
+    <script src="navigation.js?v=1"></script>
+
+            <!-- Global Page Transition Premium -->
+    <div id="global-page-transition">
+        <div class="transition-particles" id="particles-container"></div>
+        
+        <div id="global-transition-content">
+            <div class="stagger-1 transition-header">
+                <i class="fa-solid fa-graduation-cap header-icon"></i>
+                <div class="header-titles">
+                    <h3>Sistema Integral Escolar</h3>
+                    <p>Centro Escolar Cantón Patamera</p>
+                </div>
+            </div>
+            
+            <div class="stagger-1 transition-divider"></div>
+            
+            <div class="stagger-2 transition-module-info">
+                <p class="module-pre-title">Preparando módulo</p>
+                <h2 class="module-title">
+                    <i id="global-transition-icon" class="fa-solid fa-circle-notch fa-spin text-2xl text-cyan-400"></i>
+                    <span id="global-transition-title">CARGANDO...</span>
+                </h2>
+            </div>
+            
+            <div class="stagger-2 transition-divider"></div>
+            
+            <div class="stagger-3 transition-progress-container">
+                <div class="transition-bar-wrapper">
+                    <div id="global-transition-bar">
+                        <div class="bar-shine"></div>
+                    </div>
+                </div>
+                <p id="global-transition-subtitle" class="loading-message">Iniciando sistema...</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

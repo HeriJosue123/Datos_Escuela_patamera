@@ -1,0 +1,60 @@
+{
+  "html": [
+    "index.html",
+    "matricula.html",
+    "notas.html"
+  ],
+  "usedJs": [
+    "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js",
+    "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js",
+    "data.js",
+    "app.js",
+    "navigation.js",
+    "https://cdn.tailwindcss.com",
+    "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js",
+    "notas.js"
+  ],
+  "orphans": [
+    "audit.js",
+    "clean-ui.js",
+    "dark-mode-converter.js",
+    "extract-js.js",
+    "fix-badges.js",
+    "fix-bugs-2.js",
+    "fix-bugs.js",
+    "fix-sidebar.js",
+    "fix-tabs.js",
+    "fix_all.js",
+    "fix_links.js",
+    "fix_overlay.js",
+    "inject-sidebar.js",
+    "inject_nav.js",
+    "inject_overlay.js",
+    "patch.js",
+    "phase10.js",
+    "phase11.js",
+    "phase12-matricula.js",
+    "phase13-sidebar.js",
+    "phase14-matricula-firebase.js",
+    "phase15-full-ui.js",
+    "phase16-fix-all.js",
+    "phase17-student-cards.js",
+    "phase18-notas-db.js",
+    "phase19-sync-button.js",
+    "phase2.js",
+    "phase3.js",
+    "phase4.js",
+    "phase5.js",
+    "phase6.js",
+    "phase7.js",
+    "phase8.js",
+    "phase9.js",
+    "redesign_transition.js",
+    "safe-redesign.js",
+    "slow_down_transition.js",
+    "slow_premium.js"
+  ],
+  "css": [
+    "styles.css"
+  ]
+}
