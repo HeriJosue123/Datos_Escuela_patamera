@@ -1,23 +1,8 @@
 // Interceptador Global de Navegación para Módulos (Transiciones Suaves)
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Inyectar el overlay de carga en el DOM
-    const overlay = document.createElement('div');
-    overlay.id = 'global-page-transition';
-    overlay.className = 'fixed inset-0 z-[99999] bg-[#0a1120] flex flex-col items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300';
-    overlay.innerHTML = `
-        <div class="flex flex-col items-center justify-center transform scale-95 transition-transform duration-300" id="global-transition-content">
-            <div class="text-brand-500 mb-6 drop-shadow-[0_0_15px_rgba(56,189,248,0.6)]">
-                <i id="global-transition-icon" class="fa-solid fa-circle-notch fa-spin text-6xl"></i>
-            </div>
-            <h2 id="global-transition-title" class="text-3xl font-extrabold text-slate-100 mb-2 tracking-wider">Cargando...</h2>
-            <p id="global-transition-subtitle" class="text-slate-400 text-sm mb-8 font-medium">Preparando el entorno de trabajo</p>
-            
-            <div class="w-72 h-1.5 bg-[#1a2942] rounded-full overflow-hidden shadow-inner border border-white/5">
-                <div id="global-transition-bar" class="h-full bg-gradient-to-r from-brand-500 via-blue-400 to-indigo-500 w-0 transition-all ease-out rounded-full shadow-[0_0_10px_rgba(56,189,248,0.8)]" style="transition-duration: 1000ms;"></div>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(overlay);
+    // 1. Obtener el overlay (ya inyectado en el HTML)
+    const overlay = document.getElementById('global-page-transition');
+    if (!overlay) return;
 
     // 2. Interceptar clicks en enlaces internos
     const links = document.querySelectorAll('a[href]');
