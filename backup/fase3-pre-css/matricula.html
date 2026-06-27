@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrícula 2026 - C.E. Cantón Patamera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .header-bg {
+            background: #1a2942;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        /* Chart text color override for dark mode */
+        canvas {
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.2));
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d3f5e; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b4c6b; 
+        }
+
+        /* Estilos específicos para impresión */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: white !important;
+                color: black !important;
+            }
+            .header-bg, .bg-[#1a2942], .bg-\[\#1a2942\] {
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+            .text-blue-100, .text-slate-400, .text-slate-300, .text-slate-200, .text-slate-100 {
+                color: #333 !important;
+            }
+            .shadow-lg, .shadow, .shadow-sm {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .break-inside-avoid {
+                break-inside: avoid;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css?v=6" />
+
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-[#0f172a] text-slate-200 font-sans antialiased selection:bg-brand-500/30 selection:text-brand-300">
+<div class="app-container">
+
+    <!-- Header / Navbar -->
+    <header class="header-bg text-slate-100 shadow-xl border-b border-[#2d3f5e] sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-6">
+            <button class="hamburger-btn fixed top-6 left-4 z-[60] bg-[#142138] border border-[#2d3f5e] p-2 rounded-lg" id="hamburger-btn" onclick="toggleSidebar(event)" aria-label="Abrir menú" style="display:flex; flex-direction:column; gap:4px; margin-right:15px; position:absolute; left:20px;">
+                <span style="width:20px;height:2px;background:#94a3b8;border-radius:2px;"></span>
+                <span style="width:20px;height:2px;background:#94a3b8;border-radius:2px;"></span>
+                <span style="width:20px;height:2px;background:#94a3b8;border-radius:2px;"></span>
+            </button>
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <div class="bg-brand-600/20 p-3.5 rounded-xl text-brand-400 border border-brand-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                        <i class="fas fa-school fa-2x"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold uppercase tracking-wider text-inherit">Centro Escolar Cantón Patamera</h1>
+                        <p class="text-brand-300 text-sm font-semibold tracking-wide mt-1">Código: 66083 | Año Lectivo 2026</p>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center md:items-end">
+                    <div class="text-center md:text-right text-sm text-slate-400 font-medium mb-4 md:mb-2">
+                        <p><i class="fas fa-map-marker-alt mr-2"></i>Chalatenango Sur, Chalatenango</p>
+                        <p>Distrito: Nombre de Jesús, Cantón Patamera</p>
+                    </div>
+                    <button onclick="window.print()" class="no-print bg-[#142138] text-brand-400 hover:text-brand-300 hover:bg-[#1e293b] font-bold py-2.5 px-6 rounded-xl shadow-lg transition duration-200 flex items-center border border-brand-500/30 active:scale-95">
+                        <i class="fas fa-file-pdf mr-2 text-red-600"></i> Imprimir / Guardar PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+<!-- ════════════════════ SIDEBAR OVERLAY ════════════════════ -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- ════════════════════ SIDEBAR MENU ════════════════════ -->
+<nav class="sidebar-menu" id="sidebar-menu" role="navigation">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="app-logo-icon">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="41" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+          <polygon points="50,20 23,67 77,67" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M50,42 L50,30 M50,42 L42,35 M50,42 L58,35 M50,42 L38,42 M50,42 L62,42 M50,42 L42,49 M50,42 L58,49 M50,42 L45,55 M50,42 L55,55" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M48,42 C48,40 52,40 52,42 L51,45 L49,45 Z" fill="currentColor"/>
+          <path d="M22,72 C35,80 65,80 78,72" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M25,71 L22,68 M32,74 L30,70 M40,76 L39,72 M50,77 L50,73 M60,76 L61,72 M68,74 L70,70 M75,71 L78,68" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="50" cy="85" r="1.5" fill="currentColor"/>
+          <circle cx="40" cy="83" r="1" fill="currentColor"/>
+          <circle cx="60" cy="83" r="1" fill="currentColor"/>
+          <circle cx="31" cy="79" r="1" fill="currentColor"/>
+          <circle cx="69" cy="79" r="1" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="app-logo-text">
+        <strong>Cantón Patamera</strong>
+        <span>Menú Principal</span>
+      </div>
+    </div>
+    <button class="sidebar-close-btn" onclick="closeSidebar()" aria-label="Cerrar menú">✕</button>
+  </div>
+  <div class="sidebar-nav-items">
+    <button class="sidebar-nav-btn" id="tab-dashboard" onclick="navigateWithTransition('index.html', 'dashboard')">
+      <span class="sidebar-nav-icon">📊</span>
+      <span class="sidebar-nav-label">Inicio</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="registro" id="tab-registro" onclick="navigateWithTransition('index.html', 'registro')">
+      <span class="sidebar-nav-icon">✏️</span>
+      <span class="sidebar-nav-label">Registro Diario</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="ingreso" id="tab-ingreso" onclick="navigateWithTransition('index.html', 'ingreso')">
+      <span class="sidebar-nav-icon">📦</span>
+      <span class="sidebar-nav-label">Ingreso de Alimentos</span>
+      <span class="sidebar-nav-badge">Nuevo</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="kardex" id="tab-kardex" onclick="navigateWithTransition('index.html', 'kardex')">
+      <span class="sidebar-nav-icon">📋</span>
+      <span class="sidebar-nav-label">Kardex</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="tabla-amarilla" id="tab-amarilla" onclick="navigateWithTransition('index.html', 'tabla-amarilla')">
+      <span class="sidebar-nav-icon">🟡</span>
+      <span class="sidebar-nav-label">Tabla Resumen</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="ciclos" id="tab-ciclos" onclick="navigateWithTransition('index.html', 'ciclos')">
+      <span class="sidebar-nav-icon">👥</span>
+      <span class="sidebar-nav-label">Por Ciclo</span>
+    </button>
+    
+    <div class="sidebar-divider"></div>
+    <button class="sidebar-nav-btn active" onclick="navigateWithTransition('matricula.html')">
+      <span class="sidebar-nav-icon">🏫</span>
+      <span class="sidebar-nav-label">Matrícula 2026</span>
+    </button>
+
+    <div class="sidebar-divider"></div>
+    <button class="sidebar-nav-btn" onclick="navigateWithTransition('notas.html')">
+      <span class="sidebar-nav-icon">🎓</span>
+      <span class="sidebar-nav-label">Control de Notas</span>
+      <span class="sidebar-nav-badge" style="background:var(--brand-500)">IA</span>
+    </button>
+    <button class="sidebar-nav-btn" data-tab="config" id="tab-config" onclick="navigateWithTransition('index.html', 'config')">
+      <span class="sidebar-nav-icon">⚙️</span>
+      <span class="sidebar-nav-label">Configuración</span>
+    </button>
+  </div>
+</nav>
+
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 break-inside-avoid">
+            <!-- Total Students -->
+            <div class="bg-[#142138] rounded-2xl shadow-lg p-6 border border-[#2d3f5e] border-l-4 border-l-brand-500 card-hover flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Matrícula Total</p>
+                    <h2 class="text-5xl font-black text-slate-100 tracking-tight" id="total-students">--</h2>
+                </div>
+                <div class="bg-brand-500/10 p-4 rounded-2xl text-brand-400 border border-brand-500/20">
+                    <i class="fas fa-users fa-3x"></i>
+                </div>
+            </div>
+
+            <!-- Boys -->
+            <div class="bg-[#142138] rounded-2xl shadow-lg p-6 border border-[#2d3f5e] border-l-4 border-l-teal-500 card-hover flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Masculino</p>
+                    <h2 class="text-5xl font-black text-slate-100 tracking-tight" id="total-male">--</h2>
+                </div>
+                <div class="bg-teal-500/10 p-4 rounded-2xl text-teal-400 border border-teal-500/20 px-5">
+                    <i class="fas fa-male fa-3x"></i>
+                </div>
+            </div>
+
+            <!-- Girls -->
+            <div class="bg-[#142138] rounded-2xl shadow-lg p-6 border border-[#2d3f5e] border-l-4 border-l-pink-500 card-hover flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Femenino</p>
+                    <h2 class="text-5xl font-black text-slate-100 tracking-tight" id="total-female">--</h2>
+                </div>
+                <div class="bg-pink-500/10 p-4 rounded-2xl text-pink-400 border border-pink-500/20 px-6">
+                    <i class="fas fa-female fa-3x"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 break-inside-avoid">
+            
+            <!-- Stats by Grade -->
+            <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e]">
+                <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-100 flex items-center gap-3">
+                        <div class="bg-brand-500/20 p-2 rounded-lg text-brand-400 text-sm"><i class="fas fa-chart-bar"></i></div>
+                        Estadística por Grado
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto rounded-xl border border-[#2d3f5e]">
+                        <table class="min-w-full divide-y divide-[#2d3f5e]">
+                            <thead class="bg-[#0f172a]/80">
+                                <tr>
+                                    <th class="px-5 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest">Grado</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Masculino</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">Femenino</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-brand-400 uppercase tracking-widest">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-[#142138] divide-y divide-[#2d3f5e]" id="grade-stats-body">
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats by Cycle -->
+            <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e] flex flex-col">
+                <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-100 flex items-center gap-3">
+                        <div class="bg-indigo-500/20 p-2 rounded-lg text-indigo-400 text-sm"><i class="fas fa-layer-group"></i></div>
+                        Estadística por Ciclo
+                    </h3>
+                </div>
+                <div class="p-6 flex flex-col lg:flex-col xl:flex-row items-center justify-around flex-1 gap-8">
+                    <div class="w-full xl:w-1/2 overflow-x-auto rounded-xl border border-[#2d3f5e]">
+                         <table class="min-w-full divide-y divide-[#2d3f5e]">
+                            <thead class="bg-[#0f172a]/80">
+                                <tr>
+                                    <th class="px-5 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest">Ciclo Educativo</th>
+                                    <th class="px-5 py-4 text-center text-xs font-bold text-brand-400 uppercase tracking-widest">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-[#142138] divide-y divide-[#2d3f5e]" id="cycle-stats-body">
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="w-full xl:w-1/2 h-48 relative">
+                        <canvas id="cycleChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teachers Section -->
+        <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e] mb-8 break-inside-avoid">
+            <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-4 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-slate-100 flex items-center gap-3">
+                    <div class="bg-purple-500/20 p-2 rounded-lg text-purple-400 text-sm"><i class="fas fa-chalkboard-teacher"></i></div>
+                    Profesores Encargados
+                </h3>
+            </div>
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Teacher 1 -->
+                <div class="border rounded-2xl p-6 bg-[#1a2942] border-[#2d3f5e] shadow-inner card-hover break-inside-avoid">
+                    <div class="flex items-center mb-5 border-b border-[#2d3f5e]/80 pb-4">
+                        <div class="bg-purple-500/10 p-3.5 rounded-xl mr-4 text-purple-400 border border-purple-500/20">
+                            <i class="fas fa-user-graduate fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-100 text-lg">Prof. Alejandra Alvarenga Otero</h4>
+                            <span class="text-[10px] font-black uppercase text-purple-400 tracking-widest">Parvularia y I Ciclo</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-slate-400 uppercase font-bold mb-3 tracking-widest">Grados Asignados:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Parvularia 4</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Parvularia 5</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Parvularia 6</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Primer Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Segundo Grado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher 2 -->
+                <div class="border rounded-2xl p-6 bg-[#1a2942] border-[#2d3f5e] shadow-inner card-hover break-inside-avoid">
+                    <div class="flex items-center mb-5 border-b border-[#2d3f5e]/80 pb-4">
+                        <div class="bg-brand-500/10 p-3.5 rounded-xl mr-4 text-brand-400 border border-brand-500/20">
+                            <i class="fas fa-user-tie fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-100 text-lg">Prof. Marvin Norberto Galvez Cruz</h4>
+                            <span class="text-[10px] font-black uppercase text-brand-400 tracking-widest">I, II y III Ciclo</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-slate-400 uppercase font-bold mb-3 tracking-widest">Grados Asignados:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Tercer Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Cuarto Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Quinto Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Séptimo Grado</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0f172a] text-slate-300 border border-[#2d3f5e] shadow-sm">Octavo Grado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student List Section -->
+        <div class="bg-[#142138] rounded-2xl shadow-lg overflow-hidden border border-[#2d3f5e] break-inside-avoid">
+            <div class="bg-[#1e293b]/50 border-b border-[#2d3f5e] px-6 py-5 flex items-center gap-3">
+                <div class="bg-cyan-500/20 p-2.5 rounded-lg text-cyan-400 shadow-inner">
+                    <i class="fas fa-clipboard-list fa-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-100">Nómina Oficial de Estudiantes</h3>
+                    <p class="text-xs text-slate-400 font-semibold tracking-widest uppercase mt-0.5">Listado estructurado por grados</p>
+                </div>
+            </div>
+            
+            <div id="students-container" class="p-6 space-y-4">
+                <!-- Students will be rendered here by JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-[#0f172a] text-slate-400 py-8 mt-12 no-print border-t border-[#2d3f5e]">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2">Ministerio de Educación, Ciencia y Tecnología</p>
+            <p class="text-xs text-slate-500 font-semibold tracking-wider uppercase mt-2">&copy; 2026 Sistema de Registro Académico - Centro Escolar Cantón Patamera</p>
+        </div>
+    </footer>
+</div>
+    <script src="matricula.js"></script>
+    <script src="navigation.js?v=1"></script>
+
+            <!-- Global Page Transition Premium -->
+    <div id="global-page-transition">
+        <div class="transition-particles" id="particles-container"></div>
+        
+        <div id="global-transition-content">
+            <div class="stagger-1 transition-header">
+                <i class="fa-solid fa-graduation-cap header-icon"></i>
+                <div class="header-titles">
+                    <h3>Sistema Integral Escolar</h3>
+                    <p>Centro Escolar Cantón Patamera</p>
+                </div>
+            </div>
+            
+            <div class="stagger-1 transition-divider"></div>
+            
+            <div class="stagger-2 transition-module-info">
+                <p class="module-pre-title">Preparando módulo</p>
+                <h2 class="module-title">
+                    <i id="global-transition-icon" class="fa-solid fa-circle-notch fa-spin text-2xl text-cyan-400"></i>
+                    <span id="global-transition-title">CARGANDO...</span>
+                </h2>
+            </div>
+            
+            <div class="stagger-2 transition-divider"></div>
+            
+            <div class="stagger-3 transition-progress-container">
+                <div class="transition-bar-wrapper">
+                    <div id="global-transition-bar">
+                        <div class="bar-shine"></div>
+                    </div>
+                </div>
+                <p id="global-transition-subtitle" class="loading-message">Iniciando sistema...</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -525,6 +525,7 @@ body::before {
 .card-gold  .stat-card-value { color: var(--gold); }
 .card-gold::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background: var(--gold); opacity:0.6; }
 
+.card-rose  { border-color: rgba(244,63,94,0.3);  }
 .card-rose  .stat-card-value { color: var(--rose); }
 .card-rose::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background: var(--rose); opacity:0.6; }
 
@@ -630,8 +631,15 @@ body::before {
   margin-bottom: 1rem;
 }
 
+.form-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 600px) {
-  .form-row, 
+  .form-row, .form-row-3 { grid-template-columns: 1fr; }
 }
 
 .form-group {
@@ -750,6 +758,11 @@ body::before {
 .food-name { font-size: 0.73rem; font-weight: 600; color: inherit; }
 
 /* Student count input */
+.student-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 
 .student-counter {
   display: flex;
@@ -860,6 +873,7 @@ body::before {
 
 .btn-sm { font-size: 0.77rem; padding: 0.4rem 0.85rem; }
 .btn-lg { font-size: 0.95rem; padding: 0.75rem 1.75rem; }
+.btn-full { width: 100%; justify-content: center; }
 
 /* ─── Table ───────────────────────────────────────── */
 .table-wrap {
@@ -971,6 +985,8 @@ tbody td.date-cell {
 .badge-green  { background: var(--green-dim);  color: var(--green); }
 .badge-gold   { background: var(--gold-dim);   color: var(--gold); }
 .badge-rose   { background: var(--rose-dim);   color: var(--rose); }
+.badge-cyan   { background: var(--cyan-dim);   color: var(--cyan); }
+.badge-violet { background: var(--violet-dim); color: var(--violet); }
 
 /* ─── Toast / Alerts ──────────────────────────────── */
 #toast-container {
@@ -1203,6 +1219,10 @@ tbody td.date-cell {
   color: var(--text-muted);
 }
 
+.empty-state-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+.empty-state-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-secondary); }
+.empty-state-sub { font-size: 0.82rem; }
+
 /* Header de impresión (oculto en pantalla) */
 .print-only-header {
   display: none !important;
@@ -1347,7 +1367,14 @@ tbody td.date-cell {
     letter-spacing: 0.5px !important;
   }
   
-  
+  .print-header-divider {
+    height: 2px !important;
+    border-top: 2px solid #c5a02c !important; /* Elegant gold divider */
+    margin-top: 0.5rem !important;
+    margin-bottom: 1.25rem !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
 
   /* Tarjetas KPI elegantes y minimalistas para reporte */
   .cards-grid {
@@ -1455,6 +1482,7 @@ tbody td.date-cell {
   }
 }
 
+
 /* ─── Custom Table UI ──────────────────────────────── */
 .table-container {
     scrollbar-width: thin;
@@ -1497,6 +1525,7 @@ tbody td.date-cell {
     background-color: rgba(0,0,0,0.2);
 }
 
+
 /* ─── Table Input Consistency ──────────────────────── */
 #student-rows input[type="number"], 
 #student-rows input[type="text"] {
@@ -1512,6 +1541,7 @@ tbody td.date-cell {
 #consolidado-rows td {
     padding: 0.75rem !important;
 }
+
 
 /* ─── Consolidado Table Refinements ──────────────────────── */
 #consolidado-rows td {
@@ -1562,6 +1592,7 @@ tbody td.date-cell {
     padding: 0 !important;
     font-size: inherit !important;
 }
+
 
 /* ─── Risk Students Cards (Overriding JS HTML purely via CSS) ──────────────────────── */
 #risk-students-list li {
