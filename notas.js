@@ -43,17 +43,22 @@ function updateHeaderDate() {
 updateHeaderDate();
 setInterval(updateHeaderDate, 60000);
 
-// Modify local storage calls to sync with Firebase
+// --- FIREBASE SYNC (MIGRADO A DB EXPANDIBLE) ---
 async function syncToFirebase() {
     if(!db) { updateDbStatus('offline', 'Sin Conexión'); return; }
     updateDbStatus('syncing', 'Sincronizando...');
     try {
-        const docRef = db.collection('grades_data').doc('master_db');
+        const dbKey = getDbKey();
+        const schoolId = '66083';
+        const docRef = db.collection('schools').doc(schoolId)
+            .collection('years').doc(currentYear)
+            .collection('grade_subjects').doc(dbKey);
+            
         await docRef.set({
-            database: database,
+            students: database[dbKey] || [],
             last_updated: firebase.firestore.FieldValue.serverTimestamp()
         });
-        console.log("Datos guardados en Firebase");
+        
         updateDbStatus('connected', 'Sincronizado');
     } catch(e) {
         console.error("Error guardando a Firebase", e);
@@ -61,257 +66,220 @@ async function syncToFirebase() {
     }
 }
 
-async function loadFromFirebase() {
-    if(!db) return false;
+async function fetchOfficialRoster(year, grade) {
+    if(!db) return [];
     try {
-        const docRef = db.collection('grades_data').doc('master_db');
-        const docSnap = await docRef.get();
-        if (docSnap.exists) {
-            let remoteData = docSnap.data().database;
-            if(remoteData) {
-                database = remoteData;
-                localStorage.setItem('school_notes_full_progression_db', JSON.stringify(database));
-                updateDbStatus('connected', 'Sincronizado');
-                return true;
-            }
+        const schoolId = '66083';
+        const docRef = db.collection('schools').doc(schoolId)
+            .collection('years').doc(year)
+            .collection('enrollment').doc(grade);
+        const snap = await docRef.get();
+        if (snap.exists && snap.data().students) {
+            return snap.data().students;
         }
-    } catch(e) {
-        console.error("Error cargando de Firebase", e);
-    }
-    return false;
+    } catch(e) { console.error("Error fetching roster", e); }
+    return [];
 }
 
-// Official Student Rosters by Grade for Year 2026 (Baseline)
-        const BASE_MATRICULA_2026 = {
-            "2°": [
-                { name: "FLORES ALBERTO, JUAN MANUEL" },
-                { name: "HERCULES ALBERTO, DANELY BETZALY" },
-                { name: "HERNÁNDEZ ALBERTO, LIAM CALEB" }
-            ],
-            "3°": [
-                { name: "PORTILLO ALBERTO, GERARDO EDENILSON" },
-                { name: "PORTILLO ALBERTO, JOEL ISAİ" }
-            ],
-            "4°": [
-                { name: "HENRÍQUEZ PORTILLO, IRVIN EMANUEL" },
-                { name: "MIRANDA ALBERTO, DIEGO ALEXANDER" }
-            ],
-            "5°": [
-                { name: "ALBERTO RIVERA, BRAYAN FABRICIO" },
-                { name: "LÓPEZ ALBERTO, ALEXANDER ADONAY" },
-                { name: "PORTILLO MELGAR, DIEGO FELIPE" }
-            ],
-            "6°": [],
-            "7°": [
-                { name: "ALBERTO ALBERTO, ESTRELLA DANIELA" },
-                { name: "ALBERTO LOBOS, JOSÉ EDUARDO" },
-                { name: "ECHEVERRÍA CARDONA, ELIZA ITAMAR" },
-                { name: "ECHEVERRÍA CARDONA, ROSMERY BETSABE" },
-                { name: "RAUDA NATAREN, HARRIS ALEXANDER" }
-            ],
-            "8°": [
-                { name: "URBINA PORTILLO, ANDREA SARAI" }
-            ],
-            "9°": []
-        };
+// Data State
+let activeTab = 'periodo1';
+let currentYear = '2026';
+let currentGrade = '7° Grado'; // Ajustado a la nomenclatura de Matrícula
+let currentSubject = 'LENGUAJE Y LITERATURA';
 
-        // Full Progression Path for Schooling (2° Grado up to 9° Grado)
-        const GRADE_PATH = ["2°", "3°", "4°", "5°", "6°", "7°", "8°", "9°"];
+let database = {};
 
-        // Function to dynamically calculate promoted rosters for any target year up to 2035
-        function getOfficialRosterForYear(year, targetGrade) {
-            const yearOffset = parseInt(year) - 2026;
-            if (yearOffset === 0) {
-                return BASE_MATRICULA_2026[targetGrade] || [];
-            }
+let headerData = {
+    school: "CANTON PATAMERA",
+    teacher: "Marvin Norberto Galvez"
+};
 
-            // Look for which 2026 grade promotes to the targetGrade in the selected year
-            const targetGradeIdx = GRADE_PATH.indexOf(targetGrade);
-            if (targetGradeIdx === -1) return [];
+let distChartInstance = null;
+let lineChartInstance = null;
 
-            const sourceGradeIdx = targetGradeIdx - yearOffset;
-            if (sourceGradeIdx < 0 || sourceGradeIdx >= GRADE_PATH.length) {
-                return []; // Out of our tracking path bounds
-            }
+// Initialize App (Async to allow DB fetching before render)
+window.addEventListener('DOMContentLoaded', async () => {
+    loadHeaderFromStorage();
+    await loadDatabaseFromStorage();
+    updateUILabel();
+    renderActiveTab();
+});
 
-            const sourceGradeName = GRADE_PATH[sourceGradeIdx];
-            return BASE_MATRICULA_2026[sourceGradeName] || [];
-        }
+function getDbKey() {
+    return `${currentYear}_${currentGrade}_${currentSubject}`;
+}
 
-        // Data State
-        let activeTab = 'periodo1';
-        let currentYear = '2026';
-        let currentGrade = '7°';
-        let currentSubject = 'LENGUAJE Y LITERATURA';
-        
-        // database structure: { "Year_Grade_Subject": [ { id, name, p1: { a1:[], a2:[], a3_nota }, p2:{...}, p3:{...} } ] }
-        let database = {};
-
-        // Setup Header values in localStorage
-        let headerData = {
-            school: "CANTON PATAMERA",
-            teacher: "Marvin Norberto Galvez"
-        };
-
-        // Chart instances
-        let distChartInstance = null;
-        let lineChartInstance = null;
-
-        // Initialize App
-        window.addEventListener('DOMContentLoaded', () => {
-            loadHeaderFromStorage();
-            loadDatabaseFromStorage();
-            updateUILabel();
-            renderActiveTab();
-        });
-
-        // Get key for the combination of Year, Grade and Subject
-        function getDbKey() {
-            return `${currentYear}_${currentGrade}_${currentSubject}`;
-        }
-
-        // Load DB
-        function loadDatabaseFromStorage() {
-            const data = localStorage.getItem('school_notes_full_progression_db');
-            if (data) {
-                database = JSON.parse(data);
-                
-                // Automatic migration: Revert main keys to p1..p3 & ensure a1 has length 8 (for Units 1..8)
-                for (let key in database) {
-                    if (Array.isArray(database[key])) {
-                        database[key] = database[key].map(st => {
-                            ['p1', 'p2', 'p3'].forEach((pKey, pIdx) => {
-                                const uKey = `u${pIdx + 1}`;
-                                // If student has u1..u3 but not p1..p3 (from previous change), copy it back
-                                if (!st[pKey]) {
-                                    if (st[uKey]) {
-                                        st[pKey] = JSON.parse(JSON.stringify(st[uKey]));
-                                    } else {
-                                        st[pKey] = { a1: Array(8).fill(0), a2: Array(6).fill(0), a3_nota: 0 };
-                                    }
-                                }
-                                
-                                // Ensure a1 has length 7 to represent the 7 criteria
-                                if (!st[pKey].a1 || st[pKey].a1.length !== 7) {
-                                    const oldA1 = st[pKey].a1 || [];
-                                    st[pKey].a1 = Array(7).fill(0);
-                                    for (let i = 0; i < Math.min(oldA1.length, 7); i++) {
-                                        st[pKey].a1[i] = oldA1[i];
-                                    }
-                                }
-                                
-                                // Ensure a2 has length 6
-                                if (!st[pKey].a2 || st[pKey].a2.length < 6) {
-                                    const oldA2 = st[pKey].a2 || [];
-                                    st[pKey].a2 = Array(6).fill(0);
-                                    for (let i = 0; i < Math.min(oldA2.length, 6); i++) {
-                                        st[pKey].a2[i] = oldA2[i];
-                                    }
-                                }
-                            });
-                            return st;
-                        });
+function migrateStudentStructure(dbKey) {
+    if (Array.isArray(database[dbKey])) {
+        database[dbKey] = database[dbKey].map(st => {
+            ['p1', 'p2', 'p3'].forEach((pKey, pIdx) => {
+                const uKey = `u${pIdx + 1}`;
+                if (!st[pKey]) {
+                    if (st[uKey]) {
+                        st[pKey] = JSON.parse(JSON.stringify(st[uKey]));
+                    } else {
+                        st[pKey] = { a1: Array(7).fill(0), a2: Array(6).fill(0), a3_nota: 0 };
                     }
                 }
-                saveToLocalStorage();
-            }
-            
-            // Check if current key exists, otherwise initialize it dynamically
-            const dbKey = getDbKey();
-            if (!database[dbKey]) {
-                initializeKeyData(dbKey);
+                
+                if (!st[pKey].a1 || st[pKey].a1.length !== 7) {
+                    const oldA1 = st[pKey].a1 || [];
+                    st[pKey].a1 = Array(7).fill(0);
+                    for (let i = 0; i < Math.min(oldA1.length, 7); i++) {
+                        st[pKey].a1[i] = oldA1[i];
+                    }
+                }
+                
+                if (!st[pKey].a2 || st[pKey].a2.length < 6) {
+                    const oldA2 = st[pKey].a2 || [];
+                    st[pKey].a2 = Array(6).fill(0);
+                    for (let i = 0; i < Math.min(oldA2.length, 6); i++) {
+                        st[pKey].a2[i] = oldA2[i];
+                    }
+                }
+            });
+            return st;
+        });
+    }
+}
+
+async function loadDatabaseFromStorage() {
+    const dbKey = getDbKey();
+    const schoolId = '66083';
+    
+    updateDbStatus('syncing', 'Descargando notas...');
+    try {
+        if(db) {
+            const docRef = db.collection('schools').doc(schoolId)
+                .collection('years').doc(currentYear)
+                .collection('grade_subjects').doc(dbKey);
+                
+            const snap = await docRef.get();
+            if(snap.exists) {
+                database[dbKey] = snap.data().students;
+                updateDbStatus('connected', 'Sincronizado');
+                migrateStudentStructure(dbKey);
+                return;
             }
         }
-
-        // Initialize Year-Grade-Subject key with default official promoted students
-        function initializeKeyData(dbKey) {
-            const officialList = getOfficialRosterForYear(currentYear, currentGrade);
-            database[dbKey] = officialList.map(st => createStudentObject(st.name));
-            saveToLocalStorage();
+    } catch(e) { console.error(e); }
+    
+    // Si no existe en Firebase, buscar en localStorage (Cache/Legacy)
+    const data = localStorage.getItem('school_notes_full_progression_db');
+    if (data) {
+        let legacyDB = JSON.parse(data);
+        if (legacyDB[dbKey]) {
+            database[dbKey] = legacyDB[dbKey];
+            migrateStudentStructure(dbKey);
+            updateDbStatus('offline', 'Cargado Local');
+            // Como esto era offline, forzamos un push a la nueva estructura expandible
+            syncToFirebase();
+            return;
         }
+    }
+    
+    // Si no está en ningun lado, inicializar usando el Roster oficial de Matrícula
+    await initializeKeyData(dbKey);
+    updateDbStatus('connected', 'Sincronizado');
+}
 
-        // Header Data loading
-        function loadHeaderFromStorage() {
-            const savedHeader = localStorage.getItem('school_notes_header_full_progression');
-            if (savedHeader) {
-                headerData = JSON.parse(savedHeader);
-                document.getElementById('header-school').value = headerData.school;
-                document.getElementById('header-teacher').value = headerData.teacher;
-            }
-            
-            const savedYear = localStorage.getItem('school_notes_active_year_full');
-            if (savedYear) {
-                currentYear = savedYear;
-                document.getElementById('header-year').value = currentYear;
-            }
-            
-            const savedGrade = localStorage.getItem('school_notes_active_grade_full');
-            if (savedGrade) {
-                currentGrade = savedGrade;
-                document.getElementById('header-grade').value = currentGrade;
-            }
-            
-            const savedSubject = localStorage.getItem('school_notes_active_subject_full');
-            if (savedSubject) {
-                currentSubject = savedSubject;
-                document.getElementById('header-subject').value = currentSubject;
-            }
-            
-            // Check URL query parameters for API Key
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlKey = urlParams.get('apiKey') || urlParams.get('key');
-            if (urlKey) {
-                localStorage.setItem('gemini_api_key', urlKey);
-            }
-            
-            // Load key and populate inputs
-            let savedKey = localStorage.getItem('gemini_api_key');
-            if (!savedKey) {
-                savedKey = "AIzaSyC3-cBlQ7nJwJ6xKydE_c-cIhOFns-nIAo";
-                localStorage.setItem('gemini_api_key', savedKey);
-            }
-            if (savedKey) {
-                setTimeout(() => {
-                    const modalKey = document.getElementById('modal-gemini-api-key-input');
-                    const dashKey = document.getElementById('dashboard-gemini-api-key-input');
-                    if (modalKey) modalKey.value = savedKey;
-                    if (dashKey) dashKey.value = savedKey;
-                }, 100);
-            }
-        }
+async function initializeKeyData(dbKey) {
+    updateDbStatus('syncing', 'Obteniendo Matrícula...');
+    const officialList = await fetchOfficialRoster(currentYear, currentGrade);
+    
+    if (officialList.length === 0) {
+        console.warn("No hay estudiantes matriculados en", currentYear, currentGrade);
+        database[dbKey] = [];
+    } else {
+        database[dbKey] = officialList.map(st => {
+            let obj = createStudentObject(st.name);
+            obj.nie = st.nie;
+            return obj;
+        });
+    }
+    
+    // Guardar inmediatamente en localStorage y en la nueva base expandible
+    saveToLocalStorage();
+}
 
-        // Save and Sync API Key
-        function saveGeminiKey(val) {
-            localStorage.setItem('gemini_api_key', val.trim());
+function loadHeaderFromStorage() {
+    const savedHeader = localStorage.getItem('school_notes_header_full_progression');
+    if (savedHeader) {
+        headerData = JSON.parse(savedHeader);
+        document.getElementById('header-school').value = headerData.school;
+        document.getElementById('header-teacher').value = headerData.teacher;
+    }
+    
+    const savedYear = localStorage.getItem('school_notes_active_year_full');
+    if (savedYear) {
+        currentYear = savedYear;
+        document.getElementById('header-year').value = currentYear;
+    }
+    
+    const savedGrade = localStorage.getItem('school_notes_active_grade_full');
+    if (savedGrade) {
+        currentGrade = savedGrade;
+        document.getElementById('header-grade').value = currentGrade;
+    }
+    
+    const savedSubject = localStorage.getItem('school_notes_active_subject_full');
+    if (savedSubject) {
+        currentSubject = savedSubject;
+        document.getElementById('header-subject').value = currentSubject;
+    }
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlKey = urlParams.get('apiKey') || urlParams.get('key');
+    if (urlKey) {
+        localStorage.setItem('gemini_api_key', urlKey);
+    }
+    
+    let savedKey = localStorage.getItem('gemini_api_key');
+    if (!savedKey) {
+        savedKey = "AIzaSyC3-cBlQ7nJwJ6xKydE_c-cIhOFns-nIAo";
+        localStorage.setItem('gemini_api_key', savedKey);
+    }
+    if (savedKey) {
+        setTimeout(() => {
             const modalKey = document.getElementById('modal-gemini-api-key-input');
             const dashKey = document.getElementById('dashboard-gemini-api-key-input');
-            if (modalKey) modalKey.value = val.trim();
-            if (dashKey) dashKey.value = val.trim();
-        }
+            if (modalKey) modalKey.value = savedKey;
+            if (dashKey) dashKey.value = savedKey;
+        }, 100);
+    }
+}
 
-        // Save Header
-        function autoSaveHeader() {
-            headerData.school = document.getElementById('header-school').value;
-            headerData.teacher = document.getElementById('header-teacher').value;
-            localStorage.setItem('school_notes_header_full_progression', JSON.stringify(headerData));
-        }
+function saveGeminiKey(val) {
+    localStorage.setItem('gemini_api_key', val.trim());
+    const modalKey = document.getElementById('modal-gemini-api-key-input');
+    const dashKey = document.getElementById('dashboard-gemini-api-key-input');
+    if (modalKey) modalKey.value = val.trim();
+    if (dashKey) dashKey.value = val.trim();
+}
 
-        // Update titles on the screen
-        function updateUILabel() {
-            const labelStr = `${currentYear} - ${currentGrade} Grado - ${currentSubject}`;
-            document.getElementById('current-info-title').innerText = labelStr;
-            document.getElementById('consolidado-info-title').innerText = currentSubject;
-            
-            // Update Consolidado Year Tab labels
-            document.querySelectorAll('.consolidado-year-lbl').forEach(el => {
-                el.innerText = currentYear;
-            });
+function autoSaveHeader() {
+    headerData.school = document.getElementById('header-school').value;
+    headerData.teacher = document.getElementById('header-teacher').value;
+    localStorage.setItem('school_notes_header_full_progression', JSON.stringify(headerData));
+}
 
-            updateCriteriaPanel();
-        }
+function updateUILabel() {
+    const labelStr = `${currentYear} - ${currentGrade} - ${currentSubject}`;
+    document.getElementById('current-info-title').innerText = labelStr;
+    document.getElementById('consolidado-info-title').innerText = currentSubject;
+    
+    document.querySelectorAll('.consolidado-year-lbl').forEach(el => {
+        el.innerText = currentYear;
+    });
 
-        // Render criteria dynamically depending on subject
-        function updateCriteriaPanel() {
+    updateCriteriaPanel();
+}
+
+// Function updateCriteriaPanel() se mantiene igual
+// Vamos a reinsertar la lógica original pero acortada para mantener el archivo limpio.
+// Oh wait, I am replacing a huge chunk that included updateCriteriaPanel(). I MUST keep it.
+
+function updateCriteriaPanel() {
             const panel = document.getElementById('criteria-distribution-panel');
             if (!panel) return;
             
@@ -708,78 +676,55 @@ async function loadFromFirebase() {
             }
         }
 
-        // Switch Year Selector
-        function changeYear() {
-            currentYear = document.getElementById('header-year').value;
-            localStorage.setItem('school_notes_active_year_full', currentYear);
-            
-            // Reload database state for the new key
-            const dbKey = getDbKey();
-            if (!database[dbKey]) {
-                initializeKeyData(dbKey);
-            }
+// Async Switch Handlers
+async function changeYear() {
+    currentYear = document.getElementById('header-year').value;
+    localStorage.setItem('school_notes_active_year_full', currentYear);
+    await loadDatabaseFromStorage();
+    updateUILabel();
+    renderActiveTab();
+    showToast(`Cambiado al Año Lectivo ${currentYear}`, 'fa-circle-check', 'text-brand-400');
+}
 
-            updateUILabel();
-            renderActiveTab();
-            showToast(`Cambiado al Año Lectivo ${currentYear}`, 'fa-circle-check', 'text-brand-400');
-        }
+async function changeGrade() {
+    currentGrade = document.getElementById('header-grade').value;
+    localStorage.setItem('school_notes_active_grade_full', currentGrade);
+    await loadDatabaseFromStorage();
+    updateUILabel();
+    renderActiveTab();
+    showToast(`Cargado ${currentGrade} con éxito`, 'fa-circle-check', 'text-brand-400');
+}
 
-        // Switch Grade Selector
-        function changeGrade() {
-            currentGrade = document.getElementById('header-grade').value;
-            localStorage.setItem('school_notes_active_grade_full', currentGrade);
-            
-            // Reload database state for the new key
-            const dbKey = getDbKey();
-            if (!database[dbKey]) {
-                initializeKeyData(dbKey);
-            }
+async function changeSubject() {
+    currentSubject = document.getElementById('header-subject').value;
+    localStorage.setItem('school_notes_active_subject_full', currentSubject);
+    await loadDatabaseFromStorage();
+    updateUILabel();
+    renderActiveTab();
+    showToast(`Cargado asignatura ${currentSubject}`, 'fa-circle-check', 'text-brand-400');
+}
 
-            updateUILabel();
-            renderActiveTab();
-            showToast(`Cargado ${currentGrade} con éxito`, 'fa-circle-check', 'text-brand-400');
-        }
+function createStudentObject(name) {
+    return {
+        id: Date.now() + Math.random().toString(36).substr(2, 9),
+        name: name.toUpperCase(),
+        p1: { a1: Array(7).fill(0), a2: Array(6).fill(0), a3_nota: 0 },
+        p2: { a1: Array(7).fill(0), a2: Array(6).fill(0), a3_nota: 0 },
+        p3: { a1: Array(7).fill(0), a2: Array(6).fill(0), a3_nota: 0 }
+    };
+}
 
-        // Switch Subject Selector
-        function changeSubject() {
-            currentSubject = document.getElementById('header-subject').value;
-            localStorage.setItem('school_notes_active_subject_full', currentSubject);
-            
-            // Reload database state for the new key
-            const dbKey = getDbKey();
-            if (!database[dbKey]) {
-                initializeKeyData(dbKey);
-            }
-
-            updateUILabel();
-            renderActiveTab();
-            showToast(`Cargado asignatura ${currentSubject}`, 'fa-circle-check', 'text-brand-400');
-        }
-
-        // Helper student generator
-        function createStudentObject(name) {
-            return {
-                id: Date.now() + Math.random().toString(36).substr(2, 9),
-                name: name.toUpperCase(),
-                p1: { a1: Array(7).fill(0), a2: Array(6).fill(0), a3_nota: 0 },
-                p2: { a1: Array(7).fill(0), a2: Array(6).fill(0), a3_nota: 0 },
-                p3: { a1: Array(7).fill(0), a2: Array(6).fill(0), a3_nota: 0 }
-            };
-        }
-
-        // Save State
-        function saveToLocalStorage() {
+function saveToLocalStorage() {
     syncToFirebase();
-            localStorage.setItem('school_notes_full_progression_db', JSON.stringify(database));
-        }
+    localStorage.setItem('school_notes_full_progression_db', JSON.stringify(database));
+}
 
-        // Save All Action Button
-        function saveAllData(manual = false) {
-            saveToLocalStorage();
-            if (manual) {
-                showToast(`Notas del año ${currentYear} guardadas con éxito`, "fa-circle-check", "text-emerald-400");
-            }
-        }
+function saveAllData(manual = false) {
+    saveToLocalStorage();
+    if (manual) {
+        showToast(`Notas guardadas con éxito`, "fa-circle-check", "text-emerald-400");
+    }
+}
 
         // Switch active tab view
         function switchTab(tabId) {
