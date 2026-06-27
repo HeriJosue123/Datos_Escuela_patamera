@@ -1,4 +1,6 @@
+const fs = require('fs');
 
+const navJsContent = `
 // Interceptador Global de Navegación para Módulos (Transiciones Suaves)
 
 window.navigateWithTransition = function(href) {
@@ -66,4 +68,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+});
+`;
+
+fs.writeFileSync('navigation.js', navJsContent);
+console.log('navigation.js updated');
+
+const files = ['index.html', 'notas.html', 'matricula.html'];
+files.forEach(file => {
+    let content = fs.readFileSync(file, 'utf8');
+    content = content.replace(/onclick="window\.location\.href='([^']+)'"/g, "onclick=\"navigateWithTransition('$1')\"");
+    content = content.replace(/onclick='window\.location\.href="([^"]+)"'/g, "onclick='navigateWithTransition(\"$1\")'");
+    fs.writeFileSync(file, content);
+    console.log(file + ' updated');
 });
