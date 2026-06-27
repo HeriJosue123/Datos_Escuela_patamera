@@ -1,4 +1,14 @@
+const fs = require('fs');
 
+// 1. Update styles.css
+let css = fs.readFileSync('styles.css', 'utf8');
+// En styles.css la barra tiene: transition: width 0.8s cubic-bezier...
+css = css.replace(/transition:\s*width 0\.8s cubic-bezier/g, 'transition: width 1.5s cubic-bezier');
+fs.writeFileSync('styles.css', css);
+console.log('styles.css updated');
+
+// 2. Update navigation.js
+const navContent = `
 const loadingMessages = [
     "Sincronizando datos...",
     "Preparando componentes...",
@@ -160,3 +170,7 @@ window.triggerInternalTransition = function(tabId, callback) {
         null
     );
 };
+`;
+
+fs.writeFileSync('navigation.js', navContent);
+console.log('navigation.js updated');

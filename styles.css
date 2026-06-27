@@ -1883,7 +1883,7 @@ tbody td.date-cell {
   background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
   width: 0%;
   border-radius: 99px;
-  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
