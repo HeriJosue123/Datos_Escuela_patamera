@@ -4,12 +4,6 @@
  */
 
 'use strict';
-// DOM Helpers (Optimización de consultas)
-const getEl = id => document.getElementById(id);
-const getVal = id => getEl(id)?.value;
-const getFloat = id => parseFloat(getVal(id)) || 0;
-const getInt = id => parseInt(getVal(id)) || 0;
-
 
 // Capturar errores globales para mostrarlos en forma de alerta en la UI
 window.addEventListener('error', function(event) {
@@ -263,7 +257,7 @@ function changeActiveMonth(newMonth) {
   
   // Actualizar etiqueta del mes activo en el UI (si existe)
   try {
-    const label = getEl('dash-month-label');
+    const label = document.getElementById('dash-month-label');
     const idx = parseInt(m) - 1;
     if (label && !isNaN(idx) && idx >= 0 && idx < 12) {
       label.textContent = `Mes activo: ${MONTHS_ES[idx].charAt(0).toUpperCase() + MONTHS_ES[idx].slice(1)} ${y}`;
@@ -299,7 +293,7 @@ function getFriendlyMonthName(monthStr) {
 }
 
 function populateMonthSelector() {
-  const selector = getEl('month-selector');
+  const selector = document.getElementById('month-selector');
   if (!selector) return;
 
   // Encontrar el mes más antiguo registrado o usar por defecto Marzo 2026
@@ -476,9 +470,9 @@ function getDayName(dateStr) {
 ═══════════════════════════════════════════════════════════ */
 
 function toggleSidebar() {
-  const sidebar = getEl('sidebar-menu');
-  const overlay = getEl('sidebar-overlay');
-  const btn = getEl('hamburger-btn');
+  const sidebar = document.getElementById('sidebar-menu');
+  const overlay = document.getElementById('sidebar-overlay');
+  const btn = document.getElementById('hamburger-btn');
   const isOpen = sidebar.classList.contains('open');
 
   if (isOpen) {
@@ -491,9 +485,9 @@ function toggleSidebar() {
 }
 
 function closeSidebar() {
-  const sidebar = getEl('sidebar-menu');
-  const overlay = getEl('sidebar-overlay');
-  const btn = getEl('hamburger-btn');
+  const sidebar = document.getElementById('sidebar-menu');
+  const overlay = document.getElementById('sidebar-overlay');
+  const btn = document.getElementById('hamburger-btn');
   sidebar.classList.remove('open');
   overlay.classList.remove('active');
   btn.classList.remove('active');
@@ -511,7 +505,7 @@ function navigateTab(tabId, btnEl) {
 
     // Switch panels
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    const panel = getEl(`panel-${tabId}`);
+    const panel = document.getElementById(`panel-${tabId}`);
     if (panel) {
       panel.classList.add('active');
     } else {
@@ -583,7 +577,7 @@ function renderDashboard() {
   const lastDate = dates[dates.length - 1];
 
   // KPIs
-  getEl('kpi-days').textContent = dates.length;
+  document.getElementById('kpi-days').textContent = dates.length;
 
   if (lastDate) {
     const rec = STATE.records[lastDate];
@@ -592,16 +586,16 @@ function renderDashboard() {
       const maxStudents = Math.max(...FOODS.map(f => rec[c]?.[f.key] || 0));
       return s + maxStudents;
     }, 0);
-    getEl('kpi-students').textContent = totalStudents;
-    getEl('kpi-students-sub').textContent = formatDateDisplay(lastDate).split(',')[0] + ' ' + lastDate.split('-')[2];
+    document.getElementById('kpi-students').textContent = totalStudents;
+    document.getElementById('kpi-students-sub').textContent = formatDateDisplay(lastDate).split(',')[0] + ' ' + lastDate.split('-')[2];
 
     const totalConsKg = FOODS.reduce((s, f) => s + getDayTotalKg(lastDate, f.key), 0);
-    getEl('kpi-consumption').textContent = fmtN(totalConsKg, 3);
+    document.getElementById('kpi-consumption').textContent = fmtN(totalConsKg, 3);
   }
 
   // Stock bars
-  const container = getEl('stock-bars-container');
-  let barsHtml = '';
+  const container = document.getElementById('stock-bars-container');
+  container.innerHTML = '';
   FOODS.forEach(f => {
     const initial   = STATE.config.initialStock[f.key] || 0;
     const remaining = getStockRemaining(f.key);
@@ -611,7 +605,7 @@ function renderDashboard() {
     const badgeClass = pct > 50 ? 'badge-green' : pct > 20 ? 'badge-gold' : 'badge-rose';
     const badgeText  = pct > 50 ? 'Suficiente' : pct > 20 ? 'Moderado' : 'Stock Bajo';
 
-    barsHtml += `
+    container.insertAdjacentHTML('beforeend', `
       <div class="stock-card">
         <div class="stock-card-header">
           <div class="stock-name">${f.icon} ${f.label}</div>
@@ -628,13 +622,12 @@ function renderDashboard() {
           <span class="badge ${badgeClass}">${badgeText}</span>
         </div>
       </div>
-    `;
+    `);
   });
-  container.innerHTML = barsHtml;
 
   // Recent records table
-  const tbody = getEl('recent-tbody');
-  let recentHtml = '';
+  const tbody = document.getElementById('recent-tbody');
+  tbody.innerHTML = '';
   const recentDates = [...dates].reverse().slice(0, 7);
   if (recentDates.length === 0) {
     tbody.innerHTML = `<tr><td colspan="9" class="empty-state" style="text-align:center;padding:2rem;color:var(--text-muted)">Sin registros aún</td></tr>`;
@@ -645,7 +638,7 @@ function renderDashboard() {
     const parvAlum  = Math.max(...FOODS.map(f => rec.parvularia?.[f.key] || 0));
     const c1Alum    = Math.max(...FOODS.map(f => rec.primer_ciclo?.[f.key] || 0));
     const c23Alum   = Math.max(...FOODS.map(f => rec['2_y_3_ciclo']?.[f.key] || 0));
-    recentHtml += `
+    tbody.insertAdjacentHTML('beforeend', `
       <tr>
         <td class="date-cell">${date}</td>
         <td class="num">${parvAlum}</td>
@@ -657,9 +650,8 @@ function renderDashboard() {
         <td class="num">${fmtN(getDayTotalKg(date,'leche'),3)}</td>
         <td class="num">${fmtN(getDayTotalKg(date,'cereal_vainilla'),3)}</td>
       </tr>
-    `;
+    `);
   });
-  tbody.innerHTML = recentHtml;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -670,7 +662,7 @@ function initRegistroForm() {
   // Set today's date as default
   const today = new Date();
   const dd = today.toISOString().split('T')[0];
-  const regDateEl = getEl('reg-date');
+  const regDateEl = document.getElementById('reg-date');
   if (regDateEl) {
     regDateEl.value = dd;
   }
@@ -681,7 +673,7 @@ function initRegistroForm() {
     { containerId: 'ciclo1-foods', prefix: 'ciclo1' },
     { containerId: 'ciclo23-foods',prefix: 'ciclo23'},
   ].forEach(({ containerId, prefix }) => {
-    const container = getEl(containerId);
+    const container = document.getElementById(containerId);
     if (!container) {
       console.warn(`Contenedor #${containerId} no encontrado en initRegistroForm`);
       return;
@@ -703,7 +695,7 @@ function initRegistroForm() {
 
   // Add listeners for student inputs
   ['parv-students','ciclo1-students','ciclo23-students'].forEach(id => {
-    const el = getEl(id);
+    const el = document.getElementById(id);
     if (el) {
       el.addEventListener('input', updatePreview);
     }
@@ -713,21 +705,21 @@ function initRegistroForm() {
 }
 
 function adjustCounter(inputId, delta) {
-  const el = getEl(inputId);
+  const el = document.getElementById(inputId);
   const val = parseInt(el.value || 0) + delta;
   el.value = Math.max(0, val);
   updatePreview();
 }
 
 function updatePreview() {
-  const tbody = getEl('preview-tbody');
-  const tfoot = getEl('preview-tfoot');
+  const tbody = document.getElementById('preview-tbody');
+  const tfoot = document.getElementById('preview-tfoot');
   if (!tbody || !tfoot) return;
   tbody.innerHTML = '';
 
-  const parvStudentsEl = getEl('parv-students');
-  const c1StudentsEl   = getEl('ciclo1-students');
-  const c23StudentsEl  = getEl('ciclo23-students');
+  const parvStudentsEl = document.getElementById('parv-students');
+  const c1StudentsEl   = document.getElementById('ciclo1-students');
+  const c23StudentsEl  = document.getElementById('ciclo23-students');
 
   const parvStudents  = parvStudentsEl ? (parseInt(parvStudentsEl.value) || 0) : 0;
   const c1Students    = c1StudentsEl ? (parseInt(c1StudentsEl.value) || 0) : 0;
@@ -736,9 +728,9 @@ function updatePreview() {
   let totalRow = { parv:0, c1:0, c23:0, total:0 };
 
   FOODS.forEach(f => {
-    const parvChecked  = getEl(`parv-${f.key}`)?.checked;
-    const c1Checked    = getEl(`ciclo1-${f.key}`)?.checked;
-    const c23Checked   = getEl(`ciclo23-${f.key}`)?.checked;
+    const parvChecked  = document.getElementById(`parv-${f.key}`)?.checked;
+    const c1Checked    = document.getElementById(`ciclo1-${f.key}`)?.checked;
+    const c23Checked   = document.getElementById(`ciclo23-${f.key}`)?.checked;
 
     const parvKg  = parvChecked  ? alumnosToKg(parvStudents,  f.key) : 0;
     const c1Kg    = c1Checked    ? alumnosToKg(c1Students,    f.key) : 0;
@@ -775,12 +767,12 @@ function updatePreview() {
 }
 
 function saveDayRecord() {
-  const date = getEl('reg-date').value;
+  const date = document.getElementById('reg-date').value;
   if (!date) { showToast('⚠️ Selecciona una fecha.', 'error'); return; }
 
-  const parvStudents  = parseInt(getEl('parv-students').value)  || 0;
-  const c1Students    = parseInt(getEl('ciclo1-students').value) || 0;
-  const c23Students   = parseInt(getEl('ciclo23-students').value)|| 0;
+  const parvStudents  = parseInt(document.getElementById('parv-students').value)  || 0;
+  const c1Students    = parseInt(document.getElementById('ciclo1-students').value) || 0;
+  const c23Students   = parseInt(document.getElementById('ciclo23-students').value)|| 0;
 
   const record = {
     parvularia:    {},
@@ -789,9 +781,9 @@ function saveDayRecord() {
   };
 
   FOODS.forEach(f => {
-    record.parvularia[f.key]     = getEl(`parv-${f.key}`)?.checked   ? parvStudents  : 0;
-    record.primer_ciclo[f.key]   = getEl(`ciclo1-${f.key}`)?.checked  ? c1Students    : 0;
-    record['2_y_3_ciclo'][f.key] = getEl(`ciclo23-${f.key}`)?.checked ? c23Students   : 0;
+    record.parvularia[f.key]     = document.getElementById(`parv-${f.key}`)?.checked   ? parvStudents  : 0;
+    record.primer_ciclo[f.key]   = document.getElementById(`ciclo1-${f.key}`)?.checked  ? c1Students    : 0;
+    record['2_y_3_ciclo'][f.key] = document.getElementById(`ciclo23-${f.key}`)?.checked ? c23Students   : 0;
   });
 
   // Warn if overwriting
@@ -810,7 +802,7 @@ function saveDayRecord() {
 
 function clearDayForm() {
   ['parv-students','ciclo1-students','ciclo23-students'].forEach(id => {
-    getEl(id).value = 0;
+    document.getElementById(id).value = 0;
   });
   document.querySelectorAll('.food-toggle input[type=checkbox]').forEach(cb => cb.checked = false);
   updatePreview();
@@ -821,7 +813,7 @@ function clearDayForm() {
 ═══════════════════════════════════════════════════════════ */
 
 function initKardexProductSelect() {
-  const sel = getEl('kardex-product-select');
+  const sel = document.getElementById('kardex-product-select');
   if (!sel) return;
   sel.innerHTML = '';
   FOODS.forEach(f => {
@@ -833,11 +825,11 @@ function initKardexProductSelect() {
 }
 
 function renderKardex() {
-  const foodKey = getEl('kardex-product-select')?.value || FOODS[0].key;
+  const foodKey = document.getElementById('kardex-product-select')?.value || FOODS[0].key;
   const food    = FOODS.find(f => f.key === foodKey);
   const dates   = getMonthDates();
-  const tbody   = getEl('kardex-tbody');
-  const tfoot   = getEl('kardex-tfoot');
+  const tbody   = document.getElementById('kardex-tbody');
+  const tfoot   = document.getElementById('kardex-tfoot');
   tbody.innerHTML = '';
 
   let runningBalance = STATE.config.initialStock[foodKey] || 0;
@@ -885,8 +877,8 @@ function renderKardex() {
 ═══════════════════════════════════════════════════════════ */
 
 function renderYellowTable() {
-  const tbody = getEl('yellow-tbody');
-  const tfoot = getEl('yellow-tfoot');
+  const tbody = document.getElementById('yellow-tbody');
+  const tfoot = document.getElementById('yellow-tfoot');
   tbody.innerHTML = '';
 
   let totals = { initial:0, consumed:0, parv:0, c1:0, c23:0, remaining:0 };
@@ -939,7 +931,7 @@ function renderYellowTable() {
 }
 
 function initAmarillaProductSelect() {
-  const sel = getEl('amarilla-product-select');
+  const sel = document.getElementById('amarilla-product-select');
   if (!sel) return;
   sel.innerHTML = '';
   FOODS.forEach(f => {
@@ -951,11 +943,11 @@ function initAmarillaProductSelect() {
 }
 
 function renderAmarillaDetail() {
-  const foodKey  = getEl('amarilla-product-select')?.value || FOODS[0].key;
+  const foodKey  = document.getElementById('amarilla-product-select')?.value || FOODS[0].key;
   const food     = FOODS.find(f => f.key === foodKey);
   const dates    = getMonthDates();
-  const tbody    = getEl('amarilla-detail-tbody');
-  const tfoot    = getEl('amarilla-detail-tfoot');
+  const tbody    = document.getElementById('amarilla-detail-tbody');
+  const tfoot    = document.getElementById('amarilla-detail-tfoot');
   tbody.innerHTML = '';
 
   let balance  = STATE.config.initialStock[foodKey] || 0;
@@ -1025,9 +1017,9 @@ function showCycleView(cycleKey, btn) {
 
 function renderCycleView(cycleKey) {
   const dates   = getMonthDates();
-  const theadRow = getEl('cycle-thead-row');
-  const tbody    = getEl('cycle-tbody');
-  const tfoot    = getEl('cycle-tfoot');
+  const theadRow = document.getElementById('cycle-thead-row');
+  const tbody    = document.getElementById('cycle-tbody');
+  const tfoot    = document.getElementById('cycle-tfoot');
 
   // Build header
   theadRow.innerHTML = `<th>Fecha</th><th>Día</th><th>Alumnos</th>` +
@@ -1088,7 +1080,7 @@ function renderCycleView(cycleKey) {
 
 function renderConfig() {
   // Portions
-  const portionsEl = getEl('portions-config');
+  const portionsEl = document.getElementById('portions-config');
   portionsEl.innerHTML = '';
   FOODS.forEach(f => {
     portionsEl.insertAdjacentHTML('beforeend', `
@@ -1105,7 +1097,7 @@ function renderConfig() {
   });
 
   // Package weights
-  const packsEl = getEl('packages-config');
+  const packsEl = document.getElementById('packages-config');
   packsEl.innerHTML = '';
   FOODS.forEach(f => {
     packsEl.insertAdjacentHTML('beforeend', `
@@ -1122,7 +1114,7 @@ function renderConfig() {
   });
 
   // Initial stock
-  const stockEl = getEl('stock-config');
+  const stockEl = document.getElementById('stock-config');
   stockEl.innerHTML = '';
   FOODS.forEach(f => {
     stockEl.insertAdjacentHTML('beforeend', `
@@ -1141,9 +1133,9 @@ function renderConfig() {
 
 function saveConfig() {
   FOODS.forEach(f => {
-    const por = parseFloat(getEl(`por-${f.key}`)?.value);
-    const pw  = parseFloat(getEl(`pw-${f.key}`)?.value);
-    const is  = parseFloat(getEl(`is-${f.key}`)?.value);
+    const por = parseFloat(document.getElementById(`por-${f.key}`)?.value);
+    const pw  = parseFloat(document.getElementById(`pw-${f.key}`)?.value);
+    const is  = parseFloat(document.getElementById(`is-${f.key}`)?.value);
     if (!isNaN(por)) STATE.config.portions[f.key]       = por;
     if (!isNaN(pw))  STATE.config.packageWeights[f.key] = pw;
     if (!isNaN(is))  STATE.config.initialStock[f.key]   = is;
@@ -1247,10 +1239,10 @@ function confirmReset() {
 ═══════════════════════════════════════════════════════════ */
 
 function openNewDayModal() {
-  getEl('modal-overlay').classList.remove('hidden');
+  document.getElementById('modal-overlay').classList.remove('hidden');
 }
 function closeModal() {
-  getEl('modal-overlay').classList.add('hidden');
+  document.getElementById('modal-overlay').classList.add('hidden');
 }
 function goToRegistry() {
   closeModal();
@@ -1263,7 +1255,7 @@ function goToRegistry() {
 
 function showToast(msg, type = 'info') {
   const icons = { success:'✅', error:'❌', info:'ℹ️' };
-  const container = getEl('toast-container');
+  const container = document.getElementById('toast-container');
   const el = document.createElement('div');
   el.className = `toast toast-${type}`;
   el.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span class="toast-msg">${msg}</span>`;
@@ -1284,8 +1276,8 @@ function updateHeaderDate() {
   const d  = now.getDate();
   const mo = MONTHS_ES[now.getMonth()];
   const dateStr = `${dayName.charAt(0).toUpperCase()+dayName.slice(1)}, ${d} de ${mo}`;
-  getEl('header-date-display').textContent = `📅 ${dateStr}`;
-  const sidebarDate = getEl('sidebar-date');
+  document.getElementById('header-date-display').textContent = `📅 ${dateStr}`;
+  const sidebarDate = document.getElementById('sidebar-date');
   if (sidebarDate) sidebarDate.textContent = dateStr;
 }
 
@@ -1295,13 +1287,13 @@ function updateHeaderDate() {
 
 function initIngresoForm() {
   // Set today as default date
-  const dateEl = getEl('ingreso-date');
+  const dateEl = document.getElementById('ingreso-date');
   if (dateEl) {
     dateEl.value = new Date().toISOString().split('T')[0];
   }
 
   // Build food input cards
-  const grid = getEl('ingreso-food-grid');
+  const grid = document.getElementById('ingreso-food-grid');
   if (!grid) return;
   grid.innerHTML = '';
 
@@ -1332,23 +1324,23 @@ function initIngresoForm() {
 }
 
 function onIngresoPackChange(foodKey) {
-  const packs = parseFloat(getEl(`ingreso-paq-${foodKey}`).value) || 0;
+  const packs = parseFloat(document.getElementById(`ingreso-paq-${foodKey}`).value) || 0;
   const pw = STATE.config.packageWeights[foodKey] || 1;
   const kg = packs * pw;
-  getEl(`ingreso-kg-${foodKey}`).value = kg.toFixed(2);
+  document.getElementById(`ingreso-kg-${foodKey}`).value = kg.toFixed(2);
   updateIngresoPreview();
 }
 
 function updateIngresoPreview() {
-  const tbody = getEl('ingreso-preview-tbody');
-  const tfoot = getEl('ingreso-preview-tfoot');
+  const tbody = document.getElementById('ingreso-preview-tbody');
+  const tfoot = document.getElementById('ingreso-preview-tfoot');
   tbody.innerHTML = '';
   let totalKg = 0;
   let hasItems = false;
 
   FOODS.forEach(f => {
-    const kg = parseFloat(getEl(`ingreso-kg-${f.key}`)?.value) || 0;
-    const item = getEl(`ingreso-item-${f.key}`);
+    const kg = parseFloat(document.getElementById(`ingreso-kg-${f.key}`)?.value) || 0;
+    const item = document.getElementById(`ingreso-item-${f.key}`);
     if (kg > 0) {
       hasItems = true;
       item.classList.add('has-value');
@@ -1385,16 +1377,16 @@ function updateIngresoPreview() {
 }
 
 function saveIngreso() {
-  const date = getEl('ingreso-date').value;
+  const date = document.getElementById('ingreso-date').value;
   if (!date) { showToast('⚠️ Selecciona una fecha.', 'error'); return; }
 
-  const proveedor = getEl('ingreso-proveedor').value.trim() || 'Sin especificar';
-  const nota = getEl('ingreso-nota').value.trim();
+  const proveedor = document.getElementById('ingreso-proveedor').value.trim() || 'Sin especificar';
+  const nota = document.getElementById('ingreso-nota').value.trim();
 
   const items = {};
   let totalKg = 0;
   FOODS.forEach(f => {
-    const kg = parseFloat(getEl(`ingreso-kg-${f.key}`)?.value) || 0;
+    const kg = parseFloat(document.getElementById(`ingreso-kg-${f.key}`)?.value) || 0;
     if (kg > 0) {
       items[f.key] = kg;
       totalKg += kg;
@@ -1440,20 +1432,20 @@ function saveIngreso() {
 
 function clearIngresoForm() {
   FOODS.forEach(f => {
-    const kgEl = getEl(`ingreso-kg-${f.key}`);
-    const paqEl = getEl(`ingreso-paq-${f.key}`);
+    const kgEl = document.getElementById(`ingreso-kg-${f.key}`);
+    const paqEl = document.getElementById(`ingreso-paq-${f.key}`);
     if (kgEl) kgEl.value = '0';
     if (paqEl) paqEl.value = '0';
-    const item = getEl(`ingreso-item-${f.key}`);
+    const item = document.getElementById(`ingreso-item-${f.key}`);
     if (item) item.classList.remove('has-value');
   });
-  getEl('ingreso-proveedor').value = '';
-  getEl('ingreso-nota').value = '';
+  document.getElementById('ingreso-proveedor').value = '';
+  document.getElementById('ingreso-nota').value = '';
   updateIngresoPreview();
 }
 
 function renderIngresoHistory() {
-  const tbody = getEl('ingreso-history-tbody');
+  const tbody = document.getElementById('ingreso-history-tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
 
@@ -1583,7 +1575,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const parts = STATE.activeMonth.split('-');
     if (parts.length === 2) {
       const [y, m] = parts;
-      const label = getEl('dash-month-label');
+      const label = document.getElementById('dash-month-label');
       const idx = parseInt(m) - 1;
       if (label && idx >= 0 && idx < 12) {
         label.textContent = `Mes activo: ${MONTHS_ES[idx].charAt(0).toUpperCase() + MONTHS_ES[idx].slice(1)} ${y}`;
