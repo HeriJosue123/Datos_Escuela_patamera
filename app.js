@@ -563,8 +563,14 @@ function navigateTab(tabId, btnEl) {
       console.warn("No se pudo guardar la pestaña en localStorage:", e);
     }
 
-    // Refresh content
-    refreshActiveTab(tabId);
+    // Ejecutar transición visual suave antes de mostrar el contenido
+    if (window.triggerInternalTransition) {
+        window.triggerInternalTransition(tabId, () => {
+            refreshActiveTab(tabId);
+        });
+    } else {
+        refreshActiveTab(tabId);
+    }
   } catch (err) {
     console.error("Error en navigateTab:", err);
   }

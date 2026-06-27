@@ -148,28 +148,28 @@
     <button class="sidebar-close-btn" onclick="closeSidebar()" aria-label="Cerrar menú">✕</button>
   </div>
   <div class="sidebar-nav-items">
-    <button class="sidebar-nav-btn" id="tab-dashboard" onclick="localStorage.setItem('active_tab', 'dashboard'); window.location.href='index.html';">
+    <button class="sidebar-nav-btn" id="tab-dashboard" onclick="navigateWithTransition('index.html', 'dashboard')">
       <span class="sidebar-nav-icon">📊</span>
       <span class="sidebar-nav-label">Inicio</span>
     </button>
-    <button class="sidebar-nav-btn" data-tab="registro" id="tab-registro" onclick="localStorage.setItem('active_tab', 'registro'); window.location.href='index.html';">
+    <button class="sidebar-nav-btn" data-tab="registro" id="tab-registro" onclick="navigateWithTransition('index.html', 'registro')">
       <span class="sidebar-nav-icon">✏️</span>
       <span class="sidebar-nav-label">Registro Diario</span>
     </button>
-    <button class="sidebar-nav-btn" data-tab="ingreso" id="tab-ingreso" onclick="localStorage.setItem('active_tab', 'ingreso'); window.location.href='index.html';">
+    <button class="sidebar-nav-btn" data-tab="ingreso" id="tab-ingreso" onclick="navigateWithTransition('index.html', 'ingreso')">
       <span class="sidebar-nav-icon">📦</span>
       <span class="sidebar-nav-label">Ingreso de Alimentos</span>
       <span class="sidebar-nav-badge">Nuevo</span>
     </button>
-    <button class="sidebar-nav-btn" data-tab="kardex" id="tab-kardex" onclick="localStorage.setItem('active_tab', 'kardex'); window.location.href='index.html';">
+    <button class="sidebar-nav-btn" data-tab="kardex" id="tab-kardex" onclick="navigateWithTransition('index.html', 'kardex')">
       <span class="sidebar-nav-icon">📋</span>
       <span class="sidebar-nav-label">Kardex</span>
     </button>
-    <button class="sidebar-nav-btn" data-tab="tabla-amarilla" id="tab-amarilla" onclick="localStorage.setItem('active_tab', 'tabla-amarilla'); window.location.href='index.html';">
+    <button class="sidebar-nav-btn" data-tab="tabla-amarilla" id="tab-amarilla" onclick="navigateWithTransition('index.html', 'tabla-amarilla')">
       <span class="sidebar-nav-icon">🟡</span>
       <span class="sidebar-nav-label">Tabla Resumen</span>
     </button>
-    <button class="sidebar-nav-btn" data-tab="ciclos" id="tab-ciclos" onclick="localStorage.setItem('active_tab', 'ciclos'); window.location.href='index.html';">
+    <button class="sidebar-nav-btn" data-tab="ciclos" id="tab-ciclos" onclick="navigateWithTransition('index.html', 'ciclos')">
       <span class="sidebar-nav-icon">👥</span>
       <span class="sidebar-nav-label">Por Ciclo</span>
     </button>
@@ -185,7 +185,7 @@
       <span class="sidebar-nav-label">Control de Notas</span>
       <span class="sidebar-nav-badge" style="background:var(--brand-500)">IA</span>
     </button>
-    <button class="sidebar-nav-btn" data-tab="config" id="tab-config" onclick="localStorage.setItem('active_tab', 'config'); window.location.href='index.html';">
+    <button class="sidebar-nav-btn" data-tab="config" id="tab-config" onclick="navigateWithTransition('index.html', 'config')">
       <span class="sidebar-nav-icon">⚙️</span>
       <span class="sidebar-nav-label">Configuración</span>
     </button>

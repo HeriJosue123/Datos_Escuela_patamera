@@ -1,4 +1,7 @@
+const fs = require('fs');
 
+// 1. Update navigation.js
+const navContent = `
 window.navigateWithTransition = function(href, tabId) {
     if (!href) return;
     
@@ -89,3 +92,56 @@ window.triggerInternalTransition = function(tabId, callback) {
         }, 300);
     }, 850);
 };
+`;
+fs.writeFileSync('navigation.js', navContent);
+
+// 2. Fix HTML files links
+const htmlFiles = ['index.html', 'notas.html', 'matricula.html'];
+htmlFiles.forEach(file => {
+    let content = fs.readFileSync(file, 'utf8');
+    
+    // Convert: onclick="localStorage.setItem('active_tab', 'kardex'); window.location.href='index.html';"
+    // to: onclick="navigateWithTransition('index.html', 'kardex')"
+    content = content.replace(/onclick="localStorage\.setItem\('active_tab', '([^']+)'\); window\.location\.href='([^']+)'[;]*"/g, 'onclick="navigateWithTransition(\'$2\', \'$1\')"');
+    content = content.replace(/onclick="localStorage\.setItem\('active_tab',\s*'([^']+)'\);\s*window\.location\.href='([^']+)'[;]*"/g, 'onclick="navigateWithTransition(\'$2\', \'$1\')"');
+    
+    fs.writeFileSync(file, content);
+    console.log(file + ' updated');
+});
+
+// 3. Update app.js navigateTab to use triggerInternalTransition
+let appJs = fs.readFileSync('app.js', 'utf8');
+const oldNavigateCode = `
+    // Guardar pestaña activa en localStorage para persistencia
+    try {
+      localStorage.setItem('alicontrol_active_tab', tabId);
+    } catch (e) {
+      console.warn("No se pudo guardar la pestaña en localStorage:", e);
+    }
+
+    // Refresh content
+    refreshActiveTab(tabId);`;
+    
+const newNavigateCode = `
+    // Guardar pestaña activa en localStorage para persistencia
+    try {
+      localStorage.setItem('alicontrol_active_tab', tabId);
+    } catch (e) {
+      console.warn("No se pudo guardar la pestaña en localStorage:", e);
+    }
+
+    // Ejecutar transición visual suave antes de mostrar el contenido
+    if (window.triggerInternalTransition) {
+        window.triggerInternalTransition(tabId, () => {
+            refreshActiveTab(tabId);
+        });
+    } else {
+        refreshActiveTab(tabId);
+    }`;
+
+if (appJs.includes('refreshActiveTab(tabId);') && !appJs.includes('window.triggerInternalTransition')) {
+    appJs = appJs.replace(oldNavigateCode, newNavigateCode);
+    fs.writeFileSync('app.js', appJs);
+    console.log('app.js updated');
+}
+
