@@ -100,48 +100,7 @@ let STATE = {
   lastUpdated: 0,
 };
 
-let db = null;
-let firebaseInitialized = false;
 
-function initFirebase() {
-  try {
-    if (typeof firebase === 'undefined') {
-      console.warn("Firebase SDK no cargado. Funcionando en modo local.");
-      return;
-    }
-    const firebaseConfig = {
-      apiKey: "AIzaSyCOxSEhGKWGbIG5fvUYUBRI--dXsRH3mdU",
-      authDomain: "alicontrol-c64d2.firebaseapp.com",
-      projectId: "alicontrol-c64d2",
-      storageBucket: "alicontrol-c64d2.firebasestorage.app",
-      messagingSenderId: "1052279207948",
-      appId: "1:1052279207948:web:f67b98a112c93ee86dd629"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    
-    // Habilitar persistencia offline
-    db.enablePersistence().catch(err => {
-      console.warn("Error de persistencia Firestore:", err.code);
-    });
-    
-    firebaseInitialized = true;
-    console.log("Firebase inicializado correctamente.");
-  } catch (e) {
-    console.error("Fallo al inicializar Firebase:", e);
-  }
-}
-
-// Inicializar Firebase inmediatamente
-initFirebase();
-
-function updateDbStatus(status, text) {
-  const badge = document.getElementById('db-status-badge');
-  if (!badge) return;
-  badge.className = `db-status-badge ${status}`;
-  badge.innerHTML = `☁️ ${text}`;
-}
 
 let syncTimeout = null;
 function saveToFirebase() {
