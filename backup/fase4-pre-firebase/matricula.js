@@ -325,6 +325,27 @@
             });
         };
 
+        // --- FIREBASE INTEGRATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOxSEhGKWGbIG5fvUYUBRI--dXsRH3mdU",
+            authDomain: "alicontrol-c64d2.firebaseapp.com",
+            projectId: "alicontrol-c64d2",
+            storageBucket: "alicontrol-c64d2.firebasestorage.app",
+            messagingSenderId: "1052279207948",
+            appId: "1:1052279207948:web:f67b98a112c93ee86dd629"
+        };
+
+        let db;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.firestore();
+            console.log("🔥 Firebase inicializado en módulo Matrícula");
+        } catch(e) {
+            console.error("Error al iniciar Firebase", e);
+        }
+
         async function initEnrollmentData() {
             const schoolId = '66083';
             const year = '2026';
