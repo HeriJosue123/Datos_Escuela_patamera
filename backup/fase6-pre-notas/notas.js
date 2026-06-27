@@ -1,16 +1,9 @@
 
 
 
-
-// DOM Helpers (Optimización de consultas para Phase 6)
-const getEl = id => getEl(id);
-const getVal = id => getVal(id);
-const getFloat = id => parseFloat(getVal(id)) || 0;
-const getInt = id => parseInt(getVal(id)) || 0;
-
 function updateHeaderDate() {
-  const dateEl = getEl('header-date-display');
-  const sidebarDateEl = getEl('sidebar-date');
+  const dateEl = document.getElementById('header-date-display');
+  const sidebarDateEl = document.getElementById('sidebar-date');
   const d = new Date();
   const str = d.toLocaleDateString('es-ES', { weekday:'long', month:'long', day:'numeric' });
   const formatted = str.charAt(0).toUpperCase() + str.slice(1);
@@ -222,26 +215,26 @@ function loadHeaderFromStorage() {
     const savedHeader = localStorage.getItem('school_notes_header_full_progression');
     if (savedHeader) {
         headerData = JSON.parse(savedHeader);
-        getEl('header-school').value = headerData.school;
-        getEl('header-teacher').value = headerData.teacher;
+        document.getElementById('header-school').value = headerData.school;
+        document.getElementById('header-teacher').value = headerData.teacher;
     }
     
     const savedYear = localStorage.getItem('school_notes_active_year_full');
     if (savedYear) {
         currentYear = savedYear;
-        getEl('header-year').value = currentYear;
+        document.getElementById('header-year').value = currentYear;
     }
     
     const savedGrade = localStorage.getItem('school_notes_active_grade_full');
     if (savedGrade) {
         currentGrade = savedGrade;
-        getEl('header-grade').value = currentGrade;
+        document.getElementById('header-grade').value = currentGrade;
     }
     
     const savedSubject = localStorage.getItem('school_notes_active_subject_full');
     if (savedSubject) {
         currentSubject = savedSubject;
-        getEl('header-subject').value = currentSubject;
+        document.getElementById('header-subject').value = currentSubject;
     }
     
     const urlParams = new URLSearchParams(window.location.search);
@@ -257,8 +250,8 @@ function loadHeaderFromStorage() {
     }
     if (savedKey) {
         setTimeout(() => {
-            const modalKey = getEl('modal-gemini-api-key-input');
-            const dashKey = getEl('dashboard-gemini-api-key-input');
+            const modalKey = document.getElementById('modal-gemini-api-key-input');
+            const dashKey = document.getElementById('dashboard-gemini-api-key-input');
             if (modalKey) modalKey.value = savedKey;
             if (dashKey) dashKey.value = savedKey;
         }, 100);
@@ -267,22 +260,22 @@ function loadHeaderFromStorage() {
 
 function saveGeminiKey(val) {
     localStorage.setItem('gemini_api_key', val.trim());
-    const modalKey = getEl('modal-gemini-api-key-input');
-    const dashKey = getEl('dashboard-gemini-api-key-input');
+    const modalKey = document.getElementById('modal-gemini-api-key-input');
+    const dashKey = document.getElementById('dashboard-gemini-api-key-input');
     if (modalKey) modalKey.value = val.trim();
     if (dashKey) dashKey.value = val.trim();
 }
 
 function autoSaveHeader() {
-    headerData.school = getEl('header-school').value;
-    headerData.teacher = getEl('header-teacher').value;
+    headerData.school = document.getElementById('header-school').value;
+    headerData.teacher = document.getElementById('header-teacher').value;
     localStorage.setItem('school_notes_header_full_progression', JSON.stringify(headerData));
 }
 
 function updateUILabel() {
     const labelStr = `${currentYear} - ${currentGrade} - ${currentSubject}`;
-    getEl('current-info-title').innerText = labelStr;
-    getEl('consolidado-info-title').innerText = currentSubject;
+    document.getElementById('current-info-title').innerText = labelStr;
+    document.getElementById('consolidado-info-title').innerText = currentSubject;
     
     document.querySelectorAll('.consolidado-year-lbl').forEach(el => {
         el.innerText = currentYear;
@@ -296,7 +289,7 @@ function updateUILabel() {
 // Oh wait, I am replacing a huge chunk that included updateCriteriaPanel(). I MUST keep it.
 
 function updateCriteriaPanel() {
-            const panel = getEl('criteria-distribution-panel');
+            const panel = document.getElementById('criteria-distribution-panel');
             if (!panel) return;
             
             // Define titles for the table column headers
@@ -412,13 +405,13 @@ function updateCriteriaPanel() {
 
             const titles = headerTitles[currentSubject] || headerTitles['default'];
             for (let i = 1; i <= 7; i++) {
-                const el = getEl(`a1-c${i}-hdr`);
+                const el = document.getElementById(`a1-c${i}-hdr`);
                 if (el) el.title = titles[i - 1];
             }
 
             const titles2 = headerTitles2[currentSubject] || headerTitles2['default'];
             for (let i = 1; i <= 6; i++) {
-                const el = getEl(`a2-c${i}-hdr`);
+                const el = document.getElementById(`a2-c${i}-hdr`);
                 if (el) el.title = titles2[i - 1];
             }
             
@@ -694,7 +687,7 @@ function updateCriteriaPanel() {
 
 // Async Switch Handlers
 async function changeYear() {
-    currentYear = getEl('header-year').value;
+    currentYear = document.getElementById('header-year').value;
     localStorage.setItem('school_notes_active_year_full', currentYear);
     await loadDatabaseFromStorage();
     updateUILabel();
@@ -703,7 +696,7 @@ async function changeYear() {
 }
 
 async function changeGrade() {
-    currentGrade = getEl('header-grade').value;
+    currentGrade = document.getElementById('header-grade').value;
     localStorage.setItem('school_notes_active_grade_full', currentGrade);
     await loadDatabaseFromStorage();
     updateUILabel();
@@ -712,7 +705,7 @@ async function changeGrade() {
 }
 
 async function changeSubject() {
-    currentSubject = getEl('header-subject').value;
+    currentSubject = document.getElementById('header-subject').value;
     localStorage.setItem('school_notes_active_subject_full', currentSubject);
     await loadDatabaseFromStorage();
     updateUILabel();
@@ -749,7 +742,7 @@ function saveAllData(manual = false) {
                 btn.classList.remove('text-brand-400', 'border-brand-400', 'font-bold'); btn.classList.add('border-transparent');
                 btn.classList.add('text-slate-400', 'hover:text-slate-200', 'hover:border-slate-500', 'font-semibold');
             });
-            const activeBtn = getEl(`tab-${tabId}`);
+            const activeBtn = document.getElementById(`tab-${tabId}`);
             activeBtn.classList.remove('text-slate-400', 'hover:text-slate-200', 'hover:border-slate-500', 'font-semibold', 'border-transparent');
             activeBtn.classList.add('text-brand-400', 'border-brand-400', 'font-bold');
 
@@ -758,9 +751,9 @@ function saveAllData(manual = false) {
 
         // Dynamic rendering based on active views
         function renderActiveTab() {
-            const periodView = getEl('period-view');
-            const consolidadoView = getEl('consolidado-view');
-            const analisisView = getEl('analisis-view');
+            const periodView = document.getElementById('period-view');
+            const consolidadoView = document.getElementById('consolidado-view');
+            const analisisView = document.getElementById('analisis-view');
 
             if (activeTab === 'consolidado') {
                 periodView.classList.add('hidden');
@@ -782,7 +775,7 @@ function saveAllData(manual = false) {
                 else if (activeTab === 'periodo2') periodName = "Segundo Periodo";
                 else if (activeTab === 'periodo3') periodName = "Tercer Periodo";
                 
-                getEl('period-badge').innerText = periodName;
+                document.getElementById('period-badge').innerText = periodName;
                 renderPeriodTable();
             }
         }
@@ -814,7 +807,7 @@ function saveAllData(manual = false) {
 
         // Autocomplete suggestions for AI student search
         function suggestStudents(query) {
-            const suggestionsDiv = getEl('ai-suggestions');
+            const suggestionsDiv = document.getElementById('ai-suggestions');
             if (!query.trim()) {
                 suggestionsDiv.innerHTML = '';
                 suggestionsDiv.classList.add('hidden');
@@ -839,8 +832,8 @@ function saveAllData(manual = false) {
 
         // Select item in suggestions list
         function selectStudentForAI(name) {
-            getEl('ai-student-search').value = name;
-            getEl('ai-suggestions').classList.add('hidden');
+            document.getElementById('ai-student-search').value = name;
+            document.getElementById('ai-suggestions').classList.add('hidden');
             runStudentAIAnalysis();
         }
 
@@ -891,15 +884,15 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
 
         // Run Student pedagogical AI analysis dynamically
         async function runStudentAIAnalysis() {
-            const nameInput = getEl('ai-student-search');
+            const nameInput = document.getElementById('ai-student-search');
             const studentName = nameInput.value.trim().toUpperCase();
             
             const dbKey = getDbKey();
             const list = database[dbKey] || [];
             const student = list.find(s => s.name.toUpperCase() === studentName);
 
-            const blankState = getEl('ai-blank-state');
-            const resultsDiv = getEl('ai-results');
+            const blankState = document.getElementById('ai-blank-state');
+            const resultsDiv = document.getElementById('ai-results');
 
             if (!student) {
                 showToast("Por favor selecciona un alumno válido de la lista", "fa-circle-xmark", "text-rose-400");
@@ -921,26 +914,26 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
             
             const prom = (p1Grade + p2Grade + p3Grade) / 3;
 
-            getEl('ai-student-header-name').innerText = student.name;
-            getEl('ai-score-units-list').innerHTML = periodScoresHtml;
-            getEl('ai-score-final').innerText = prom.toFixed(1);
+            document.getElementById('ai-student-header-name').innerText = student.name;
+            document.getElementById('ai-score-units-list').innerHTML = periodScoresHtml;
+            document.getElementById('ai-score-final').innerText = prom.toFixed(1);
 
             // Check if API Key is available to perform real Gemini analysis
             const apiKey = localStorage.getItem('gemini_api_key');
             if (apiKey && apiKey.length > 10) {
-                getEl('ai-student-trend').innerText = "PROCESANDO... 🤖";
-                getEl('ai-student-trend').className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-indigo-600 text-white animate-pulse";
-                getEl('ai-score-breakdown').innerHTML = `<p class="leading-relaxed text-slate-400 italic">Llamando a la IA real de Gemini para generar diagnóstico personalizado...</p>`;
-                getEl('ai-recommendation').innerText = "Generando recomendaciones...";
+                document.getElementById('ai-student-trend').innerText = "PROCESANDO... 🤖";
+                document.getElementById('ai-student-trend').className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-indigo-600 text-white animate-pulse";
+                document.getElementById('ai-score-breakdown').innerHTML = `<p class="leading-relaxed text-slate-400 italic">Llamando a la IA real de Gemini para generar diagnóstico personalizado...</p>`;
+                document.getElementById('ai-recommendation').innerText = "Generando recomendaciones...";
 
                 const gradesSummary = `Materia: ${currentSubject}\n- 1° Periodo: ${p1Grade.toFixed(1)}\n- 2° Periodo: ${p2Grade.toFixed(1)}\n- 3° Periodo: ${p3Grade.toFixed(1)}\n- Promedio Final: ${prom.toFixed(1)}`;
                 
                 const aiResult = await callGeminiAPI(student.name, gradesSummary);
                 if (aiResult) {
-                    getEl('ai-student-trend').innerText = aiResult.trend.toUpperCase();
-                    getEl('ai-student-trend').className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-cyan-600 text-white";
-                    getEl('ai-score-breakdown').innerHTML = `<p class="leading-relaxed">${aiResult.diagnostico}</p>`;
-                    getEl('ai-recommendation').innerText = aiResult.recommendation;
+                    document.getElementById('ai-student-trend').innerText = aiResult.trend.toUpperCase();
+                    document.getElementById('ai-student-trend').className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-cyan-600 text-white";
+                    document.getElementById('ai-score-breakdown').innerHTML = `<p class="leading-relaxed">${aiResult.diagnostico}</p>`;
+                    document.getElementById('ai-recommendation').innerText = aiResult.recommendation;
                     return;
                 } else {
                     showToast("Error en API Key. Usando diagnóstico simulado local.", "fa-circle-exclamation", "text-amber-400");
@@ -965,8 +958,8 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
                     trendColor = "bg-rose-500 text-white";
                 }
             }
-            getEl('ai-student-trend').innerText = trend;
-            getEl('ai-student-trend').className = `px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${trendColor}`;
+            document.getElementById('ai-student-trend').innerText = trend;
+            document.getElementById('ai-student-trend').className = `px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${trendColor}`;
 
             // 3. Score breakdown checks (Integradora, Cotidianas, Pruebas)
             let activePeriodsCount = 0;
@@ -1004,7 +997,7 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
             } else {
                 focusDesc = "✔️ Rendimiento promedio y regular. Presenta regularidad en la entrega de tareas y en sus exámenes de periodo sin variaciones extremas en su desempeño.";
             }
-            getEl('ai-score-breakdown').innerHTML = `<p class="leading-relaxed">${focusDesc}</p>`;
+            document.getElementById('ai-score-breakdown').innerHTML = `<p class="leading-relaxed">${focusDesc}</p>`;
 
             // 4. Personalized AI Recommendation
             let recommendation = "";
@@ -1019,12 +1012,12 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
             } else {
                 recommendation = "Continuar el monitoreo periódico en clases. Fortalecer el hábito de lectura autónoma y repasar los temas más complejos antes de las pruebas objetivas de cierre.";
             }
-            getEl('ai-recommendation').innerText = recommendation;
+            document.getElementById('ai-recommendation').innerText = recommendation;
         }
 
         // Render Period Table
         function renderPeriodTable() {
-            const tbody = getEl('student-rows');
+            const tbody = document.getElementById('student-rows');
             tbody.innerHTML = '';
 
             const dbKey = getDbKey();
@@ -1140,7 +1133,7 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
         // Render Consolidado
         // Render Consolidado
         function renderConsolidado() {
-            const tbody = getEl('consolidado-rows');
+            const tbody = document.getElementById('consolidado-rows');
             tbody.innerHTML = '';
 
             const dbKey = getDbKey();
@@ -1181,20 +1174,20 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
         // Render analytics Dashboard & calculate student progress metrics
         function renderAnalyticsDashboard() {
             // Reset AI card search box on load
-            getEl('ai-student-search').value = '';
-            getEl('ai-blank-state').classList.remove('hidden');
-            getEl('ai-results').classList.add('hidden');
+            document.getElementById('ai-student-search').value = '';
+            document.getElementById('ai-blank-state').classList.remove('hidden');
+            document.getElementById('ai-results').classList.add('hidden');
 
             const dbKey = getDbKey();
             const list = database[dbKey] || [];
             
             if (list.length === 0) {
-                getEl('kpi-avg').innerText = "0.0";
-                getEl('kpi-pass-rate').innerText = "0%";
-                getEl('kpi-risk').innerText = "0";
-                getEl('kpi-max').innerText = "0.0";
-                getEl('risk-students-list').innerHTML = `<li class="p-4 text-center text-slate-400">Sin alumnos registrados.</li>`;
-                getEl('pedagogical-tips').innerText = "Agrega alumnos y notas para poder analizar su progreso.";
+                document.getElementById('kpi-avg').innerText = "0.0";
+                document.getElementById('kpi-pass-rate').innerText = "0%";
+                document.getElementById('kpi-risk').innerText = "0";
+                document.getElementById('kpi-max').innerText = "0.0";
+                document.getElementById('risk-students-list').innerHTML = `<li class="p-4 text-center text-slate-400">Sin alumnos registrados.</li>`;
+                document.getElementById('pedagogical-tips').innerText = "Agrega alumnos y notas para poder analizar su progreso.";
                 return;
             }
 
@@ -1250,20 +1243,20 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
             const passRate = (approvedCount / list.length) * 100;
 
             // Update KPI views
-            getEl('kpi-avg').innerText = overallAvg.toFixed(1);
-            getEl('kpi-pass-rate').innerText = `${passRate.toFixed(0)}%`;
-            getEl('kpi-risk').innerText = riskCount;
-            getEl('kpi-max').innerText = maxGrade.toFixed(1);
+            document.getElementById('kpi-avg').innerText = overallAvg.toFixed(1);
+            document.getElementById('kpi-pass-rate').innerText = `${passRate.toFixed(0)}%`;
+            document.getElementById('kpi-risk').innerText = riskCount;
+            document.getElementById('kpi-max').innerText = maxGrade.toFixed(1);
 
             // Populate risks list
             if (riskCount === 0) {
-                getEl('risk-students-list').innerHTML = `
+                document.getElementById('risk-students-list').innerHTML = `
                     <li class="p-4 text-center text-emerald-600 bg-emerald-50 rounded-lg">
                         <i class="fa-solid fa-circle-check text-2xl mb-1 block"></i>
                         ¡Felicidades! Todos los alumnos de la sección están aprobados.
                     </li>`;
             } else {
-                getEl('risk-students-list').innerHTML = riskListHTML;
+                document.getElementById('risk-students-list').innerHTML = riskListHTML;
             }
 
             // Create automatic recommendations feedback text
@@ -1275,7 +1268,7 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
             } else {
                 feedback = `🎉 Excelente rendimiento general en la materia. El promedio general es sobresaliente (${overallAvg.toFixed(1)}) con una tasa de aprobación del ${passRate.toFixed(0)}%. Se recomienda motivar al grupo a mantener la constancia y proponer actividades de ampliación o retos intelectuales a los alumnos más aventajados.`;
             }
-            getEl('pedagogical-tips').innerText = feedback;
+            document.getElementById('pedagogical-tips').innerText = feedback;
 
             // Helper format
             function promediosFormateados(n) { return n.toFixed(1); }
@@ -1288,7 +1281,7 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
         function renderCharts(rangesData, periodsData) {
             // 1. Rendimiento Distribution Chart
             if (distChartInstance) distChartInstance.destroy();
-            const ctx1 = getEl('distributionChart').getContext('2d');
+            const ctx1 = document.getElementById('distributionChart').getContext('2d');
             distChartInstance = new Chart(ctx1, {
                 type: 'bar',
                 data: {
@@ -1318,7 +1311,7 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
 
             // 2. Period averages comparisons line chart
             if (lineChartInstance) lineChartInstance.destroy();
-            const ctx2 = getEl('periodComparisonChart').getContext('2d');
+            const ctx2 = document.getElementById('periodComparisonChart').getContext('2d');
             lineChartInstance = new Chart(ctx2, {
                 type: 'line',
                 data: {
@@ -1398,24 +1391,24 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
 
         // Add Student Modal Helpers
         function openAddStudentModal() {
-            getEl('new-student-name').value = '';
-            const modal = getEl('student-modal');
+            document.getElementById('new-student-name').value = '';
+            const modal = document.getElementById('student-modal');
             modal.classList.remove('hidden');
             setTimeout(() => {
-                getEl('modal-container').classList.remove('scale-95');
-                getEl('new-student-name').focus();
+                document.getElementById('modal-container').classList.remove('scale-95');
+                document.getElementById('new-student-name').focus();
             }, 10);
         }
 
         function closeAddStudentModal() {
-            getEl('modal-container').classList.add('scale-95');
+            document.getElementById('modal-container').classList.add('scale-95');
             setTimeout(() => {
-                getEl('student-modal').classList.add('hidden');
+                document.getElementById('student-modal').classList.add('hidden');
             }, 150);
         }
 
         function addStudent() {
-            const nameInput = getEl('new-student-name');
+            const nameInput = document.getElementById('new-student-name');
             const name = nameInput.value.trim().toUpperCase();
             
             if (name === '') {
@@ -1456,9 +1449,9 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
 
         // Toast Messages Helper
         function showToast(message, iconClass, colorClass) {
-            const toast = getEl('toast');
-            const toastIcon = getEl('toast-icon');
-            const toastMsg = getEl('toast-message');
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toast-icon');
+            const toastMsg = document.getElementById('toast-message');
 
             toastIcon.className = `${colorClass} text-lg`;
             toastIcon.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
@@ -1475,32 +1468,32 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
 
         // Modal AI Assistant Functions
         function openAIAssistantModal() {
-            getEl('modal-ai-student-search').value = '';
-            getEl('modal-ai-suggestions').innerHTML = '';
-            getEl('modal-ai-suggestions').classList.add('hidden');
-            getEl('modal-ai-blank-state').classList.remove('hidden');
-            getEl('modal-ai-results').classList.add('hidden');
+            document.getElementById('modal-ai-student-search').value = '';
+            document.getElementById('modal-ai-suggestions').innerHTML = '';
+            document.getElementById('modal-ai-suggestions').classList.add('hidden');
+            document.getElementById('modal-ai-blank-state').classList.remove('hidden');
+            document.getElementById('modal-ai-results').classList.add('hidden');
             
             // Set correct title text
-            getEl('modal-ai-title-label').innerText = `Buscar Alumno en Grado Actual (${currentGrade} - Año ${currentYear})`;
+            document.getElementById('modal-ai-title-label').innerText = `Buscar Alumno en Grado Actual (${currentGrade} - Año ${currentYear})`;
 
-            const modal = getEl('ai-assistant-modal');
+            const modal = document.getElementById('ai-assistant-modal');
             modal.classList.remove('hidden');
             setTimeout(() => {
-                getEl('ai-modal-container').classList.remove('scale-95');
-                getEl('modal-ai-student-search').focus();
+                document.getElementById('ai-modal-container').classList.remove('scale-95');
+                document.getElementById('modal-ai-student-search').focus();
             }, 10);
         }
 
         function closeAIAssistantModal() {
-            getEl('ai-modal-container').classList.add('scale-95');
+            document.getElementById('ai-modal-container').classList.add('scale-95');
             setTimeout(() => {
-                getEl('ai-assistant-modal').classList.add('hidden');
+                document.getElementById('ai-assistant-modal').classList.add('hidden');
             }, 150);
         }
 
         function suggestStudentsModal(query) {
-            const suggestionsDiv = getEl('modal-ai-suggestions');
+            const suggestionsDiv = document.getElementById('modal-ai-suggestions');
             if (!query.trim()) {
                 suggestionsDiv.innerHTML = '';
                 suggestionsDiv.classList.add('hidden');
@@ -1524,8 +1517,8 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
         }
 
         function selectStudentForAIModal(name) {
-            getEl('modal-ai-student-search').value = name;
-            getEl('modal-ai-suggestions').classList.add('hidden');
+            document.getElementById('modal-ai-student-search').value = name;
+            document.getElementById('modal-ai-suggestions').classList.add('hidden');
             runStudentAIAnalysisModal(name);
         }
 
@@ -1542,7 +1535,7 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
                 "MORAL, URBANIDAD Y CIVICA"
             ];
 
-            const tbody = getEl('modal-ai-subjects-tbody');
+            const tbody = document.getElementById('modal-ai-subjects-tbody');
             tbody.innerHTML = '';
 
             let validSubjectsData = [];
@@ -1603,19 +1596,19 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
             }
 
             // Hide blank state and display results
-            getEl('modal-ai-blank-state').classList.add('hidden');
-            getEl('modal-ai-results').classList.remove('hidden');
+            document.getElementById('modal-ai-blank-state').classList.add('hidden');
+            document.getElementById('modal-ai-results').classList.remove('hidden');
 
             const avgOverall = totalWeightedSum / countWeightedSubjects;
 
             // Check if API Key is available for real Gemini analysis across all subjects
             const apiKey = localStorage.getItem('gemini_api_key');
             if (apiKey && apiKey.length > 10) {
-                getEl('modal-ai-student-name').innerText = studentName;
-                getEl('modal-ai-student-trend').innerText = "PROCESANDO... 🤖";
-                getEl('modal-ai-student-trend').className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-600 text-white animate-pulse";
-                getEl('modal-ai-summary-text').innerHTML = `<p class="leading-relaxed text-slate-400 italic">Analizando el expediente escolar completo con la IA real de Gemini...</p>`;
-                getEl('modal-ai-recommendation-text').innerHTML = "Generando recomendaciones...";
+                document.getElementById('modal-ai-student-name').innerText = studentName;
+                document.getElementById('modal-ai-student-trend').innerText = "PROCESANDO... 🤖";
+                document.getElementById('modal-ai-student-trend').className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-600 text-white animate-pulse";
+                document.getElementById('modal-ai-summary-text').innerHTML = `<p class="leading-relaxed text-slate-400 italic">Analizando el expediente escolar completo con la IA real de Gemini...</p>`;
+                document.getElementById('modal-ai-recommendation-text').innerHTML = "Generando recomendaciones...";
 
                 const gradesSummaryText = validSubjectsData.map(d => `- ${d.subject}: Promedio Final = ${d.nf.toFixed(1)}`).join("\n");
                 
@@ -1703,10 +1696,10 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
                         }
                         const aiResult = JSON.parse(text.trim());
                         
-                        getEl('modal-ai-student-trend').innerText = aiResult.trend.toUpperCase();
-                        getEl('modal-ai-student-trend').className = `px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-cyan-600 text-white`;
-                        getEl('modal-ai-summary-text').innerHTML = aiResult.diagnostico;
-                        getEl('modal-ai-recommendation-text').innerHTML = aiResult.recomendaciones.replace(/\n/g, '<br>');
+                        document.getElementById('modal-ai-student-trend').innerText = aiResult.trend.toUpperCase();
+                        document.getElementById('modal-ai-student-trend').className = `px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-cyan-600 text-white`;
+                        document.getElementById('modal-ai-summary-text').innerHTML = aiResult.diagnostico;
+                        document.getElementById('modal-ai-recommendation-text').innerHTML = aiResult.recomendaciones.replace(/\n/g, '<br>');
                         return;
                     } else {
                         showToast("Error en API Key. Usando diagnóstico simulado local.", "fa-circle-exclamation", "text-amber-400");
@@ -1744,9 +1737,9 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
                 }
             }
 
-            getEl('modal-ai-student-name').innerText = studentName;
-            getEl('modal-ai-student-trend').innerText = trend;
-            getEl('modal-ai-student-trend').className = `px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${trendColor}`;
+            document.getElementById('modal-ai-student-name').innerText = studentName;
+            document.getElementById('modal-ai-student-trend').innerText = trend;
+            document.getElementById('modal-ai-student-trend').className = `px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${trendColor}`;
 
             // Generate overall summary
             let summaryText = "";
@@ -1809,7 +1802,7 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
                 summaryText += `<br><br><i class="fa-solid fa-triangle-exclamation text-amber-400 mr-1.5"></i><strong>Análisis Detallado:</strong><br><ul class="list-disc pl-4 mt-1 space-y-1 text-slate-350">${detailItems.map(item => `<li>${item}</li>`).join('')}</ul>`;
             }
 
-            getEl('modal-ai-summary-text').innerHTML = summaryText;
+            document.getElementById('modal-ai-summary-text').innerHTML = summaryText;
 
             // Generate pedagogical recommendations
             let recText = "";
@@ -1823,5 +1816,5 @@ Devuelve SOLAMENTE el objeto JSON, sin formato markdown extra ni explicaciones.`
                 recText = "Felicitar al estudiante por mantener un rendimiento aprobado y motivarle a continuar entregando a tiempo sus asignaciones. Recomendar lecturas autónomas complementarias y guías de auto-evaluación para elevar sus calificaciones al rango sobresaliente.";
             }
 
-            getEl('modal-ai-recommendation-text').innerHTML = recText.replace(/\n/g, '<br>');
+            document.getElementById('modal-ai-recommendation-text').innerHTML = recText.replace(/\n/g, '<br>');
         }
