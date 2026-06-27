@@ -1,9 +1,6 @@
 
-// Interceptador Global de Navegación para Módulos (Transiciones Suaves)
-
 window.navigateWithTransition = function(href) {
     if (!href) return;
-    
     const overlay = document.getElementById('global-page-transition');
     if (!overlay) {
         window.location.href = href;
@@ -36,14 +33,7 @@ window.navigateWithTransition = function(href) {
     document.getElementById('global-transition-icon').className = 'text-6xl ' + destIcon;
     document.getElementById('global-transition-subtitle').innerText = destSubtitle;
     
-    overlay.classList.remove('opacity-0', 'pointer-events-none');
-    overlay.classList.add('opacity-100', 'pointer-events-auto');
-    
-    const content = document.getElementById('global-transition-content');
-    if(content) {
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-    }
+    overlay.classList.add('active');
     
     setTimeout(() => {
         const bar = document.getElementById('global-transition-bar');
@@ -52,18 +42,5 @@ window.navigateWithTransition = function(href) {
     
     setTimeout(() => {
         window.location.href = href;
-    }, 800);
+    }, 850);
 };
-
-document.addEventListener('DOMContentLoaded', () => {
-    const links = document.querySelectorAll('a[href]');
-    links.forEach(link => {
-        link.addEventListener('click', (e) => {
-            const href = link.getAttribute('href');
-            if (href && href.endsWith('.html') && link.target !== '_blank') {
-                e.preventDefault();
-                window.navigateWithTransition(href);
-            }
-        });
-    });
-});
