@@ -43,7 +43,7 @@ window.navigateWithTransition = function(href, tabId) {
     
     setTimeout(() => {
         window.location.href = href;
-    }, 850);
+    }, 1200);
 };
 
 window.triggerInternalTransition = function(tabId, callback) {
@@ -80,12 +80,12 @@ window.triggerInternalTransition = function(tabId, callback) {
     
     setTimeout(() => {
         if(callback) callback();
-    }, 450);
+    }, 600);
 
     setTimeout(() => {
         overlay.classList.remove('active');
         setTimeout(() => {
             if (bar) bar.style.width = '0%';
         }, 300);
-    }, 850);
+    }, 1200);
 };
