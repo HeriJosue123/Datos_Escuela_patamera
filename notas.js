@@ -1,5 +1,33 @@
 
-`;
+/* ═══════════════════════════════════════════════════════════
+   FIREBASE CONFIGURATION
+═══════════════════════════════════════════════════════════ */
+const firebaseConfig = {
+    apiKey: "AIzaSyCOxSEhGKWGbIG5fvUYUBRI--dXsRH3mdU",
+    authDomain: "alicontrol-c64d2.firebaseapp.com",
+    projectId: "alicontrol-c64d2",
+    storageBucket: "alicontrol-c64d2.firebasestorage.app",
+    messagingSenderId: "1052279207948",
+    appId: "1:1052279207948:web:f67b98a112c93ee86dd629"
+};
+
+let db;
+try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    db.enablePersistence().catch(err => {
+        console.warn("Error persistencia:", err.code);
+    });
+    console.log("Firebase inicializado en notas.js");
+} catch(e) {
+    console.error("Error al iniciar Firebase", e);
+}
+
+
+function updateDbStatus(status, text) {
+  const badge = document.getElementById('db-status-badge');
+  if (!badge) return;
+  badge.className = `db-status-badge ${status}`;
   badge.innerHTML = `☁️ ${text}`;
 }
 
