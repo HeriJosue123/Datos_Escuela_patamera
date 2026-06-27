@@ -928,17 +928,38 @@ function closeSidebar() {
 
     <script src="navigation.js?v=1"></script>
 
-        <!-- Global Page Transition Overlay -->
+            <!-- Global Page Transition Premium -->
     <div id="global-page-transition">
+        <div class="transition-particles" id="particles-container"></div>
+        
         <div id="global-transition-content">
-            <div class="text-brand-500 mb-6 drop-shadow-[0_0_15px_rgba(56,189,248,0.6)]">
-                <i id="global-transition-icon" class="fa-solid fa-circle-notch fa-spin text-6xl"></i>
+            <div class="stagger-1 transition-header">
+                <i class="fa-solid fa-graduation-cap header-icon"></i>
+                <div class="header-titles">
+                    <h3>Sistema Integral Escolar</h3>
+                    <p>Centro Escolar Cantón Patamera</p>
+                </div>
             </div>
-            <h2 id="global-transition-title" class="text-3xl font-extrabold text-slate-100 mb-2 tracking-wider">Cargando...</h2>
-            <p id="global-transition-subtitle" class="text-slate-400 text-sm mb-8 font-medium">Preparando el entorno de trabajo</p>
             
-            <div class="transition-bar-wrapper">
-                <div id="global-transition-bar"></div>
+            <div class="stagger-1 transition-divider"></div>
+            
+            <div class="stagger-2 transition-module-info">
+                <p class="module-pre-title">Preparando módulo</p>
+                <h2 class="module-title">
+                    <i id="global-transition-icon" class="fa-solid fa-circle-notch fa-spin text-2xl text-cyan-400"></i>
+                    <span id="global-transition-title">CARGANDO...</span>
+                </h2>
+            </div>
+            
+            <div class="stagger-2 transition-divider"></div>
+            
+            <div class="stagger-3 transition-progress-container">
+                <div class="transition-bar-wrapper">
+                    <div id="global-transition-bar">
+                        <div class="bar-shine"></div>
+                    </div>
+                </div>
+                <p id="global-transition-subtitle" class="loading-message">Iniciando sistema...</p>
             </div>
         </div>
     </div>
